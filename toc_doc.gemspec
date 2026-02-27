@@ -3,7 +3,7 @@
 require_relative 'lib/toc_doc/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'tocdoc'
+  spec.name = 'toc_doc'
   spec.version = TocDoc::VERSION
   spec.authors = ['01max']
   spec.email = ['m.louguet@gmail.com']
@@ -11,13 +11,13 @@ Gem::Specification.new do |spec|
   spec.summary = 'A Ruby gem to interact with the (unofficial) Doctolib API.'
   spec.description = "A standalone Ruby gem providing a Faraday-based client
     with modular resource endpoints, configurable defaults, and a clean error hierarchy."
-  spec.homepage = 'https://github.com/01max/tocdoc'
+  spec.homepage = 'https://github.com/01max/toc_doc'
   spec.required_ruby_version = '>= 3.2.0'
 
   spec.metadata['allowed_push_host'] = 'https://rubygems.org'
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/01max/tocdoc'
-  spec.metadata['changelog_uri'] = 'https://github.com/01max/tocdoc/blob/main/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/01max/toc_doc'
+  spec.metadata['changelog_uri'] = 'https://github.com/01max/toc_doc/blob/main/CHANGELOG.md'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

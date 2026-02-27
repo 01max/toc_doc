@@ -10,4 +10,4 @@ Style/StringLiteralsInInterpolation:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
-    - 'tocdoc.gemspec'
+    - 'toc_doc.gemspec'

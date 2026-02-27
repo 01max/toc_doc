@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in tocdoc.gemspec
+# Specify your gem's dependencies in toc_doc.gemspec
 gemspec
 
 gem 'irb'
