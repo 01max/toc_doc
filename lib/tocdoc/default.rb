@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require "faraday"
-require "faraday/retry"
+require 'faraday'
+require 'faraday/retry'
 
 module Tocdoc
   # Default configuration values and helpers for Tocdoc.
   module Default
-    API_ENDPOINT = "https://www.doctolib.fr".freeze
+    API_ENDPOINT = 'https://www.doctolib.fr'
     USER_AGENT   = "Tocdoc Ruby Gem #{Tocdoc::VERSION}".freeze
-    MEDIA_TYPE   = "application/json".freeze
+    MEDIA_TYPE   = 'application/json'
     PER_PAGE     = 5
     MAX_RETRY    = 3
 
@@ -26,19 +26,19 @@ module Tocdoc
       end
 
       def api_endpoint
-        ENV.fetch("TOCDOC_API_ENDPOINT", API_ENDPOINT)
+        ENV.fetch('TOCDOC_API_ENDPOINT', API_ENDPOINT)
       end
 
       def user_agent
-        ENV.fetch("TOCDOC_USER_AGENT", USER_AGENT)
+        ENV.fetch('TOCDOC_USER_AGENT', USER_AGENT)
       end
 
       def default_media_type
-        ENV.fetch("TOCDOC_MEDIA_TYPE", MEDIA_TYPE)
+        ENV.fetch('TOCDOC_MEDIA_TYPE', MEDIA_TYPE)
       end
 
       def per_page
-        Integer(ENV.fetch("TOCDOC_PER_PAGE", PER_PAGE), 10)
+        Integer(ENV.fetch('TOCDOC_PER_PAGE', PER_PAGE), 10)
       rescue ArgumentError
         PER_PAGE
       end
@@ -65,7 +65,7 @@ module Tocdoc
 
       def retry_options
         {
-          max: Integer(ENV.fetch("TOCDOC_RETRY_MAX", MAX_RETRY), 10),
+          max: Integer(ENV.fetch('TOCDOC_RETRY_MAX', MAX_RETRY), 10),
           interval: 0.5,
           interval_randomness: 0.5,
           backoff_factor: 2,
@@ -73,8 +73,12 @@ module Tocdoc
           methods: %i[get head options]
         }
       rescue ArgumentError
+        retry_options_fallback
+      end
+
+      def retry_options_fallback
         {
-          max: 3,
+          max: MAX_RETRY,
           interval: 0.5,
           interval_randomness: 0.5,
           backoff_factor: 2,
