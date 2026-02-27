@@ -9,7 +9,8 @@ Gem::Specification.new do |spec|
   spec.email = ["m.louguet@gmail.com"]
 
   spec.summary = "A Ruby gem to interact with the (unofficial) Doctolib API."
-  spec.description = "A standalone Ruby gem providing a Faraday-based client with modular resource endpoints, configurable defaults, and a clean error hierarchy."
+  spec.description = "A standalone Ruby gem providing a Faraday-based client
+    with modular resource endpoints, configurable defaults, and a clean error hierarchy."
   spec.homepage = "https://github.com/01max/tocdoc"
   spec.required_ruby_version = ">= 3.2.0"
 
@@ -36,6 +37,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rubocop"
-  spec.add_development_dependency "webmock"
   spec.add_development_dependency "vcr"
+  spec.add_development_dependency "webmock"
 end
