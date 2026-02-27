@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Tocdoc
+module TocDoc
   class Client
-    # Tocdoc::Client::Availabilities
+    # TocDoc::Client::Availabilities
     module Availabilities
       # Availability endpoint helpers will be implemented in later phases.
     end

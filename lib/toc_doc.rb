@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'tocdoc/version'
+require_relative 'toc_doc/version'
 
-module Tocdoc
+module TocDoc
   class Error < StandardError; end
   # Your code goes here...
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Tocdoc
+module TocDoc
   class Client
     # The main API client will be implemented in later phases.
   end

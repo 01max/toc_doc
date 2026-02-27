@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Tocdoc do
+RSpec.describe TocDoc do
   it 'has a version number' do
-    expect(Tocdoc::VERSION).not_to be nil
+    expect(TocDoc::VERSION).not_to be nil
   end
 end

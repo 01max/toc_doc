@@ -1,4 +1,4 @@
-# Tocdoc
+# TocDoc
 
 TODO: Delete this and the text below, and describe your gem
 
@@ -36,4 +36,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 
 ## Code of Conduct
 
-Everyone interacting in the Tocdoc project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/tocdoc/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the TocDoc project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/tocdoc/blob/main/CODE_OF_CONDUCT.md).

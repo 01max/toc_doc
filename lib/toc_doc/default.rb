@@ -3,11 +3,11 @@
 require 'faraday'
 require 'faraday/retry'
 
-module Tocdoc
-  # Default configuration values and helpers for Tocdoc.
+module TocDoc
+  # Default configuration values and helpers for TocDoc.
   module Default
     API_ENDPOINT = 'https://www.doctolib.fr'
-    USER_AGENT   = "Tocdoc Ruby Gem #{Tocdoc::VERSION}".freeze
+    USER_AGENT   = "TocDoc Ruby Gem #{TocDoc::VERSION}".freeze
     MEDIA_TYPE   = 'application/json'
     PER_PAGE     = 5
     MAX_RETRY    = 3
@@ -58,7 +58,7 @@ module Tocdoc
       def build_middleware
         Faraday::RackBuilder.new do |builder|
           builder.request :retry, retry_options
-          builder.use Tocdoc::Middleware::RaiseError
+          builder.use TocDoc::Middleware::RaiseError
           builder.adapter Faraday.default_adapter
         end
       end

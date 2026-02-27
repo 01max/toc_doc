@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'lib/tocdoc/version'
+require_relative 'lib/toc_doc/version'
 
 Gem::Specification.new do |spec|
   spec.name = 'tocdoc'
-  spec.version = Tocdoc::VERSION
+  spec.version = TocDoc::VERSION
   spec.authors = ['01max']
   spec.email = ['m.louguet@gmail.com']
 

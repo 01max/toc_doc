@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "tocdoc/default"
+require 'toc_doc/default'
 
-module Tocdoc
-  # Shared configuration behavior for the Tocdoc module and client instances.
+module TocDoc
+  # Shared configuration behavior for the TocDoc module and client instances.
   module Configurable
     VALID_CONFIG_KEYS = %i[
       api_endpoint
@@ -24,7 +24,7 @@ module Tocdoc
 
     # Yields self so callers can configure via a block.
     #
-    #   Tocdoc.configure do |config|
+    #   TocDoc.configure do |config|
     #     config.api_endpoint = "https://www.doctolib.de"
     #   end
     def configure
@@ -32,9 +32,9 @@ module Tocdoc
       self
     end
 
-    # Reset all configuration options back to Tocdoc::Default values.
+    # Reset all configuration options back to TocDoc::Default values.
     def reset!
-      Tocdoc::Default.options.each do |key, value|
+      TocDoc::Default.options.each do |key, value|
         public_send("#{key}=", value)
       end
       self
@@ -59,7 +59,7 @@ module Tocdoc
       candidate == options
     end
 
-    # When extended (e.g., by the Tocdoc module), initialize with defaults.
+    # When extended (e.g., by the TocDoc module), initialize with defaults.
     def self.extended(base)
       base.reset!
     end
