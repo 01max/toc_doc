@@ -3,7 +3,7 @@
 require 'faraday'
 require 'faraday/retry'
 
-require 'toc_doc/middleware/raise_error'
+require 'toc_doc/http/middleware/raise_error'
 
 module TocDoc
   # Default configuration values and helpers for TocDoc.

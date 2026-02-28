@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'toc_doc/default'
+require 'toc_doc/core/default'
 
 module TocDoc
   # Shared configuration behavior for the TocDoc module and client instances.

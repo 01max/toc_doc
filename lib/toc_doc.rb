@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'toc_doc/version'
+require_relative 'toc_doc/core/version'
 
-require 'toc_doc/error'
-require 'toc_doc/configurable'
-require 'toc_doc/connection'
-require 'toc_doc/uri_utils'
-require 'toc_doc/resource'
-require 'toc_doc/availability'
-require 'toc_doc/availability_response'
+require 'toc_doc/core/error'
+require 'toc_doc/core/configurable'
+require 'toc_doc/core/connection'
+require 'toc_doc/core/uri_utils'
+require 'toc_doc/models/resource'
+require 'toc_doc/models/availability'
+require 'toc_doc/models/availability_response'
 require 'toc_doc/client'
 
 # The main module for TocDoc. This is the namespace for all public classes and modules.

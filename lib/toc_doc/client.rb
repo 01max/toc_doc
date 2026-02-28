@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'toc_doc/configurable'
-require 'toc_doc/connection'
-require 'toc_doc/uri_utils'
+require 'toc_doc/core/configurable'
+require 'toc_doc/core/connection'
+require 'toc_doc/core/uri_utils'
 require 'toc_doc/client/availabilities'
 
 module TocDoc

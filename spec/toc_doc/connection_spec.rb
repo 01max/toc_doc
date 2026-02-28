@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'toc_doc/connection'
+require 'toc_doc/core/connection'
 
 RSpec.describe TocDoc::Connection do
   # Build a minimal anonymous class that mixes in both Configurable and
