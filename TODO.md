@@ -26,16 +26,16 @@
 - [x] Error mapping specs
 
 ## 5 – Client & Availabilities
-- [ ] Client includes config + connection
-- [ ] Availabilities endpoint module
-- [ ] TocDoc.availabilities delegation
-- [ ] Availabilities specs (stubs/VCR)
+- [x] Client includes config + connection
+- [x] Availabilities endpoint module
+- [x] TocDoc.availabilities delegation
+- [x] Availabilities specs (stubs/VCR)
 
 ## 6 – Response Objects
-- [ ] Resource wrapper
-- [ ] Availability objects
-- [ ] Client mapping to response objects
-- [ ] Response specs
+- [x] Resource wrapper
+- [x] Availability objects
+- [x] Client mapping to response objects
+- [x] Response specs
 
 ## 8 – Pagination
 - [ ] Analyze pagination model

@@ -41,31 +41,32 @@ RSpec.describe TocDoc::Client::Availabilities do
       expect(a_request(:get, base_url).with(query: default_query)).to have_been_made.once
     end
 
-    it 'returns parsed JSON with top-level keys' do
+    it 'returns an AvailabilityResponse with top-level fields' do
       result = client.availabilities(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
       )
 
-      expect(result).to be_a(Hash)
-      expect(result['total']).to eq(2)
-      expect(result['next_slot']).to eq('2026-02-28T10:00:00.000+01:00')
+      expect(result).to be_a(TocDoc::AvailabilityResponse)
+      expect(result.total).to eq(2)
+      expect(result.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
     end
 
-    it 'returns an array of availabilities' do
+    it 'returns an array of Availability objects' do
       result = client.availabilities(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
       )
 
-      avails = result['availabilities']
+      avails = result.availabilities
       expect(avails).to be_an(Array)
       expect(avails.length).to eq(2)
-      expect(avails.first['date']).to eq('2026-02-28')
-      expect(avails.first['slots']).to be_an(Array)
-      expect(avails.first['slots'].length).to eq(3)
+      expect(avails).to all(be_a(TocDoc::Availability))
+      expect(avails.first.date).to eq('2026-02-28')
+      expect(avails.first.slots).to be_an(Array)
+      expect(avails.first.slots.length).to eq(3)
     end
   end
 
@@ -167,7 +168,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         start_date: Date.new(2026, 2, 28)
       )
 
-      expect(result['total']).to eq(2)
+      expect(result.total).to eq(2)
     ensure
       TocDoc.reset!
     end

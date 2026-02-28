@@ -28,13 +28,14 @@ module TocDoc
       #     telehealth: false
       #   )
       def availabilities(visit_motive_ids:, agenda_ids:, start_date: Date.today, limit: per_page, **options)
-        get('/availabilities.json', query: {
-              visit_motive_ids: dashed_ids(visit_motive_ids),
-              agenda_ids: dashed_ids(agenda_ids),
-              start_date: start_date.to_s,
-              limit: limit,
-              **options
-            })
+        response = get('/availabilities.json', query: {
+                         visit_motive_ids: dashed_ids(visit_motive_ids),
+                         agenda_ids: dashed_ids(agenda_ids),
+                         start_date: start_date.to_s,
+                         limit: limit,
+                         **options
+                       })
+        TocDoc::AvailabilityResponse.new(response)
       end
     end
   end
