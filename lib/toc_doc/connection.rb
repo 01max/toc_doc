@@ -84,6 +84,7 @@ module TocDoc
       explicit_headers = opts.delete(:headers) || {}
 
       query = explicit_query || opts
+
       [query || {}, explicit_headers]
     end
   end

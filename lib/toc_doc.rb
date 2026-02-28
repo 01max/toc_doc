@@ -3,6 +3,7 @@
 require_relative 'toc_doc/version'
 
 require 'toc_doc/configurable'
+require 'toc_doc/uri_utils'
 require 'toc_doc/client'
 
 # The main module for TocDoc. This is the namespace for all public classes and modules.
