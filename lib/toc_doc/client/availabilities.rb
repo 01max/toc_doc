@@ -3,7 +3,7 @@
 module TocDoc
   class Client
     # TocDoc::Client::Availabilities
-    module Availabilities
+    module Availabilities < Base
       # Availability endpoint helpers will be implemented in later phases.
     end
   end
