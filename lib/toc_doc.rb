@@ -4,6 +4,7 @@ require_relative 'toc_doc/version'
 
 require 'toc_doc/error'
 require 'toc_doc/configurable'
+require 'toc_doc/connection'
 require 'toc_doc/uri_utils'
 require 'toc_doc/client'
 
@@ -34,9 +35,9 @@ module TocDoc
       client
     end
 
-    def method_missing(method_name, *args, &block)
+    def method_missing(method_name, *args, **kwargs, &block)
       if client.respond_to?(method_name)
-        client.public_send(method_name, *args, &block)
+        client.public_send(method_name, *args, **kwargs, &block)
       else
         super
       end

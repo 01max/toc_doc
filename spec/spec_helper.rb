@@ -5,7 +5,7 @@ require 'toc_doc'
 require 'webmock/rspec'
 require 'vcr'
 
-SPEC_ROOT = File.expand_path('..', __dir__)
+SPEC_ROOT = File.expand_path('../spec/', __dir__)
 
 VCR.configure do |config|
   config.cassette_library_dir = File.join(SPEC_ROOT, 'fixtures', 'vcr_cassettes')
