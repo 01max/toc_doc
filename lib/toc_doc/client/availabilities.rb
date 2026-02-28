@@ -35,7 +35,7 @@ module TocDoc
                          limit: limit,
                          **options
                        })
-        TocDoc::AvailabilityResponse.new(response)
+        TocDoc::Response::Availability.new(response)
       end
     end
   end

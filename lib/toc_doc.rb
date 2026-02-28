@@ -6,9 +6,9 @@ require 'toc_doc/core/error'
 require 'toc_doc/core/configurable'
 require 'toc_doc/core/connection'
 require 'toc_doc/core/uri_utils'
-require 'toc_doc/models/resource'
-require 'toc_doc/models/availability'
-require 'toc_doc/models/availability_response'
+
+require 'toc_doc/models'
+
 require 'toc_doc/client'
 
 # The main module for TocDoc. This is the namespace for all public classes and modules.

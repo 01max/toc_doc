@@ -41,14 +41,14 @@ RSpec.describe TocDoc::Client::Availabilities do
       expect(a_request(:get, base_url).with(query: default_query)).to have_been_made.once
     end
 
-    it 'returns an AvailabilityResponse with top-level fields' do
+    it 'returns an Response::Availability with top-level fields' do
       result = client.availabilities(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
       )
 
-      expect(result).to be_a(TocDoc::AvailabilityResponse)
+      expect(result).to be_a(TocDoc::Response::Availability)
       expect(result.total).to eq(2)
       expect(result.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
     end

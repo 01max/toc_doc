@@ -2,7 +2,7 @@
 
 require 'json'
 
-RSpec.describe TocDoc::AvailabilityResponse do
+RSpec.describe TocDoc::Response::Availability do
   let(:raw_hash) { JSON.parse(fixture('availabilities.json')) }
 
   subject(:response) { described_class.new(raw_hash) }
