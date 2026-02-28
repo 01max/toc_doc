@@ -34,9 +34,9 @@ module TocDoc
       client
     end
 
-    def method_missing(method_name, *args, **kwargs, &block)
+    def method_missing(method_name, ...)
       if client.respond_to?(method_name)
-        client.public_send(method_name, *args, **kwargs, &block)
+        client.public_send(method_name, ...)
       else
         super
       end

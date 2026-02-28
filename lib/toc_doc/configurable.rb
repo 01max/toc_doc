@@ -42,9 +42,7 @@ module TocDoc
 
     # Returns a hash of the current configuration options.
     def options
-      Configurable.keys.each_with_object({}) do |key, hash|
-        hash[key] = public_send(key)
-      end
+      Configurable.keys.to_h { |key| [key, public_send(key)] }
     end
 
     # Compares the given options hash to the current options for memoization.

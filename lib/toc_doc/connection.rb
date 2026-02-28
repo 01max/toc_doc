@@ -53,18 +53,11 @@ module TocDoc
     end
 
     # Returns a boolean based on the last HTTP response status.
-    def boolean_from_response(method, path, options = {})
+    def boolean_from_response?(method, path, options = {})
       request(method, path, nil, options)
       status = last_response&.status
 
-      case status
-      when 200..299
-        true
-      when 404
-        false
-      else
-        false
-      end
+      (200..299).cover?(status)
     end
 
     # Core request helper used by all HTTP verbs.

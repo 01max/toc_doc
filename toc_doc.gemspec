@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/01max/toc_doc'
   spec.metadata['changelog_uri'] = 'https://github.com/01max/toc_doc/blob/main/CHANGELOG.md'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -32,11 +33,6 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'faraday', '>= 1', '< 3'
-  spec.add_runtime_dependency 'faraday-retry', '~> 2.0'
-
-  spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'vcr'
-  spec.add_development_dependency 'webmock'
+  spec.add_dependency 'faraday', '>= 1', '< 3'
+  spec.add_dependency 'faraday-retry', '~> 2.0'
 end

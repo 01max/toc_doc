@@ -114,29 +114,29 @@ RSpec.describe TocDoc::Connection do
     end
   end
 
-  describe '#boolean_from_response' do
+  describe '#boolean_from_response?' do
     it 'returns true for a 200 response' do
       stubs.get('/exists') { [200, {}, '{}'] }
 
-      expect(client.send(:boolean_from_response, :get, '/exists')).to be(true)
+      expect(client.send(:boolean_from_response?, :get, '/exists')).to be(true)
     end
 
     it 'returns true for any 2xx response' do
       stubs.get('/no-content') { [204, {}, ''] }
 
-      expect(client.send(:boolean_from_response, :get, '/no-content')).to be(true)
+      expect(client.send(:boolean_from_response?, :get, '/no-content')).to be(true)
     end
 
     it 'returns false for a 404 response' do
       stubs.get('/missing') { [404, {}, '{}'] }
 
-      expect(client.send(:boolean_from_response, :get, '/missing')).to be(false)
+      expect(client.send(:boolean_from_response?, :get, '/missing')).to be(false)
     end
 
     it 'returns false for other non-2xx responses' do
       stubs.get('/error') { [422, {}, '{}'] }
 
-      expect(client.send(:boolean_from_response, :get, '/error')).to be(false)
+      expect(client.send(:boolean_from_response?, :get, '/error')).to be(false)
     end
   end
 
