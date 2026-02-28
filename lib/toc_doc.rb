@@ -10,7 +10,6 @@ require 'toc_doc/client'
 
 # The main module for TocDoc. This is the namespace for all public classes and modules.
 module TocDoc
-
   extend Configurable
 
   class << self

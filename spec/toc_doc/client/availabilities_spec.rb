@@ -9,9 +9,9 @@ RSpec.describe TocDoc::Client::Availabilities do
   let(:default_query) do
     {
       visit_motive_ids: '7767829',
-      agenda_ids:       '1101600',
-      start_date:       '2026-02-28',
-      limit:            '5'
+      agenda_ids: '1101600',
+      start_date: '2026-02-28',
+      limit: '5'
     }
   end
 

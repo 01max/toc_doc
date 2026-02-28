@@ -35,15 +35,21 @@ module TocDoc
 
     # Memoized Faraday connection configured from configurable options.
     def agent
-      @agent ||= begin
-        options = connection_options.dup
-        options[:builder] = middleware if middleware
-        Faraday.new(api_endpoint, options) do |conn|
-          conn.headers['Accept'] = default_media_type
-          conn.headers['Content-Type'] = default_media_type
-          conn.headers['User-Agent'] = user_agent
-        end
+      @agent ||= Faraday.new(api_endpoint, faraday_options) do |conn|
+        configure_faraday_headers(conn)
       end
+    end
+
+    def faraday_options
+      opts = connection_options.dup
+      opts[:builder] = middleware if middleware
+      opts
+    end
+
+    def configure_faraday_headers(conn)
+      conn.headers['Accept']       = default_media_type
+      conn.headers['Content-Type'] = default_media_type
+      conn.headers['User-Agent']   = user_agent
     end
 
     # Returns a boolean based on the last HTTP response status.

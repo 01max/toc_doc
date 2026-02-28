@@ -29,12 +29,12 @@ module TocDoc
       #   )
       def availabilities(visit_motive_ids:, agenda_ids:, start_date: Date.today, limit: per_page, **options)
         get('/availabilities.json', query: {
-          visit_motive_ids: dashed_ids(visit_motive_ids),
-          agenda_ids: dashed_ids(agenda_ids),
-          start_date: start_date.to_s,
-          limit: limit,
-          **options
-        })
+              visit_motive_ids: dashed_ids(visit_motive_ids),
+              agenda_ids: dashed_ids(agenda_ids),
+              start_date: start_date.to_s,
+              limit: limit,
+              **options
+            })
       end
     end
   end

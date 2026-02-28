@@ -40,7 +40,7 @@ RSpec.describe TocDoc::Middleware::RaiseError do
 
   it 'does not expose Faraday in the raised class' do
     stub(404)
-  rescue => e
+  rescue StandardError => e
     expect(e).not_to be_a(Faraday::Error)
     expect(e).to be_a(TocDoc::Error)
   end
