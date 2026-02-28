@@ -12,6 +12,7 @@ module TocDoc
       connection_options
       default_media_type
       per_page
+      auto_paginate
     ].freeze
 
     # Accessors for all configurable options.

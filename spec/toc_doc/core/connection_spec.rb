@@ -186,4 +186,115 @@ RSpec.describe TocDoc::Connection do
       expect(headers).to eq({ 'X-Foo' => 'bar' })
     end
   end
+
+  describe '#paginate' do
+    # Build a separate client whose test-adapter middleware also parses JSON,
+    # so that the bodies returned by paginate / get are real Ruby objects.
+    let(:json_stubs) { Faraday::Adapter::Test::Stubs.new }
+
+    let(:json_client) do
+      instance = client_class.new
+      instance.reset!
+      instance.middleware = Faraday::RackBuilder.new do |b|
+        b.response :json, content_type: /./
+        b.adapter :test, json_stubs
+      end
+      instance
+    end
+
+    context 'when auto_paginate is false (default)' do
+      it 'returns the first page body without invoking the block' do
+        json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"data":[1,2]}'] }
+
+        block_called = false
+        result = json_client.send(:paginate, '/items') do
+          block_called = true
+          nil
+        end
+
+        expect(result).to eq({ 'data' => [1, 2] })
+        expect(block_called).to be(false)
+      end
+
+      it 'returns the first page body when no block is given' do
+        json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"data":[3]}'] }
+
+        result = json_client.send(:paginate, '/items')
+
+        expect(result).to eq({ 'data' => [3] })
+      end
+    end
+
+    context 'when auto_paginate is true' do
+      before { json_client.auto_paginate = true }
+
+      it 'stops after the first page when the block returns nil' do
+        json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2]}'] }
+
+        block_calls = 0
+        result = json_client.send(:paginate, '/items') do |_acc, _resp|
+          block_calls += 1
+          nil
+        end
+
+        expect(block_calls).to eq(1)
+        expect(result).to eq({ 'items' => [1, 2] })
+      end
+
+      it 'fetches a second page when the block returns next-page options' do
+        page_responses = [
+          [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2],"page":1}'],
+          [200, { 'Content-Type' => 'application/json' }, '{"items":[3,4],"page":2}']
+        ]
+        json_stubs.get('/items') { page_responses.shift }
+
+        block_calls = 0
+        result = json_client.send(:paginate, '/items') do |acc, last_resp|
+          block_calls += 1
+          latest = last_resp.body
+
+          # First yield: acc IS latest (same object), nothing to merge.
+          # Second yield: merge new-page data into acc.
+          acc['items'] = (acc['items'] || []) + (latest['items'] || []) unless acc.equal?(latest)
+
+          block_calls < 2 ? { query: { page: block_calls + 1 } } : nil
+        end
+
+        expect(block_calls).to eq(2)
+        expect(result['items']).to eq([1, 2, 3, 4])
+      end
+
+      it 'does not make a second request when the block returns nil on the first call' do
+        request_count = 0
+        json_stubs.get('/items') do
+          request_count += 1
+          [200, { 'Content-Type' => 'application/json' }, '{"items":[]}']
+        end
+
+        json_client.send(:paginate, '/items') { |_acc, _resp| nil }
+
+        expect(request_count).to eq(1)
+      end
+
+      it 'supports three or more pages' do
+        pages = [
+          [200, { 'Content-Type' => 'application/json' }, '{"items":[1]}'],
+          [200, { 'Content-Type' => 'application/json' }, '{"items":[2]}'],
+          [200, { 'Content-Type' => 'application/json' }, '{"items":[3]}']
+        ]
+        json_stubs.get('/items') { pages.shift }
+
+        block_calls = 0
+        result = json_client.send(:paginate, '/items') do |acc, last_resp|
+          block_calls += 1
+          latest = last_resp.body
+          acc['items'] = (acc['items'] || []) + (latest['items'] || []) unless acc.equal?(latest)
+          block_calls < 3 ? { query: { page: block_calls + 1 } } : nil
+        end
+
+        expect(block_calls).to eq(3)
+        expect(result['items']).to eq([1, 2, 3])
+      end
+    end
+  end
 end

@@ -11,8 +11,9 @@ module TocDoc
     API_ENDPOINT = 'https://www.doctolib.fr'
     USER_AGENT   = "TocDoc Ruby Gem #{TocDoc::VERSION}".freeze
     MEDIA_TYPE   = 'application/json'
-    PER_PAGE     = 5
-    MAX_RETRY    = 3
+    PER_PAGE       = 5
+    AUTO_PAGINATE  = false
+    MAX_RETRY      = 3
 
     class << self
       # Returns a hash of default configuration options.
@@ -22,6 +23,7 @@ module TocDoc
           user_agent: user_agent,
           default_media_type: default_media_type,
           per_page: per_page,
+          auto_paginate: auto_paginate,
           middleware: middleware,
           connection_options: connection_options
         }
@@ -43,6 +45,13 @@ module TocDoc
         Integer(ENV.fetch('TOCDOC_PER_PAGE', PER_PAGE), 10)
       rescue ArgumentError
         PER_PAGE
+      end
+
+      def auto_paginate
+        env_val = ENV.fetch('TOCDOC_AUTO_PAGINATE', nil)
+        return AUTO_PAGINATE if env_val.nil?
+
+        env_val.casecmp('true').zero?
       end
 
       # Default Faraday middleware stack: retry + error handling + adapter.

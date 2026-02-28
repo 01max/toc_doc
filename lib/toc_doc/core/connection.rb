@@ -52,6 +52,42 @@ module TocDoc
       conn.headers['User-Agent']   = user_agent
     end
 
+    # Performs a paginated GET, accumulating results across pages.
+    #
+    # When +auto_paginate+ is disabled or no block is given, behaves exactly
+    # like +#get+.
+    #
+    # When +auto_paginate+ is true *and* a block is provided the block is
+    # yielded after every page fetch — including the first — with
+    # +(accumulator, last_response)+.  The block must:
+    #
+    # 1. Detect whether it is a continuation call by comparing object identity:
+    #    +acc.equal?(last_response.body)+ is +true+ only on the first yield,
+    #    when the accumulator *is* the first-page body.  On subsequent yields
+    #    the block should merge +last_response.body+ into +acc+.
+    # 2. Return a Hash of options to pass to the next +#get+ call (pagination
+    #    continues), or +nil+ / +false+ to halt.
+    #
+    # @param path [String] the API path
+    # @param options [Hash] query/header options forwarded to every request
+    # @yieldparam acc [Object] the growing accumulator (first-page body initially)
+    # @yieldparam last_response [Faraday::Response] the most-recent raw response
+    # @yieldreturn [Hash, nil] next-page options, or +nil+/+false+ to halt
+    # @return [Object] the fully-accumulated response body
+    def paginate(path, options = {}, &)
+      data = get(path, options)
+      return data unless block_given? && auto_paginate
+
+      loop do
+        next_options = yield(data, last_response)
+        break unless next_options
+
+        get(path, next_options)
+      end
+
+      data
+    end
+
     # Returns a boolean based on the last HTTP response status.
     def boolean_from_response?(method, path, options = {})
       request(method, path, nil, options)
