@@ -50,7 +50,7 @@
   - [ ] on rubygem
   - [ ] gem.coop ?
 
-# 2.0
+# 1.1
 
 ## Better API usage
 - [ ] Rate limiting
@@ -64,7 +64,7 @@
 - [ ] Implement resource modules
 - [ ] Specs per endpoint
 
-# 3.0
+# 1.2
 
 ## Auth / User-based actions
 - [ ] Research auth scheme
