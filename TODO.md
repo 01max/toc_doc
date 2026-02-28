@@ -38,12 +38,12 @@
 - [x] Response specs
 
 ## 8 – Pagination
-- [ ] Analyze pagination model
-- [ ] Implement Connection#paginate
-- [ ] Pagination config & specs
+- [x] Analyze pagination model
+- [x] Implement Connection#paginate
+- [x] Pagination config & specs
 
 ## 9 – Docs & Release
-- [ ] README
+- [x] README
 - [ ] YARD docs
 - [ ] CHANGELOG
 - [ ] Build & publish gem 
