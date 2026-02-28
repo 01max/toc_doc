@@ -60,8 +60,9 @@ module TocDoc
       def build_middleware
         Faraday::RackBuilder.new do |builder|
           builder.request :retry, retry_options
-          builder.response :json, content_type: /\bjson$/
           builder.use TocDoc::Middleware::RaiseError
+          builder.response :raise_error
+          builder.response :json, content_type: /\bjson$/
           builder.adapter Faraday.default_adapter
         end
       end

@@ -2,14 +2,13 @@
 
 require_relative 'toc_doc/version'
 
+require 'toc_doc/error'
 require 'toc_doc/configurable'
 require 'toc_doc/uri_utils'
 require 'toc_doc/client'
 
 # The main module for TocDoc. This is the namespace for all public classes and modules.
 module TocDoc
-  # Custom error class for TocDoc-related errors.
-  class Error < StandardError; end
 
   extend Configurable
 

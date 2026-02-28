@@ -20,10 +20,10 @@
 - [x] Connection specs
 
 ## 4 – Error Handling
-- [ ] Error base class & factory
-- [ ] Error subclasses (4xx/5xx)
-- [ ] RaiseError middleware
-- [ ] Error mapping specs
+- [x] Error base class & factory
+- [x] Error subclasses (4xx/5xx)
+- [x] RaiseError middleware
+- [x] Error mapping specs
 
 ## 5 – Client & Availabilities
 - [ ] Client includes config + connection
