@@ -35,12 +35,14 @@ module TocDoc
 
     # Memoized Faraday connection configured from configurable options.
     def agent
-      @agent ||= Faraday.new(api_endpoint, connection_options) do |conn|
-        conn.headers['Accept'] = default_media_type
-        conn.headers['Content-Type'] = default_media_type
-        conn.headers['User-Agent'] = user_agent
-
-        conn.builder = middleware if middleware
+      @agent ||= begin
+        options = connection_options.dup
+        options[:builder] = middleware if middleware
+        Faraday.new(api_endpoint, options) do |conn|
+          conn.headers['Accept'] = default_media_type
+          conn.headers['Content-Type'] = default_media_type
+          conn.headers['User-Agent'] = user_agent
+        end
       end
     end
 
@@ -64,8 +66,8 @@ module TocDoc
       query, headers = parse_query_and_convenience_headers(options)
 
       response = agent.public_send(method) do |req|
-        req.url(path, query) if query && !query.empty?
-        req.headers.update(headers) if headers && !headers.empty?
+        req.url(path, query)
+        req.headers.update(headers) unless headers.empty?
         req.body = data if data
       end
 

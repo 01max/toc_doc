@@ -14,10 +14,10 @@
 - [x] Config specs (module + client)
 
 ## 3 – Connection & HTTP
-- [ ] Connection module (agent, request helpers)
-- [ ] Faraday middleware
-- [ ] URL building helpers
-- [ ] Connection specs
+- [x] Connection module (agent, request helpers)
+- [x] ~Faraday middleware~
+- [x] URL building helpers
+- [x] Connection specs
 
 ## 4 – Error Handling
 - [ ] Error base class & factory
