@@ -58,19 +58,20 @@
 - [ ] Parse date / datetime
 - [ ] ?
 
+# PLAN 1.X
+
+## Extra Endpoints
+- [ ] Identify additional endpoints
+- [ ] Prioritize implementation of resource modules for those endpoints
+
+# 1.2
+
 ## Better API usage
 - [ ] Rate limiting
 - [ ] Caching
 - [ ] Logging
-- [ ] Better multi-region support ?
-- [ ] Async support ?
 
-## Extra Endpoints
-- [ ] Identify additional endpoints
-- [ ] Implement resource modules
-- [ ] Specs per endpoint
-
-# 1.2
+# 1.4
 
 ## Auth / User-based actions
 - [ ] Research auth scheme
