@@ -2,6 +2,11 @@
 
 A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-based client with modular resource endpoints, configurable defaults, optional auto-pagination, and a clean error hierarchy.
 
+[![Gem Version](https://badge.fury.io/rb/toc_doc.svg)](https://badge.fury.io/rb/toc_doc)
+[![CI](https://github.com/01max/toc_doc/actions/workflows/main.yml/badge.svg)](https://github.com/01max/toc_doc/actions)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![YARD Docs](https://img.shields.io/badge/docs-YARD-blue.svg)](https://rubydoc.info/gems/toc_doc)
+
 > **Heads-up:** Doctolib™ does not publish a public API. This gem reverse-engineers
 > the endpoints used by the Doctolib™ website. Behaviour may change at any time
 > without notice. This project is for entertainment purposes only.
