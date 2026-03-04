@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = 'A Ruby gem to interact with the (unofficial) Doctolib API.'
   spec.description = "A standalone Ruby gem providing a Faraday-based client
-    with modular resource endpoints, configurable defaults, and a clean error hierarchy."
+    to interact with the (unofficial) Doctolib API."
   spec.homepage = 'https://github.com/01max/toc_doc'
   spec.license = 'GPL-3.0-or-later'
   spec.required_ruby_version = '>= 3.2.0'
