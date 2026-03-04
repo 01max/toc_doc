@@ -69,6 +69,18 @@ RSpec.describe TocDoc::Response::Availability do
       expect(second.slots.length).to eq(2)
     end
 
+    it 'excludes dates with no slots' do
+      r = described_class.new(
+        'total' => 1,
+        'availabilities' => [
+          { 'date' => '2026-03-04', 'slots' => [] },
+          { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+        ]
+      )
+      expect(r.availabilities.length).to eq(1)
+      expect(r.availabilities.first.date).to eq('2026-03-09')
+    end
+
     it 'returns an empty array when missing' do
       expect(described_class.new('total' => 0).availabilities).to eq([])
     end

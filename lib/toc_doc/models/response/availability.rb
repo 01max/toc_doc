@@ -30,8 +30,15 @@ module TocDoc
         nil
       end
 
-      # @return [Array<TocDoc::Availability>]
+      # @return [Array<TocDoc::Availability>] only dates that have at least one slot
       def availabilities
+        @availabilities ||= Array(@attrs['availabilities'])
+                            .select { |entry| Array(entry['slots']).any? }
+                            .map { |entry| TocDoc::Availability.new(entry) }
+      end
+
+      # @return [Array<TocDoc::Availability>]
+      def raw_availabilities
         @availabilities ||= Array(@attrs['availabilities']).map do |entry|
           TocDoc::Availability.new(entry)
         end
