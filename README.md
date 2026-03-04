@@ -111,7 +111,7 @@ it_client.availabilities(visit_motive_ids: 789, agenda_ids: 101)
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
 | `user_agent` | `TocDoc Ruby Gem 0.1.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
-| `per_page` | `5` | Default number of results returned per request. |
+| `per_page` | `5` | Default number of results returned per request, platform's max is currently at `15`. |
 | `auto_paginate` | `false` | When `true`, automatically fetches all pages and merges results. |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
 | `connection_options` | `{}` | Options passed directly to `Faraday.new`. |

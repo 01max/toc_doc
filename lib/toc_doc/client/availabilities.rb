@@ -44,7 +44,7 @@ module TocDoc
           visit_motive_ids: dashed_ids(visit_motive_ids),
           agenda_ids: dashed_ids(agenda_ids),
           start_date: start_date.to_s,
-          limit: limit,
+          limit: [limit.to_i, TocDoc::Default::MAX_PER_PAGE].min,
           **extra
         }
       end

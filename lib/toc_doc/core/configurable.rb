@@ -18,6 +18,11 @@ module TocDoc
     # Accessors for all configurable options.
     attr_accessor(*VALID_CONFIG_KEYS)
 
+    # Hard-limit per_page to {TocDoc::Default::MAX_PER_PAGE}.
+    def per_page=(value)
+      @per_page = [value.to_i, TocDoc::Default::MAX_PER_PAGE].min
+    end
+
     # Returns the list of configurable keys.
     def self.keys
       VALID_CONFIG_KEYS

@@ -8,9 +8,15 @@ RSpec.describe TocDoc::Client do
   end
 
   it 'applies per-instance options over defaults' do
-    client = described_class.new(api_endpoint: 'https://client.example', per_page: 99)
+    client = described_class.new(api_endpoint: 'https://client.example', per_page: 10)
 
     expect(client.api_endpoint).to eq('https://client.example')
-    expect(client.per_page).to eq(99)
+    expect(client.per_page).to eq(10)
+  end
+
+  it 'caps per_page at MAX_PER_PAGE' do
+    client = described_class.new(per_page: 99)
+
+    expect(client.per_page).to eq(TocDoc::Default::MAX_PER_PAGE)
   end
 end

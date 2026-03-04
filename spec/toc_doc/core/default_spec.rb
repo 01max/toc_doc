@@ -29,12 +29,18 @@ RSpec.describe TocDoc::Default do
     ENV['TOCDOC_API_ENDPOINT'] = 'https://www.doctolib.de'
     ENV['TOCDOC_USER_AGENT'] = 'Custom UA'
     ENV['TOCDOC_MEDIA_TYPE'] = 'application/xml'
-    ENV['TOCDOC_PER_PAGE'] = '42'
+    ENV['TOCDOC_PER_PAGE'] = '10'
 
     expect(described_class.api_endpoint).to eq('https://www.doctolib.de')
     expect(described_class.user_agent).to eq('Custom UA')
     expect(described_class.default_media_type).to eq('application/xml')
-    expect(described_class.per_page).to eq(42)
+    expect(described_class.per_page).to eq(10)
+  end
+
+  it 'caps per_page at MAX_PER_PAGE even from ENV' do
+    ENV['TOCDOC_PER_PAGE'] = '42'
+
+    expect(described_class.per_page).to eq(TocDoc::Default::MAX_PER_PAGE)
   end
 
   it 'uses defaults when ENV keys are missing' do

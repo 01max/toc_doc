@@ -11,7 +11,8 @@ module TocDoc
     API_ENDPOINT = 'https://www.doctolib.fr'
     USER_AGENT   = "TocDoc Ruby Gem #{TocDoc::VERSION}".freeze
     MEDIA_TYPE   = 'application/json'
-    PER_PAGE       = 5
+    PER_PAGE       = 15
+    MAX_PER_PAGE   = 15
     AUTO_PAGINATE  = false
     MAX_RETRY      = 3
 
@@ -42,7 +43,7 @@ module TocDoc
       end
 
       def per_page
-        Integer(ENV.fetch('TOCDOC_PER_PAGE', PER_PAGE), 10)
+        [Integer(ENV.fetch('TOCDOC_PER_PAGE', PER_PAGE), 10), MAX_PER_PAGE].min
       rescue ArgumentError
         PER_PAGE
       end
