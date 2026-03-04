@@ -15,9 +15,19 @@ module TocDoc
         @attrs['total']
       end
 
-      # @return [String, nil] ISO 8601 datetime of the nearest available slot
+      # @return [String, nil] ISO 8601 datetime of the nearest available slot.
+      #   When the API includes a +next_slot+ key (no slots in the loaded window)
+      #   that value is returned directly. Otherwise the first slot of the first
+      #   date that has one is returned.
       def next_slot
-        @attrs['next_slot']
+        return @attrs['next_slot'] if @attrs.key?('next_slot')
+
+        Array(@attrs['availabilities']).each do |entry|
+          slots = Array(entry['slots'])
+          return slots.first unless slots.empty?
+        end
+
+        nil
       end
 
       # @return [Array<TocDoc::Availability>]

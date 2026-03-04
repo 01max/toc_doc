@@ -14,12 +14,35 @@ RSpec.describe TocDoc::Response::Availability do
   end
 
   describe '#next_slot' do
-    it 'returns the next slot datetime string' do
-      expect(response.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
+    context 'when the next_slot key is present (no slots in loaded dates)' do
+      it 'returns the next_slot value from the response' do
+        r = described_class.new('total' => 0, 'next_slot' => '2026-03-24T09:00:00.000+01:00',
+                                'availabilities' => [{ 'date' => '2026-03-04', 'slots' => [] }])
+        expect(r.next_slot).to eq('2026-03-24T09:00:00.000+01:00')
+      end
     end
 
-    it 'returns nil when absent' do
-      expect(described_class.new('total' => 0, 'availabilities' => []).next_slot).to be_nil
+    context 'when the next_slot key is absent and slots exist' do
+      it 'returns the first slot of the first date that has one' do
+        r = described_class.new(
+          'total' => 1,
+          'availabilities' => [
+            { 'date' => '2026-03-04', 'slots' => [] },
+            { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+          ]
+        )
+        expect(r.next_slot).to eq('2026-03-09T14:50:00.000+01:00')
+      end
+    end
+
+    context 'when the next_slot key is absent and no slots exist' do
+      it 'returns nil' do
+        expect(described_class.new('total' => 0, 'availabilities' => []).next_slot).to be_nil
+      end
+    end
+
+    it 'returns the next_slot value from the fixture' do
+      expect(response.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
     end
   end
 
