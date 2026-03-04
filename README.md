@@ -2,9 +2,11 @@
 
 A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-based client with modular resource endpoints, configurable defaults, optional auto-pagination, and a clean error hierarchy.
 
-> **Heads-up:** Doctolib does not publish a public API. This gem reverse-engineers
-> the endpoints used by the Doctolib website. Behaviour may change at any time
-> without notice.
+> **Heads-up:** Doctolib™ does not publish a public API. This gem reverse-engineers
+> the endpoints used by the Doctolib™ website. Behaviour may change at any time
+> without notice. This project is for entertainment purposes only.
+> Doctolib is a trademark of Doctolib. This project is not affiliated with,
+> endorsed by, or sponsored by Doctolib.
 
 ---
 
