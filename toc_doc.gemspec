@@ -35,6 +35,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'faraday', '>= 1', '< 3'
   spec.add_dependency 'faraday-retry', '~> 2.0'
-
-  spec.add_development_dependency 'yard', '~> 0.9'
 end

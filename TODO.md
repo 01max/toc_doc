@@ -46,7 +46,7 @@
 - [x] README
 - [x] YARD docs
 - [x] CHANGELOG
-- [ ] FIX GH CI
+- [x] FIX GH CI
 - [ ] Build & publish gem 
   - [ ] on rubygem
   - [ ] gem.coop ?
