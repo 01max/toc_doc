@@ -10,7 +10,11 @@ gem 'rake', '~> 13.0'
 
 gem 'rspec', '~> 3.0'
 gem 'rubocop', '~> 1.21'
-gem 'yard', '~> 0.9'
+
+group :development do
+  gem 'webrick'
+  gem 'yard', '~> 0.9'
+end
 
 group :test do
   gem 'vcr', '~> 6.0'
