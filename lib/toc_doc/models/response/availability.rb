@@ -62,7 +62,7 @@ module TocDoc
       #
       # @return [Array<TocDoc::Availability>]
       def raw_availabilities
-        @availabilities ||= Array(@attrs['availabilities']).map do |entry|
+        @raw_availabilities ||= Array(@attrs['availabilities']).map do |entry|
           TocDoc::Availability.new(entry)
         end
       end

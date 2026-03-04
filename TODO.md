@@ -45,13 +45,17 @@
 ## 9 – Docs & Release
 - [x] README
 - [x] YARD docs
-- [ ] CHANGELOG
+- [x] CHANGELOG
 - [ ] FIX GH CI
 - [ ] Build & publish gem 
   - [ ] on rubygem
   - [ ] gem.coop ?
 
 # 1.1
+
+## Parse raw API data
+- [ ] Parse date / datetime
+- [ ] ?
 
 ## Better API usage
 - [ ] Rate limiting
