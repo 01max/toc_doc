@@ -11,7 +11,7 @@ RSpec.describe TocDoc::Client::Availabilities do
       visit_motive_ids: '7767829',
       agenda_ids: '1101600',
       start_date: '2026-02-28',
-      limit: '5'
+      limit: TocDoc::Default::PER_PAGE.to_s
     }
   end
 
