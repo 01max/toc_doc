@@ -47,9 +47,10 @@
 - [x] YARD docs
 - [x] CHANGELOG
 - [x] FIX GH CI
-- [ ] Build & publish gem 
-  - [ ] on rubygem
-  - [ ] gem.coop ?
+- [x] Build & publish gem
+  - [x] on rubygem
+  - [x] release on GH
+  - [x] gem.coop/@maxime
 
 # 1.1
 
