@@ -1,0 +1,12 @@
+--markup markdown
+--output-dir doc
+--readme README.md
+--title "TocDoc Ruby Gem Documentation"
+--charset utf-8
+--protected
+--no-private
+--hide-void-return
+lib/**/*.rb
+-
+CHANGELOG.md
+LICENSE.md

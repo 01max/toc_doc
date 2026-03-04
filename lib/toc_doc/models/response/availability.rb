@@ -10,15 +10,28 @@ module TocDoc
     #   response.next_slot      #=> "2026-02-28T10:00:00.000+01:00"
     #   response.availabilities #=> [#<TocDoc::Availability ...>, ...]
     class Availability < Resource
-      # @return [Integer] total number of available slots across all dates
+      # The total number of available slots across all dates.
+      #
+      # @return [Integer]
+      #
+      # @example
+      #   response.total #=> 5
       def total
         @attrs['total']
       end
 
-      # @return [String, nil] ISO 8601 datetime of the nearest available slot.
-      #   When the API includes a +next_slot+ key (no slots in the loaded window)
-      #   that value is returned directly. Otherwise the first slot of the first
-      #   date that has one is returned.
+      # The nearest available appointment slot.
+      #
+      # When the API includes an explicit +next_slot+ key (common when there
+      # are no slots in the loaded date window) that value is returned
+      # directly.  Otherwise the first slot of the first date that has one
+      # is returned.
+      #
+      # @return [String, nil] ISO 8601 datetime string, or +nil+ when no
+      #   slot is available
+      #
+      # @example
+      #   response.next_slot #=> "2026-02-28T10:00:00.000+01:00"
       def next_slot
         return @attrs['next_slot'] if @attrs.key?('next_slot')
 
@@ -30,13 +43,23 @@ module TocDoc
         nil
       end
 
-      # @return [Array<TocDoc::Availability>] only dates that have at least one slot
+      # Dates that have at least one available slot, wrapped as
+      # {TocDoc::Availability} objects.
+      #
+      # @return [Array<TocDoc::Availability>]
+      #
+      # @example
+      #   response.availabilities.each do |avail|
+      #     puts "#{avail.date}: #{avail.slots.size} slot(s)"
+      #   end
       def availabilities
         @availabilities ||= Array(@attrs['availabilities'])
                             .select { |entry| Array(entry['slots']).any? }
                             .map { |entry| TocDoc::Availability.new(entry) }
       end
 
+      # All availability date entries, including those with no slots.
+      #
       # @return [Array<TocDoc::Availability>]
       def raw_availabilities
         @availabilities ||= Array(@attrs['availabilities']).map do |entry|
@@ -44,8 +67,10 @@ module TocDoc
         end
       end
 
-      # Returns a plain Hash, with +availabilities+ expanded back to raw Hashes.
-      # @return [Hash]
+      # Returns a plain Hash representation, with nested +availabilities+
+      # expanded back to raw Hashes.
+      #
+      # @return [Hash{String => Object}]
       def to_h
         super.merge('availabilities' => availabilities.map(&:to_h))
       end

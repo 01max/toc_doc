@@ -11,12 +11,37 @@ require 'toc_doc/models'
 
 require 'toc_doc/client'
 
-# The main module for TocDoc. This is the namespace for all public classes and modules.
+# The main module for TocDoc — a Ruby client for the Doctolib API.
+#
+# Configuration can be set at the module level and will be inherited by every
+# {TocDoc::Client} instance created via {.client} or {.setup}.
+#
+# Any method available on {TocDoc::Client} can be called directly on `TocDoc`
+# and will be forwarded to the memoized {.client}.
+#
+# @example Quick start
+#   TocDoc.setup do |config|
+#     config.api_endpoint = 'https://www.doctolib.de'
+#     config.auto_paginate = true
+#   end
+#
+#   TocDoc.availabilities(
+#     visit_motive_ids: 7_767_829,
+#     agenda_ids: 1_101_600,
+#     practice_ids: 377_272
+#   )
+#
+# @see TocDoc::Configurable
+# @see TocDoc::Client
 module TocDoc
   extend Configurable
 
   class << self
-    # Returns a memoized client configured with the current options.
+    # Returns a memoized {TocDoc::Client} configured with the current
+    # module-level options. A new client is created whenever the options
+    # have changed since the last call.
+    #
+    # @return [TocDoc::Client]
     def client
       if !defined?(@client) || @client.nil? || !@client.respond_to?(:same_options?) || !@client.same_options?(options)
         @client = TocDoc::Client.new(options)
@@ -25,10 +50,18 @@ module TocDoc
     end
 
     # Allows replacing the current client instance.
+    #
+    # @param value [TocDoc::Client] a pre-configured client instance
+    # @return [TocDoc::Client]
     attr_writer :client
 
     # Configure TocDoc at the module level and return the client.
     #
+    # @yield [config] yields self so options can be set in a block
+    # @yieldparam config [TocDoc] the module itself (responds to {Configurable} setters)
+    # @return [TocDoc::Client] the memoized client, reflecting the new configuration
+    #
+    # @example
     #   TocDoc.setup do |config|
     #     config.api_endpoint = 'https://www.doctolib.de'
     #   end
@@ -37,6 +70,7 @@ module TocDoc
       client
     end
 
+    # @!visibility private
     def method_missing(method_name, ...)
       if client.respond_to?(method_name)
         client.public_send(method_name, ...)
@@ -45,6 +79,7 @@ module TocDoc
       end
     end
 
+    # @!visibility private
     def respond_to_missing?(method_name, include_private = false)
       client.respond_to?(method_name, include_private) || super
     end

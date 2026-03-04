@@ -44,8 +44,9 @@
 
 ## 9 – Docs & Release
 - [x] README
-- [ ] YARD docs
+- [x] YARD docs
 - [ ] CHANGELOG
+- [ ] FIX GH CI
 - [ ] Build & publish gem 
   - [ ] on rubygem
   - [ ] gem.coop ?

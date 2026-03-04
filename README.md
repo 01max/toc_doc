@@ -23,6 +23,7 @@ A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-b
 6. [Pagination](#pagination)
 7. [Error handling](#error-handling)
 8. [Development](#development)
+   - [Generating documentation](#generating-documentation)
 9. [Contributing](#contributing)
 10. [Code of Conduct](#code-of-conduct)
 11. [License](#license)
@@ -317,6 +318,30 @@ bundle exec rake install
    inheriting from `TocDoc::Resource`.
 4. Include the new module in `TocDoc::Client` (`lib/toc_doc/client.rb`).
 5. Add corresponding specs under `spec/toc_doc/client/`.
+
+### Generating documentation
+
+The codebase uses [YARD](https://yardoc.org/) for API documentation. All public
+methods are annotated with `@param`, `@return`, and `@example` tags.
+
+Generate the HTML docs:
+
+```bash
+bundle exec yard doc
+```
+
+The output is written to `doc/`. To browse it locally:
+
+```bash
+bundle exec yard server
+# → http://localhost:8808
+```
+
+To check documentation coverage without generating files:
+
+```bash
+bundle exec yard stats
+```
 
 ---
 
