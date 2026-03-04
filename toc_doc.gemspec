@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "A standalone Ruby gem providing a Faraday-based client
     with modular resource endpoints, configurable defaults, and a clean error hierarchy."
   spec.homepage = 'https://github.com/01max/toc_doc'
-  spec.license = 'GPL-3.0'
+  spec.license = 'GPL-3.0-or-later'
   spec.required_ruby_version = '>= 3.2.0'
 
   spec.metadata['allowed_push_host'] = 'https://rubygems.org'
