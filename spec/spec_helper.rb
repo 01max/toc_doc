@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'toc_doc'
-require 'webmock/rspec'
-require 'vcr'
 require 'simplecov'
 
 if ENV['CI']
@@ -11,7 +7,14 @@ if ENV['CI']
   SimpleCov.formatter = Coveralls::SimpleCov::Formatter
 end
 
-SimpleCov.start
+SimpleCov.start do
+  add_filter '/spec/'
+end
+
+require 'bundler/setup'
+require 'toc_doc'
+require 'webmock/rspec'
+require 'vcr'
 
 SPEC_ROOT = File.expand_path('../spec/', __dir__)
 
