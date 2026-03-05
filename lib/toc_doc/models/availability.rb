@@ -16,7 +16,7 @@ module TocDoc
 
     # @param attrs [Hash] raw attributes from the API response, expected to include
     def initialize(*attrs)
-      super(*attrs)
+      super
       raw = build_raw(@attrs)
 
       @date = Date.parse(raw['date']) if raw['date']
