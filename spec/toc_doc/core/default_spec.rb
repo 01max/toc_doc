@@ -43,6 +43,14 @@ RSpec.describe TocDoc::Default do
     expect(described_class.per_page).to eq(TocDoc::Default::MAX_PER_PAGE)
   end
 
+  it 'reads auto_paginate from ENV' do
+    ENV['TOCDOC_AUTO_PAGINATE'] = 'true'
+    expect(described_class.auto_paginate).to be true
+
+    ENV['TOCDOC_AUTO_PAGINATE'] = 'false'
+    expect(described_class.auto_paginate).to be false
+  end
+
   it 'uses defaults when ENV keys are missing' do
     ENV.delete('TOCDOC_API_ENDPOINT')
     ENV.delete('TOCDOC_USER_AGENT')

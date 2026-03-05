@@ -101,6 +101,20 @@ RSpec.describe TocDoc::Response::Availability do
     end
   end
 
+  describe '#raw_availabilities' do
+    it 'includes entries with empty slots' do
+      r = described_class.new(
+        'total' => 1,
+        'availabilities' => [
+          { 'date' => '2026-03-04', 'slots' => [] },
+          { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+        ]
+      )
+      expect(r.raw_availabilities.length).to eq(2)
+      expect(r.raw_availabilities.first.date).to eq('2026-03-04')
+    end
+  end
+
   describe 'dot-notation access for extra fields' do
     it 'exposes unknown top-level fields via method_missing' do
       r = described_class.new(raw_hash.merge('custom_field' => 'hello'))

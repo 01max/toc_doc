@@ -19,6 +19,28 @@ RSpec.describe TocDoc do
     TocDoc.reset!
   end
 
+  describe '.setup' do
+    it 'yields self for configuration and returns the client' do
+      TocDoc.reset!
+      client = TocDoc.setup { |config| config.per_page = 11 }
+      expect(client).to be_a(TocDoc::Client)
+      expect(TocDoc.options[:per_page]).to eq(11)
+    ensure
+      TocDoc.reset!
+    end
+  end
+
+  describe 'method delegation' do
+    it 'raises NoMethodError for methods the client does not respond to' do
+      expect { TocDoc.totally_undefined_method_xyz }.to raise_error(NoMethodError)
+    end
+
+    it 'reports respond_to? correctly for delegated methods' do
+      expect(TocDoc.respond_to?(:availabilities)).to be true
+      expect(TocDoc.respond_to?(:totally_undefined_method_xyz)).to be false
+    end
+  end
+
   it 'provides a memoized client reflecting current options' do
     TocDoc.reset!
     TocDoc.configure { |config| config.per_page = 7 }

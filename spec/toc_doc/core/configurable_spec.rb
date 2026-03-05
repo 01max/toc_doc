@@ -28,4 +28,9 @@ RSpec.describe TocDoc::Configurable do
     expect(instance.same_options?(opts)).to be(true)
     expect(instance.same_options?(opts.merge(extra: 'value'))).to be(false)
   end
+
+  it 'handles non-hash arguments in same_options?' do
+    instance = Class.new { extend TocDoc::Configurable }
+    expect(instance.same_options?(instance.options)).to be(true)
+  end
 end

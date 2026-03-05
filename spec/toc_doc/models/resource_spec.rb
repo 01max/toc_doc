@@ -80,6 +80,11 @@ RSpec.describe TocDoc::Resource do
       other = described_class.new('date' => '2099-01-01')
       expect(resource).not_to eq(other)
     end
+
+    it 'does not equal non-Resource/non-Hash objects' do
+      expect(resource == 'a string').to be false
+      expect(resource == 42).to be false
+    end
   end
 
   describe 'symbol keys in constructor' do
