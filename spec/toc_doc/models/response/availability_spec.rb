@@ -56,7 +56,7 @@ RSpec.describe TocDoc::Response::Availability do
     end
 
     it 'correctly maps date on the first entry' do
-      expect(response.availabilities.first.date).to eq('2026-02-28')
+      expect(response.availabilities.first.date).to eq(Date.new(2026, 2, 28))
     end
 
     it 'correctly maps slots on the first entry' do
@@ -65,7 +65,7 @@ RSpec.describe TocDoc::Response::Availability do
 
     it 'correctly maps the second entry' do
       second = response.availabilities.last
-      expect(second.date).to eq('2026-03-01')
+      expect(second.date).to eq(Date.new(2026, 3, 1))
       expect(second.slots.length).to eq(2)
     end
 
@@ -78,7 +78,7 @@ RSpec.describe TocDoc::Response::Availability do
         ]
       )
       expect(r.availabilities.length).to eq(1)
-      expect(r.availabilities.first.date).to eq('2026-03-09')
+      expect(r.availabilities.first.date).to eq(Date.new(2026, 3, 9))
     end
 
     it 'returns an empty array when missing' do
@@ -111,7 +111,7 @@ RSpec.describe TocDoc::Response::Availability do
         ]
       )
       expect(r.raw_availabilities.length).to eq(2)
-      expect(r.raw_availabilities.first.date).to eq('2026-03-04')
+      expect(r.raw_availabilities.first.date).to eq(Date.new(2026, 3, 4))
     end
   end
 

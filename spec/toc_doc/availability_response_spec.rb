@@ -33,7 +33,7 @@ RSpec.describe TocDoc::Response::Availability do
     end
 
     it 'correctly maps date on the first entry' do
-      expect(response.availabilities.first.date).to eq('2026-02-28')
+      expect(response.availabilities.first.date).to eq(Date.new(2026, 2, 28))
     end
 
     it 'correctly maps slots on the first entry' do
@@ -42,7 +42,7 @@ RSpec.describe TocDoc::Response::Availability do
 
     it 'correctly maps the second entry' do
       second = response.availabilities.last
-      expect(second.date).to eq('2026-03-01')
+      expect(second.date).to eq(Date.new(2026, 3, 1))
       expect(second.slots.length).to eq(2)
     end
 

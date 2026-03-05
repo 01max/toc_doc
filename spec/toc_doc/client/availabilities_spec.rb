@@ -64,7 +64,7 @@ RSpec.describe TocDoc::Client::Availabilities do
       expect(avails).to be_an(Array)
       expect(avails.length).to eq(2)
       expect(avails).to all(be_a(TocDoc::Availability))
-      expect(avails.first.date).to eq('2026-02-28')
+      expect(avails.first.date).to eq(Date.new(2026, 2, 28))
       expect(avails.first.slots).to be_an(Array)
       expect(avails.first.slots.length).to eq(3)
     end
@@ -198,7 +198,7 @@ RSpec.describe TocDoc::Client::Availabilities do
 
         expect(result.total).to eq(3)
         expect(result.availabilities.length).to eq(1)
-        expect(result.availabilities.first.date).to eq('2026-03-01')
+        expect(result.availabilities.first.date).to eq(Date.new(2026, 3, 1))
       end
     end
 
@@ -218,7 +218,7 @@ RSpec.describe TocDoc::Client::Availabilities do
 
         # page1: 1 entry, page2: 1 entry → 2 total entries
         expect(result.availabilities.length).to eq(2)
-        expect(result.availabilities.map(&:date)).to eq(%w[2026-03-01 2026-03-05])
+        expect(result.availabilities.map(&:date)).to eq([Date.new(2026, 3, 1), Date.new(2026, 3, 5)])
       end
 
       it 'sums totals across pages' do

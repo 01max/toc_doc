@@ -7,25 +7,9 @@ RSpec.describe TocDoc::Availability do
     described_class.new('date' => '2026-02-28', 'slots' => slots)
   end
 
-  describe '#raw_date' do
-    it 'returns the ISO 8601 date string' do
-      expect(availability.raw_date).to eq('2026-02-28')
-    end
-  end
-
   describe '#date' do
     it 'returns a parsed Date object' do
       expect(availability.date).to eq(Date.new(2026, 2, 28))
-    end
-  end
-
-  describe '#raw_slots' do
-    it 'returns the array of slot datetime strings' do
-      expect(availability.raw_slots).to eq(slots)
-    end
-
-    it 'returns an empty array when no slots key is present' do
-      expect(described_class.new('date' => '2026-02-28').raw_slots).to eq([])
     end
   end
 

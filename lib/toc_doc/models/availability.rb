@@ -12,24 +12,24 @@ module TocDoc
   #   avail.slots      #=> [#<DateTime: 2026-02-28T10:00:00.000+01:00>]
   #   avail.raw_slots  #=> ["2026-02-28T10:00:00.000+01:00"]
   class Availability < Resource
-    # @return [String] raw date string in ISO 8601 format (e.g. "2026-02-28")
-    def raw_date
-      @attrs['date']
+    attr_reader :date, :slots
+
+    # @param attrs [Hash] raw attributes from the API response, expected to include
+    def initialize(*attrs)
+      super(*attrs)
+      raw = build_raw(@attrs)
+
+      @date = Date.parse(raw['date']) if raw['date']
+      @slots = raw['slots'].map { |s| DateTime.parse(s) }
     end
 
-    # @return [Date] parsed date
-    def date
-      Date.parse(raw_date)
-    end
+    private
 
-    # @return [Array<String>] raw ISO 8601 datetime strings for each available slot
-    def raw_slots
-      @attrs['slots'] || []
-    end
-
-    # @return [Array<DateTime>] parsed datetime objects for each available slot
-    def slots
-      raw_slots.map { |s| DateTime.parse(s) }
+    def build_raw(attrs)
+      {
+        'date' => attrs['date'],
+        'slots' => attrs['slots'] || []
+      }
     end
   end
 end
