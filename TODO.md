@@ -51,7 +51,7 @@
   - [x] on rubygem
   - [x] release on GH
   - [x] gem.coop/@maxime
-- [ ] Add test coverage tool
+- [x] Add test coverage tool
 
 # 1.1
 

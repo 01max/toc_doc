@@ -4,6 +4,7 @@ A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-b
 
 [![Gem Version](https://badge.fury.io/rb/toc_doc.svg)](https://badge.fury.io/rb/toc_doc)
 [![CI](https://github.com/01max/toc_doc/actions/workflows/main.yml/badge.svg)](https://github.com/01max/toc_doc/actions)
+[![Coverage Status](https://coveralls.io/repos/github/01max/toc_doc/badge.svg?branch=main)](https://coveralls.io/github/01max/toc_doc?branch=main)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![YARD Docs](https://img.shields.io/badge/docs-YARD-blue.svg)](https://rubydoc.info/gems/toc_doc)
 
