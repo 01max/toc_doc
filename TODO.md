@@ -1,3 +1,30 @@
+# 1.1
+
+## Parse raw API data
+- [x] Parse date / datetime
+
+# PLAN 1.2+
+
+## Extra Endpoints
+- [ ] Identify additional endpoints
+- [ ] Prioritize implementation of resource modules for those endpoints
+
+# 1.2
+
+## Better API usage
+- [ ] Rate limiting
+- [ ] Caching
+- [ ] Logging
+
+# 1.4
+
+## Auth / User-based actions
+- [ ] Research auth scheme
+- [ ] Authentication module + headers
+- [ ] Auth specs
+
+# DONE & RELEASED
+
 # 1.0
 
 ## 1 – Skeleton & Tooling
@@ -52,29 +79,3 @@
   - [x] release on GH
   - [x] gem.coop/@maxime
 - [x] Add test coverage tool
-
-# 1.1
-
-## Parse raw API data
-- [ ] Parse date / datetime
-- [ ] ?
-
-# PLAN 1.X
-
-## Extra Endpoints
-- [ ] Identify additional endpoints
-- [ ] Prioritize implementation of resource modules for those endpoints
-
-# 1.2
-
-## Better API usage
-- [ ] Rate limiting
-- [ ] Caching
-- [ ] Logging
-
-# 1.4
-
-## Auth / User-based actions
-- [ ] Research auth scheme
-- [ ] Authentication module + headers
-- [ ] Auth specs
