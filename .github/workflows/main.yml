@@ -9,6 +9,9 @@ on:
 
 jobs:
   test:
+    env:
+      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
     strategy:
