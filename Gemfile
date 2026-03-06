@@ -19,6 +19,5 @@ end
 group :test do
   gem 'coveralls_reborn', require: false
   gem 'simplecov', require: false
-  gem 'vcr', '~> 6.0'
   gem 'webmock', '~> 3.0'
 end
