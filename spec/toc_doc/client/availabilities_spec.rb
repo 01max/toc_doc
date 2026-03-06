@@ -179,7 +179,7 @@ RSpec.describe TocDoc::Client::Availabilities do
     let(:page2_body) { fixture('availabilities_page2.json') }
 
     # page 1: start_date 2026-03-01, has next_slot → triggers a second fetch
-    # page 2: start_date 2026-03-02 (day after last entry), next_slot null → stops
+    # page 2: start_date 2026-03-02 (day after last entry), no next_slot → stops
     def stub_page(start_date, body)
       stub_request(:get, base_url)
         .with(query: hash_including(start_date: start_date))
@@ -196,9 +196,8 @@ RSpec.describe TocDoc::Client::Availabilities do
           start_date: Date.new(2026, 3, 1)
         )
 
-        expect(result.total).to eq(3)
-        expect(result.availabilities.length).to eq(1)
-        expect(result.availabilities.first.date).to eq(Date.new(2026, 3, 1))
+        expect(result.total).to eq(0)
+        expect(result.availabilities.length).to eq(0)
       end
     end
 
@@ -216,9 +215,9 @@ RSpec.describe TocDoc::Client::Availabilities do
           start_date: Date.new(2026, 3, 1)
         )
 
-        # page1: 1 entry, page2: 1 entry → 2 total entries
-        expect(result.availabilities.length).to eq(2)
-        expect(result.availabilities.map(&:date)).to eq([Date.new(2026, 3, 1), Date.new(2026, 3, 5)])
+        # page1: 0 entries (empty slots), page2: 1 entry → 1 total entry
+        expect(result.availabilities.length).to eq(1)
+        expect(result.availabilities.map(&:date)).to eq([Date.new(2026, 3, 12)])
       end
 
       it 'sums totals across pages' do
@@ -231,7 +230,7 @@ RSpec.describe TocDoc::Client::Availabilities do
           start_date: Date.new(2026, 3, 1)
         )
 
-        expect(result.total).to eq(5) # 3 + 2
+        expect(result.total).to eq(3) # 0 + 3
       end
 
       it 'sets next_slot to the last page value (nil when exhausted)' do
