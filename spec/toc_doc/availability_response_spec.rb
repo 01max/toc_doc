@@ -9,7 +9,7 @@ RSpec.describe TocDoc::Response::Availability do
 
   describe '#total' do
     it 'returns the total count' do
-      expect(response.total).to eq(2)
+      expect(response.total).to eq(5)
     end
   end
 

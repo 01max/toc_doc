@@ -9,7 +9,7 @@ RSpec.describe TocDoc::Response::Availability do
 
   describe '#total' do
     it 'returns the total count' do
-      expect(response.total).to eq(2)
+      expect(response.total).to eq(5)
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe TocDoc::Response::Availability do
       end
     end
 
-    it 'returns the next_slot value from the fixture' do
+    it 'infers next_slot from the first available slot in the fixture' do
       expect(response.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
     end
   end

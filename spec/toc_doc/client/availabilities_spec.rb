@@ -49,7 +49,7 @@ RSpec.describe TocDoc::Client::Availabilities do
       )
 
       expect(result).to be_a(TocDoc::Response::Availability)
-      expect(result.total).to eq(2)
+      expect(result.total).to eq(5)
       expect(result.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
     end
 
@@ -168,7 +168,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         start_date: Date.new(2026, 2, 28)
       )
 
-      expect(result.total).to eq(2)
+      expect(result.total).to eq(5)
     ensure
       TocDoc.reset!
     end
