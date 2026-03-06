@@ -1,49 +1,37 @@
 # PLAN
 
-### Extra Endpoints
-- [x] Identify additional endpoints
-- [ ] Prioritize implementation of resource modules for those endpoints
+[POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
 ## 1.2
+
+- [ ] Search (autocomplete)
+  - [ ] search profile : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=devun
+  - [ ] search specialty : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=dentiste
+
+## 1.3
+
+- [ ] Profile
+  - slug : https://www.doctolib.fr/profiles/mathilde-devun-lesparre-medoc.json
+  - id : https://www.doctolib.fr/profiles/926388.json
+
+## 1.4
+
+- [ ] Booking context
+  - https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388
+
+## 1.5
 
 ### Better API usage
 - [ ] Rate limiting
 - [ ] Caching
 - [ ] Logging
 
-## 1.4
+## 1.6
 
 ### Auth / User-based actions
 - [ ] Research auth scheme
 - [ ] Authentication module + headers
 - [ ] Auth specs
-
-# Potential Endpoints
-
-- Interesting JSONs [GET]
-  - Practitioner ? 
-    - https://www.doctolib.fr/pharmacie/paris/pharmacie-faidherbe.json
-    - https://www.doctolib.fr/dentiste/bordeaux/mathilde-devun-lesparre-medoc.json
-    - https://www.doctolib.fr/a/b/mathilde-devun-lesparre-medoc.json
-    - https://www.doctolib.fr/profiles/mathilde-devun-lesparre-medoc.json
-  - Rassemblement practiciens / Place Practitioners collection
-    - https://www.doctolib.fr/profiles/pavillon-de-la-mutualite-bordeaux-rue-vital-carles.json
-  - Places
-    - https://www.doctolib.fr/patient_app/place_autocomplete.json?query=47300
-- Interesting NON JSONs
-  - City practitioners (❗️JSON-LD in a script tag of an HTML page - data-id="removable-json-ld")
-    - https://www.doctolib.fr/dentiste/bordeaux/
-    - https://www.doctolib.fr/medecin-generaliste/bordeaux/
-    - https://www.doctolib.fr/medecin-generaliste/villeneuve-sur-lot
-- Non-interesting 
-  - Legal links
-    - https://www.doctolib.fr/search/footer_legal_links.json
-  - FAQ
-    - https://www.doctolib.fr/search/footer_public_content.json?hub_search=false&display_faq=true&speciality_id=2&place_id=18733 
-  - Social media links
-    - https://www.doctolib.fr/search/footer_social_media_links.json
-  - New Booking [POST]
-    - online_booking/draft/new.json
 
 # DONE & RELEASED
 
@@ -106,3 +94,5 @@
 
 ### Parse raw API data
 - [x] Parse date / datetime
+
+[def]: PO
