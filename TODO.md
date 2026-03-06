@@ -1,12 +1,7 @@
-## 1.1
-
-### Parse raw API data
-- [x] Parse date / datetime
-
-# PLAN 1.2+
+# PLAN
 
 ### Extra Endpoints
-- [ ] Identify additional endpoints
+- [x] Identify additional endpoints
 - [ ] Prioritize implementation of resource modules for those endpoints
 
 ## 1.2
@@ -106,3 +101,8 @@
   - [x] release on GH
   - [x] gem.coop/@maxime
 - [x] Add test coverage tool
+
+## 1.1
+
+### Parse raw API data
+- [x] Parse date / datetime

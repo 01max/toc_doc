@@ -4,5 +4,5 @@ module TocDoc
   # The current version of the TocDoc gem.
   #
   # @return [String]
-  VERSION = '1.0.0'
+  VERSION = '1.1.0'
 end

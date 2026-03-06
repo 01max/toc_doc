@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-06
+
+### Changed
+
+- **`TocDoc::Availability`** — `#date` now returns a parsed `Date` object instead of a raw string; `#slots` now returns an array of `DateTime` objects instead of strings
+- **`TocDoc::Response::Availability#next_slot`** — falls back to inferring the next slot from the first available slot when the API response omits the `next_slot` key
+
+### Removed
+
+- **VCR** — removed VCR dependency from the test suite; HTTP interactions are now stubbed directly with WebMock
+
 ## [1.0.0] - 2026-03-04
 
 ### Added

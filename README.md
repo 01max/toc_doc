@@ -77,7 +77,7 @@ response.total      # => 5
 response.next_slot  # => "2026-02-28T10:00:00.000+01:00"
 
 response.availabilities.each do |avail|
-  puts "#{avail.date}: #{avail.slots.join(', ')}"
+  puts "#{avail.date}: #{avail.slots.map { |s| s.strftime('%H:%M') }.join(', ')}"
 end
 ```
 
@@ -195,8 +195,8 @@ Each element of `Response::Availability#availabilities`.
 
 | Method | Type | Description |
 |---|---|---|
-| `#date` | `String` | Date in `YYYY-MM-DD` format. |
-| `#slots` | `Array<String>` | ISO 8601 datetimes for each bookable slot on that date. |
+| `#date` | `Date` | Parsed date object. |
+| `#slots` | `Array<DateTime>` | Parsed datetime objects for each bookable slot on that date. |
 | `#to_h` | `Hash` | Plain-hash representation. |
 
 **Example:**
@@ -207,8 +207,8 @@ response = TocDoc.availabilities(visit_motive_ids: 123, agenda_ids: 456)
 response.total      # => 5
 response.next_slot  # => "2026-02-28T10:00:00.000+01:00"
 
-response.availabilities.first.date   # => "2026-02-28"
-response.availabilities.first.slots  # => ["2026-02-28T10:00:00.000+01:00", ...]
+response.availabilities.first.date   # => #<Date: 2026-02-28>
+response.availabilities.first.slots  # => [#<DateTime: 2026-02-28T10:00:00+01:00>, ...]
 
 response.to_h
 # => {
