@@ -9,8 +9,9 @@ module TocDoc
   # (`get`, `post`, `put`, `patch`, `delete`, `head`), a memoised
   # Faraday connection, pagination support, and response tracking.
   #
-  # All HTTP methods are **private** — callers interact with them through
-  # higher-level endpoint modules (e.g. {TocDoc::Client::Availabilities}).
+  # {#get} and {#paginate} are public so that model classes (e.g.
+  # {TocDoc::Availability}) can call them via `TocDoc.client`; all other
+  # HTTP verb methods remain private.
   #
   # @see TocDoc::Client
   module Connection
@@ -192,5 +193,7 @@ module TocDoc
 
       [query || {}, explicit_headers]
     end
+
+    public :get, :paginate
   end
 end
