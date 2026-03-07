@@ -22,8 +22,9 @@ module TocDoc
     class << self
       # Fetches availabilities from the API and returns an {Availability::Collection}.
       #
-      # The first page is fetched eagerly; remaining pages are deferred until
-      # the collection is iterated when +auto_paginate+ is +true+.
+      # When the API response contains a +next_slot+ key — indicating that no
+      # date in the current window has available slots — a second request is
+      # made automatically from that date before the collection is returned.
       #
       # @param visit_motive_ids [Integer, String, Array<Integer>]
       #   one or more visit-motive IDs (dash-joined for the API)
@@ -33,8 +34,6 @@ module TocDoc
       #   earliest date to search from (default: +Date.today+)
       # @param limit [Integer]
       #   maximum availability dates per page (default: +TocDoc.per_page+)
-      # @param auto_paginate [Boolean]
-      #   override the global {TocDoc::Configurable#auto_paginate} for this call
       # @param options [Hash]
       #   additional query params forwarded verbatim to the API
       # @return [TocDoc::Availability::Collection]
@@ -45,16 +44,23 @@ module TocDoc
       #     agenda_ids: [1_101_600],
       #     start_date: Date.today
       #   ).each { |avail| puts avail.date }
-      # rubocop:disable Metrics/ParameterLists
       def where(visit_motive_ids:, agenda_ids:, start_date: Date.today,
-                limit: TocDoc.per_page, auto_paginate: TocDoc.auto_paginate, **options)
+                limit: TocDoc.per_page, **options)
         client = TocDoc.client
         query  = build_query(visit_motive_ids, agenda_ids, start_date, limit, options)
         data   = client.get(PATH, query: query)
 
-        Collection.new(data, client: client, query: query, path: PATH, auto_paginate: auto_paginate)
+        if data['next_slot']
+          next_date  = Date.parse(data['next_slot']).to_s
+          next_page  = client.get(PATH, query: query.merge(start_date: next_date))
+          data['availabilities'] = (data['availabilities'] || []) + (next_page['availabilities'] || [])
+          data['total']          = (data['total'] || 0) + (next_page['total'] || 0)
+          data.delete('next_slot')
+          data['next_slot'] = next_page['next_slot'] if next_page.key?('next_slot')
+        end
+
+        Collection.new(data, client: client, query: query, path: PATH)
       end
-      # rubocop:enable Metrics/ParameterLists
 
       private
 

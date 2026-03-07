@@ -14,8 +14,10 @@ module TocDoc
       # Returns available appointment slots for the given visit motives and
       # agendas.
       #
-      # When +auto_paginate+ is enabled, all pages of results are
-      # fetched and merged automatically.
+      # When the API response contains a +next_slot+ key — indicating that no
+      # date in the current window has available slots — a second request is
+      # made automatically, starting from the date of that +next_slot+ value.
+      # This is transparent to the caller.
       #
       # @param visit_motive_ids [Integer, String, Array<Integer>]
       #   one or more visit-motive IDs (dash-joined for the API)
@@ -43,12 +45,15 @@ module TocDoc
       #   TocDoc.availabilities(visit_motive_ids: 123, agenda_ids: 456)
       def availabilities(visit_motive_ids:, agenda_ids:, start_date: Date.today, limit: per_page, **options)
         base_query = build_availability_query(visit_motive_ids, agenda_ids, start_date, limit, options)
+        data = get('/availabilities.json', query: base_query)
 
-        response = paginate('/availabilities.json', query: base_query) do |acc, last_resp|
-          paginate_availability_page(acc, last_resp, base_query)
+        if data['next_slot']
+          next_date = Date.parse(data['next_slot']).to_s
+          next_page = get('/availabilities.json', query: base_query.merge(start_date: next_date))
+          merge_availability_page(data, next_page)
         end
 
-        TocDoc::Response::Availability.new(response)
+        TocDoc::Response::Availability.new(data)
       end
 
       private
@@ -71,47 +76,20 @@ module TocDoc
         }
       end
 
-      # Merges the latest page body into the accumulator and returns options
-      # for the next page, or +nil+ to halt pagination.
+      # Merges a follow-up page body into the accumulator.
       #
-      # On the first yield +acc+ *is* the first-page body (identical object),
-      # so the merge step is skipped.
+      # The +next_slot+ key from the first page is removed; it is only
+      # carried forward if the follow-up page also includes one (which
+      # would indicate no slots were found there either).
       #
-      # @param acc [Hash] growing accumulator
-      # @param last_resp [Faraday::Response] the most-recent raw response
-      # @param base_query [Hash] the original query hash
-      # @return [Hash, nil] options for the next page, or +nil+ to stop
-      def paginate_availability_page(acc, last_resp, base_query)
-        latest = last_resp.body
-
-        merge_availability_page(acc, latest) unless acc.equal?(latest)
-        availability_next_page_options(latest, base_query)
-      end
-
-      # Merges a new page body into the running accumulator.
-      #
-      # @param acc [Hash] the accumulator hash
-      # @param latest [Hash] the most-recent page body
+      # @param acc [Hash] the first-page body (mutated in place)
+      # @param latest [Hash] the follow-up page body
       # @return [void]
       def merge_availability_page(acc, latest)
         acc['availabilities'] = (acc['availabilities'] || []) + (latest['availabilities'] || [])
         acc['total']          = (acc['total'] || 0) + (latest['total'] || 0)
-        acc['next_slot']      = latest['next_slot']
-      end
-
-      # Determines the options for the next page of availabilities, or +nil+
-      # if pagination should stop.
-      #
-      # @param latest [Hash] the most-recent page body
-      # @param base_query [Hash] the original query hash
-      # @return [Hash, nil] next-page options, or +nil+ to halt
-      def availability_next_page_options(latest, base_query)
-        avails        = latest['availabilities'] || []
-        last_date_str = avails.last&.dig('date')
-        return unless last_date_str && latest['next_slot']
-
-        next_start = (Date.parse(last_date_str) + 1).to_s
-        { query: base_query.merge(start_date: next_start) }
+        acc.delete('next_slot')
+        acc['next_slot'] = latest['next_slot'] if latest.key?('next_slot')
       end
     end
   end

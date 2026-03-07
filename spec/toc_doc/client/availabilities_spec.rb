@@ -178,17 +178,19 @@ RSpec.describe TocDoc::Client::Availabilities do
     let(:page1_body) { fixture('availabilities_page1.json') }
     let(:page2_body) { fixture('availabilities_page2.json') }
 
-    # page 1: start_date 2026-03-01, has next_slot → triggers a second fetch
-    # page 2: start_date 2026-03-02 (day after last entry), no next_slot → stops
+    # page 1: start_date 2026-03-01, has next_slot "2026-03-12T09:00:00.000+01:00"
+    #         → triggers a silent follow-up fetch from 2026-03-12
+    # page 2: start_date 2026-03-12, no next_slot → stops
     def stub_page(start_date, body)
       stub_request(:get, base_url)
         .with(query: hash_including(start_date: start_date))
         .to_return(status: 200, body: body, headers: { 'Content-Type' => 'application/json' })
     end
 
-    context 'when auto_paginate is false (default)' do
-      it 'returns only the first page' do
+    context 'when next_slot is present' do
+      it 'silently fetches from the next_slot date and concatenates availabilities' do
         stub_page('2026-03-01', page1_body)
+        stub_page('2026-03-12', page2_body)
 
         result = client.availabilities(
           visit_motive_ids: 7_767_829,
@@ -196,33 +198,13 @@ RSpec.describe TocDoc::Client::Availabilities do
           start_date: Date.new(2026, 3, 1)
         )
 
-        expect(result.total).to eq(0)
-        expect(result.availabilities.length).to eq(0)
-      end
-    end
-
-    context 'when auto_paginate is true' do
-      before { client.auto_paginate = true }
-      after  { client.auto_paginate = false }
-
-      it 'fetches all pages and concatenates availabilities' do
-        stub_page('2026-03-01', page1_body)
-        stub_page('2026-03-02', page2_body)
-
-        result = client.availabilities(
-          visit_motive_ids: 7_767_829,
-          agenda_ids: 1_101_600,
-          start_date: Date.new(2026, 3, 1)
-        )
-
-        # page1: 0 entries (empty slots), page2: 1 entry → 1 total entry
         expect(result.availabilities.length).to eq(1)
         expect(result.availabilities.map(&:date)).to eq([Date.new(2026, 3, 12)])
       end
 
       it 'sums totals across pages' do
         stub_page('2026-03-01', page1_body)
-        stub_page('2026-03-02', page2_body)
+        stub_page('2026-03-12', page2_body)
 
         result = client.availabilities(
           visit_motive_ids: 7_767_829,
@@ -233,9 +215,9 @@ RSpec.describe TocDoc::Client::Availabilities do
         expect(result.total).to eq(3) # 0 + 3
       end
 
-      it 'sets next_slot to the last page value (nil when exhausted)' do
+      it 'exposes the first available slot via next_slot after merging' do
         stub_page('2026-03-01', page1_body)
-        stub_page('2026-03-02', page2_body)
+        stub_page('2026-03-12', page2_body)
 
         result = client.availabilities(
           visit_motive_ids: 7_767_829,
@@ -243,11 +225,13 @@ RSpec.describe TocDoc::Client::Availabilities do
           start_date: Date.new(2026, 3, 1)
         )
 
-        expect(result.next_slot).to be_nil
+        expect(result.next_slot).to eq('2026-03-12T09:00:00.000+01:00')
       end
+    end
 
-      it 'stops after the first page when the response has no next_slot' do
-        stub_page('2026-03-01', page2_body) # page2 has next_slot: null
+    context 'when next_slot is absent' do
+      it 'makes only one request and returns the page as-is' do
+        stub_page('2026-03-01', page2_body)
 
         result = client.availabilities(
           visit_motive_ids: 7_767_829,
@@ -255,7 +239,6 @@ RSpec.describe TocDoc::Client::Availabilities do
           start_date: Date.new(2026, 3, 1)
         )
 
-        # Only the single stubbed request should be made
         expect(a_request(:get, base_url).with(query: hash_including(start_date: '2026-03-01')))
           .to have_been_made.once
         expect(result.availabilities.length).to eq(1)
