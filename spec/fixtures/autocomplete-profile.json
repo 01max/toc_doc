@@ -1,0 +1,17 @@
+{
+  "profiles": [
+    {
+      "city": "Rouen",
+      "owner_type": "Account",
+      "value": 2672,
+      "name": "Dr Emilie Chartaux",
+      "name_with_title": "Dr Emilie Chartaux",
+      "main_name": "Chartaux ",
+      "cloudinary_public_id": "otomfomxz7bv2h5uhv0v",
+      "kind": "Dermatologue et vénérologue",
+      "link": "/dermatologue/rouen/emilie-chartaux"
+    }
+  ],
+  "specialities": [],
+  "organization_statuses": []
+}
