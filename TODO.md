@@ -4,29 +4,33 @@
 
 ## 1.2
 
+- [ ] Rework Availability's client, model and collection architecture.
+
+## 1.3
+
 - [ ] Search (autocomplete)
   - [ ] search profile : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=devun
   - [ ] search specialty : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=dentiste
 
-## 1.3
+## 1.4
 
 - [ ] Profile
   - slug : https://www.doctolib.fr/profiles/mathilde-devun-lesparre-medoc.json
   - id : https://www.doctolib.fr/profiles/926388.json
 
-## 1.4
+## 1.5
 
 - [ ] Booking context
   - https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388
 
-## 1.5
+## 1.6
 
 ### Better API usage
 - [ ] Rate limiting
 - [ ] Caching
 - [ ] Logging
 
-## 1.6
+## 2.0
 
 ### Auth / User-based actions
 - [ ] Research auth scheme
