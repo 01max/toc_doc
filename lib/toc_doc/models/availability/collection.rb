@@ -46,13 +46,10 @@ module TocDoc
         filtered_entries.each(&block)
       end
 
-      # The total number of available slots, summed across all fetched pages.
-      #
-      # Triggers pagination when +auto_paginate+ is enabled.
+      # The total number of available slots in the collection, reflecting the data fetched so far.
       #
       # @return [Integer]
       def total
-        fetch_remaining_pages!
         @data['total']
       end
 
