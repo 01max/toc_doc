@@ -41,9 +41,9 @@ module TocDoc
       #
       # @yieldparam availability [TocDoc::Availability]
       # @return [Enumerator] if no block given
-      def each(&block)
+      def each(&)
         fetch_remaining_pages!
-        filtered_entries.each(&block)
+        filtered_entries.each(&)
       end
 
       # The total number of available slots in the collection, reflecting the data fetched so far.
