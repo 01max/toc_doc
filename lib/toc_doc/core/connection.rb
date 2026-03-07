@@ -108,12 +108,11 @@ module TocDoc
 
     # Performs a paginated GET, accumulating results across pages.
     #
-    # When {Configurable#auto_paginate} is disabled or no block is given,
-    # behaves exactly like {#get}.
+    # Behaves exactly like {#get} when no block is given.
     #
-    # When +auto_paginate+ is +true+ **and** a block is provided, the block is
-    # yielded after every page fetch — including the first — with
-    # +(accumulator, last_response)+.  The block must:
+    # When a block is provided, it is yielded after every page fetch —
+    # including the first — with +(accumulator, last_response)+.  The block
+    # must:
     #
     # 1. Detect whether it is a continuation call by comparing object identity:
     #    `acc.equal?(last_response.body)` is `true` only on the first yield,
@@ -130,7 +129,7 @@ module TocDoc
     # @return [Object] the fully-accumulated response body
     def paginate(path, options = {}, &)
       data = get(path, options)
-      return data unless block_given? && auto_paginate
+      return data unless block_given?
 
       loop do
         next_options = yield(data, last_response)

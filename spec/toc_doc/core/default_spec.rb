@@ -8,6 +8,7 @@ RSpec.describe TocDoc::Default do
       ENV.delete('TOCDOC_USER_AGENT')
       ENV.delete('TOCDOC_MEDIA_TYPE')
       ENV.delete('TOCDOC_PER_PAGE')
+      ENV.delete('TOCDOC_AUTO_PAGINATE')
       example.run
     ensure
       ENV.replace(original_env)
@@ -23,6 +24,7 @@ RSpec.describe TocDoc::Default do
     expect(options[:per_page]).to eq(TocDoc::Default::PER_PAGE)
     expect(options[:middleware]).not_to be_nil
     expect(options[:connection_options]).to eq({})
+    expect(options).not_to have_key(:auto_paginate)
   end
 
   it 'respects ENV fallbacks' do
@@ -41,14 +43,6 @@ RSpec.describe TocDoc::Default do
     ENV['TOCDOC_PER_PAGE'] = '42'
 
     expect(described_class.per_page).to eq(TocDoc::Default::MAX_PER_PAGE)
-  end
-
-  it 'reads auto_paginate from ENV' do
-    ENV['TOCDOC_AUTO_PAGINATE'] = 'true'
-    expect(described_class.auto_paginate).to be true
-
-    ENV['TOCDOC_AUTO_PAGINATE'] = 'false'
-    expect(described_class.auto_paginate).to be false
   end
 
   it 'uses defaults when ENV keys are missing' do

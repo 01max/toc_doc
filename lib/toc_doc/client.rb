@@ -39,7 +39,6 @@ module TocDoc
     # @option options [String]  :user_agent         User-Agent header value
     # @option options [String]  :default_media_type Accept / Content-Type header
     # @option options [Integer] :per_page           Results per page
-    # @option options [Boolean] :auto_paginate      Follow pagination automatically
     # @option options [Faraday::RackBuilder] :middleware Custom Faraday middleware
     # @option options [Hash]    :connection_options Additional Faraday options
     #

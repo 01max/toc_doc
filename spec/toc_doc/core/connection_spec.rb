@@ -202,33 +202,15 @@ RSpec.describe TocDoc::Connection do
       instance
     end
 
-    context 'when auto_paginate is false (default)' do
-      it 'returns the first page body without invoking the block' do
-        json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"data":[1,2]}'] }
+    it 'returns the first page body when no block is given' do
+      json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"data":[3]}'] }
 
-        block_called = false
-        result = json_client.send(:paginate, '/items') do
-          block_called = true
-          nil
-        end
+      result = json_client.send(:paginate, '/items')
 
-        expect(result).to eq({ 'data' => [1, 2] })
-        expect(block_called).to be(false)
-      end
-
-      it 'returns the first page body when no block is given' do
-        json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"data":[3]}'] }
-
-        result = json_client.send(:paginate, '/items')
-
-        expect(result).to eq({ 'data' => [3] })
-      end
+      expect(result).to eq({ 'data' => [3] })
     end
 
-    context 'when auto_paginate is true' do
-      before { json_client.auto_paginate = true }
-
-      it 'stops after the first page when the block returns nil' do
+    it 'stops after the first page when the block returns nil' do
         json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2]}'] }
 
         block_calls = 0
@@ -276,25 +258,24 @@ RSpec.describe TocDoc::Connection do
         expect(request_count).to eq(1)
       end
 
-      it 'supports three or more pages' do
-        pages = [
-          [200, { 'Content-Type' => 'application/json' }, '{"items":[1]}'],
-          [200, { 'Content-Type' => 'application/json' }, '{"items":[2]}'],
-          [200, { 'Content-Type' => 'application/json' }, '{"items":[3]}']
-        ]
-        json_stubs.get('/items') { pages.shift }
+    it 'supports three or more pages' do
+      pages = [
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[1]}'],
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[2]}'],
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[3]}']
+      ]
+      json_stubs.get('/items') { pages.shift }
 
-        block_calls = 0
-        result = json_client.send(:paginate, '/items') do |acc, last_resp|
-          block_calls += 1
-          latest = last_resp.body
-          acc['items'] = (acc['items'] || []) + (latest['items'] || []) unless acc.equal?(latest)
-          block_calls < 3 ? { query: { page: block_calls + 1 } } : nil
-        end
-
-        expect(block_calls).to eq(3)
-        expect(result['items']).to eq([1, 2, 3])
+      block_calls = 0
+      result = json_client.send(:paginate, '/items') do |acc, last_resp|
+        block_calls += 1
+        latest = last_resp.body
+        acc['items'] = (acc['items'] || []) + (latest['items'] || []) unless acc.equal?(latest)
+        block_calls < 3 ? { query: { page: block_calls + 1 } } : nil
       end
+
+      expect(block_calls).to eq(3)
+      expect(result['items']).to eq([1, 2, 3])
     end
   end
 end

@@ -22,7 +22,6 @@ require 'toc_doc/client'
 # @example Quick start
 #   TocDoc.setup do |config|
 #     config.api_endpoint = 'https://www.doctolib.de'
-#     config.auto_paginate = true
 #   end
 #
 #   TocDoc.availabilities(

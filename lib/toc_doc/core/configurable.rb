@@ -29,7 +29,6 @@ module TocDoc
       connection_options
       default_media_type
       per_page
-      auto_paginate
     ].freeze
 
     # @!attribute [rw] api_endpoint
@@ -42,8 +41,6 @@ module TocDoc
     #   @return [Hash] additional Faraday connection options
     # @!attribute [rw] default_media_type
     #   @return [String] the Accept / Content-Type header value
-    # @!attribute [rw] auto_paginate
-    #   @return [Boolean] whether to follow pagination automatically
     attr_accessor(*VALID_CONFIG_KEYS)
 
     # Set the number of results per page, clamped to

@@ -28,9 +28,6 @@ module TocDoc
     # @return [Integer] the hard upper limit for per_page
     MAX_PER_PAGE   = 15
 
-    # @return [Boolean] whether to auto-paginate by default
-    AUTO_PAGINATE  = false
-
     # @return [Integer] the default maximum number of retries
     MAX_RETRY      = 3
 
@@ -45,7 +42,6 @@ module TocDoc
           user_agent: user_agent,
           default_media_type: default_media_type,
           per_page: per_page,
-          auto_paginate: auto_paginate,
           middleware: middleware,
           connection_options: connection_options
         }
@@ -91,19 +87,6 @@ module TocDoc
         [Integer(ENV.fetch('TOCDOC_PER_PAGE', PER_PAGE), 10), MAX_PER_PAGE].min
       rescue ArgumentError
         PER_PAGE
-      end
-
-      # Whether to follow pagination automatically.
-      #
-      # Falls back to the `TOCDOC_AUTO_PAGINATE` environment variable (set to
-      # `"true"` to enable), then {AUTO_PAGINATE}.
-      #
-      # @return [Boolean]
-      def auto_paginate
-        env_val = ENV.fetch('TOCDOC_AUTO_PAGINATE', nil)
-        return AUTO_PAGINATE if env_val.nil?
-
-        env_val.casecmp('true').zero?
       end
 
       # The default Faraday middleware stack.
