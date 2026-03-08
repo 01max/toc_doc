@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TocDoc::Client::Availabilities do
-  let(:client) { TocDoc::Client.new }
-
+RSpec.describe TocDoc::Availability do
   let(:base_url) { 'https://www.doctolib.fr/availabilities.json' }
   let(:fixture_body) { fixture('availabilities.json') }
 
@@ -25,15 +23,11 @@ RSpec.describe TocDoc::Client::Availabilities do
       )
   end
 
-  describe '#availabilities' do
+  describe '.where' do
     before { stub_availabilities }
 
-    it 'is callable on the client' do
-      expect(client).to respond_to(:availabilities)
-    end
-
     it 'calls the correct endpoint' do
-      client.availabilities(
+      TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
@@ -41,26 +35,26 @@ RSpec.describe TocDoc::Client::Availabilities do
       expect(a_request(:get, base_url).with(query: default_query)).to have_been_made.once
     end
 
-    it 'returns an Response::Availability with top-level fields' do
-      result = client.availabilities(
+    it 'returns a Collection with top-level fields' do
+      result = TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
       )
 
-      expect(result).to be_a(TocDoc::Response::Availability)
+      expect(result).to be_a(TocDoc::Availability::Collection)
       expect(result.total).to eq(5)
       expect(result.next_slot).to eq('2026-02-28T10:00:00.000+01:00')
     end
 
-    it 'returns an array of Availability objects' do
-      result = client.availabilities(
+    it 'is enumerable over Availability objects with slots' do
+      result = TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
       )
 
-      avails = result.availabilities
+      avails = result.to_a
       expect(avails).to be_an(Array)
       expect(avails.length).to eq(2)
       expect(avails).to all(be_a(TocDoc::Availability))
@@ -76,7 +70,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         .with(query: hash_including(visit_motive_ids: '111-222-333'))
         .to_return(status: 200, body: fixture_body, headers: { 'Content-Type' => 'application/json' })
 
-      client.availabilities(
+      TocDoc::Availability.where(
         visit_motive_ids: [111, 222, 333],
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
@@ -92,7 +86,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         .with(query: hash_including(agenda_ids: '100-200'))
         .to_return(status: 200, body: fixture_body, headers: { 'Content-Type' => 'application/json' })
 
-      client.availabilities(
+      TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: [100, 200],
         start_date: Date.new(2026, 2, 28)
@@ -108,7 +102,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         .with(query: hash_including(practice_ids: '377272', telehealth: 'false'))
         .to_return(status: 200, body: fixture_body, headers: { 'Content-Type' => 'application/json' })
 
-      client.availabilities(
+      TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28),
@@ -123,19 +117,19 @@ RSpec.describe TocDoc::Client::Availabilities do
   end
 
   describe 'default parameter values' do
-    it 'uses per_page as the default limit' do
+    it 'uses TocDoc.per_page as the default limit' do
       stub_request(:get, base_url)
-        .with(query: hash_including(limit: client.per_page.to_s))
+        .with(query: hash_including(limit: TocDoc.per_page.to_s))
         .to_return(status: 200, body: fixture_body, headers: { 'Content-Type' => 'application/json' })
 
-      client.availabilities(
+      TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28)
       )
 
       expect(
-        a_request(:get, base_url).with(query: hash_including(limit: client.per_page.to_s))
+        a_request(:get, base_url).with(query: hash_including(limit: TocDoc.per_page.to_s))
       ).to have_been_made.once
     end
 
@@ -144,7 +138,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         .with(query: hash_including(limit: '10'))
         .to_return(status: 200, body: fixture_body, headers: { 'Content-Type' => 'application/json' })
 
-      client.availabilities(
+      TocDoc::Availability.where(
         visit_motive_ids: 7_767_829,
         agenda_ids: 1_101_600,
         start_date: Date.new(2026, 2, 28),
@@ -158,7 +152,7 @@ RSpec.describe TocDoc::Client::Availabilities do
   end
 
   describe 'module-level delegation' do
-    it 'delegates TocDoc.availabilities to the memoized client' do
+    it 'TocDoc.availabilities delegates to Availability.where' do
       TocDoc.reset!
       stub_availabilities
 
@@ -168,6 +162,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         start_date: Date.new(2026, 2, 28)
       )
 
+      expect(result).to be_a(TocDoc::Availability::Collection)
       expect(result.total).to eq(5)
     ensure
       TocDoc.reset!
@@ -192,21 +187,21 @@ RSpec.describe TocDoc::Client::Availabilities do
         stub_page('2026-03-01', page1_body)
         stub_page('2026-03-12', page2_body)
 
-        result = client.availabilities(
+        result = TocDoc::Availability.where(
           visit_motive_ids: 7_767_829,
           agenda_ids: 1_101_600,
           start_date: Date.new(2026, 3, 1)
         )
 
-        expect(result.availabilities.length).to eq(1)
-        expect(result.availabilities.map(&:date)).to eq([Date.new(2026, 3, 12)])
+        expect(result.to_a.length).to eq(1)
+        expect(result.map(&:date)).to eq([Date.new(2026, 3, 12)])
       end
 
       it 'sums totals across pages' do
         stub_page('2026-03-01', page1_body)
         stub_page('2026-03-12', page2_body)
 
-        result = client.availabilities(
+        result = TocDoc::Availability.where(
           visit_motive_ids: 7_767_829,
           agenda_ids: 1_101_600,
           start_date: Date.new(2026, 3, 1)
@@ -219,7 +214,7 @@ RSpec.describe TocDoc::Client::Availabilities do
         stub_page('2026-03-01', page1_body)
         stub_page('2026-03-12', page2_body)
 
-        result = client.availabilities(
+        result = TocDoc::Availability.where(
           visit_motive_ids: 7_767_829,
           agenda_ids: 1_101_600,
           start_date: Date.new(2026, 3, 1)
@@ -233,7 +228,7 @@ RSpec.describe TocDoc::Client::Availabilities do
       it 'makes only one request and returns the page as-is' do
         stub_page('2026-03-01', page2_body)
 
-        result = client.availabilities(
+        result = TocDoc::Availability.where(
           visit_motive_ids: 7_767_829,
           agenda_ids: 1_101_600,
           start_date: Date.new(2026, 3, 1)
@@ -241,7 +236,7 @@ RSpec.describe TocDoc::Client::Availabilities do
 
         expect(a_request(:get, base_url).with(query: hash_including(start_date: '2026-03-01')))
           .to have_been_made.once
-        expect(result.availabilities.length).to eq(1)
+        expect(result.to_a.length).to eq(1)
       end
     end
   end

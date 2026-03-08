@@ -3,7 +3,6 @@
 require 'toc_doc/core/configurable'
 require 'toc_doc/core/connection'
 require 'toc_doc/core/uri_utils'
-require 'toc_doc/client/availabilities'
 
 module TocDoc
   # The main entry-point for interacting with the Doctolib API.
@@ -16,17 +15,13 @@ module TocDoc
   #     api_endpoint: 'https://www.doctolib.de',
   #     per_page: 5
   #   )
-  #   client.availabilities(visit_motive_ids: 123, agenda_ids: 456)
   #
   # @see TocDoc::Configurable
   # @see TocDoc::Connection
-  # @see TocDoc::Client::Availabilities
   class Client
     include TocDoc::Configurable
     include TocDoc::Connection
     include TocDoc::UriUtils
-
-    include TocDoc::Client::Availabilities
 
     # Creates a new client instance.
     #

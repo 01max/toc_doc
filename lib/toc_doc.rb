@@ -16,9 +16,6 @@ require 'toc_doc/client'
 # Configuration can be set at the module level and will be inherited by every
 # {TocDoc::Client} instance created via {.client} or {.setup}.
 #
-# Any method available on {TocDoc::Client} can be called directly on `TocDoc`
-# and will be forwarded to the memoized {.client}.
-#
 # @example Quick start
 #   TocDoc.setup do |config|
 #     config.api_endpoint = 'https://www.doctolib.de'
@@ -67,6 +64,16 @@ module TocDoc
     def setup
       yield self if block_given?
       client
+    end
+
+    # Returns available appointment slots.
+    #
+    # Delegates to {TocDoc::Availability.where} — see that method for full
+    # parameter documentation.
+    #
+    # @return [TocDoc::Response::Availability]
+    def availabilities(**kwargs)
+      TocDoc::Availability.where(**kwargs)
     end
 
     # @!visibility private
