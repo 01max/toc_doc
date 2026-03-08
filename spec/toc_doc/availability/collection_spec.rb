@@ -16,8 +16,8 @@ RSpec.describe TocDoc::Availability::Collection do
   describe '#next_slot' do
     context 'when the next_slot key is present (no slots in loaded dates)' do
       it 'returns the next_slot value from the response' do
-        r = described_class.new({'total' => 0, 'next_slot' => '2026-03-24T09:00:00.000+01:00',
-                                 'availabilities' => [{ 'date' => '2026-03-04', 'slots' => [] }]})
+        r = described_class.new({ 'total' => 0, 'next_slot' => '2026-03-24T09:00:00.000+01:00',
+                                  'availabilities' => [{ 'date' => '2026-03-04', 'slots' => [] }] })
         expect(r.next_slot).to eq('2026-03-24T09:00:00.000+01:00')
       end
     end
@@ -25,19 +25,19 @@ RSpec.describe TocDoc::Availability::Collection do
     context 'when the next_slot key is absent and slots exist' do
       it 'returns the first slot of the first date that has one' do
         r = described_class.new({
-          'total' => 1,
-          'availabilities' => [
-            { 'date' => '2026-03-04', 'slots' => [] },
-            { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
-          ]
-        })
+                                  'total' => 1,
+                                  'availabilities' => [
+                                    { 'date' => '2026-03-04', 'slots' => [] },
+                                    { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+                                  ]
+                                })
         expect(r.next_slot).to eq('2026-03-09T14:50:00.000+01:00')
       end
     end
 
     context 'when the next_slot key is absent and no slots exist' do
       it 'returns nil' do
-        expect(described_class.new({'total' => 0, 'availabilities' => []}).next_slot).to be_nil
+        expect(described_class.new({ 'total' => 0, 'availabilities' => [] }).next_slot).to be_nil
       end
     end
 
@@ -71,18 +71,18 @@ RSpec.describe TocDoc::Availability::Collection do
 
     it 'excludes dates with no slots' do
       r = described_class.new({
-        'total' => 1,
-        'availabilities' => [
-          { 'date' => '2026-03-04', 'slots' => [] },
-          { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
-        ]
-      })
+                                'total' => 1,
+                                'availabilities' => [
+                                  { 'date' => '2026-03-04', 'slots' => [] },
+                                  { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+                                ]
+                              })
       expect(r.to_a.length).to eq(1)
       expect(r.to_a.first.date).to eq(Date.new(2026, 3, 9))
     end
 
     it 'returns an empty array when missing' do
-      expect(described_class.new({'total' => 0}).to_a).to eq([])
+      expect(described_class.new({ 'total' => 0 }).to_a).to eq([])
     end
   end
 
@@ -100,12 +100,12 @@ RSpec.describe TocDoc::Availability::Collection do
   describe '#raw_availabilities' do
     it 'includes entries with empty slots' do
       r = described_class.new({
-        'total' => 1,
-        'availabilities' => [
-          { 'date' => '2026-03-04', 'slots' => [] },
-          { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
-        ]
-      })
+                                'total' => 1,
+                                'availabilities' => [
+                                  { 'date' => '2026-03-04', 'slots' => [] },
+                                  { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+                                ]
+                              })
       expect(r.raw_availabilities.length).to eq(2)
       expect(r.raw_availabilities.first.date).to eq(Date.new(2026, 3, 4))
     end
