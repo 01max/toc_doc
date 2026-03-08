@@ -5,13 +5,13 @@ module TocDoc
   #
   # Doctolib expects certain ID list parameters to be dash-joined strings
   # rather than standard repeated/bracket array notation. Include this module
-  # into endpoint modules and call +dashed_ids+ explicitly for each such param:
+  # and call +dashed_ids+ explicitly for each such param:
   #
-  #   module TocDoc::Client::Availabilities
-  #     include TocDoc::UriUtils
+  #   class TocDoc::Availability
+  #     extend TocDoc::UriUtils
   #
-  #     def availabilities(visit_motive_ids:, agenda_ids:, **opts)
-  #       get('/availabilities.json', query: {
+  #     def self.where(visit_motive_ids:, agenda_ids:, **opts)
+  #       client.get('/availabilities.json', query: {
   #         visit_motive_ids: dashed_ids(visit_motive_ids),
   #         agenda_ids:       dashed_ids(agenda_ids),
   #         **opts

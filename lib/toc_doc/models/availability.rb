@@ -82,7 +82,8 @@ module TocDoc
       end
     end
 
-    # @param attrs [Hash] raw attributes from the API response, expected to include
+    # @param attrs [Hash] raw attributes from the API response; expected to include
+    #   a +date+ key (ISO 8601 date string) and a +slots+ key (Array of ISO 8601 datetime strings)
     def initialize(*attrs)
       super
       raw = build_raw(@attrs)

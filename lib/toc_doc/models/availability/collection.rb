@@ -83,9 +83,6 @@ module TocDoc
       # Fetches the next window of availabilities (starting the day after the
       # last date in the current collection) and merges them in.
       #
-      # Pagination is handled by {TocDoc::Client::Availabilities#next_slots},
-      # which calls {#merge_page!} once it has resolved and fetched the next page.
-      #
       # @param page_data [Hash] parsed response body to merge into this collection
       # @return [self]
       def merge_page!(page_data)
