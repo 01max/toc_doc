@@ -72,8 +72,8 @@ module TocDoc
     # parameter documentation.
     #
     # @return [TocDoc::Response::Availability]
-    def availabilities(**kwargs)
-      TocDoc::Availability.where(**kwargs)
+    def availabilities(**)
+      TocDoc::Availability.where(**)
     end
 
     # @!visibility private

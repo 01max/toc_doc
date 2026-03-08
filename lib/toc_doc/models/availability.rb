@@ -50,19 +50,26 @@ module TocDoc
         query  = build_query(visit_motive_ids, agenda_ids, start_date, limit, options)
         data   = client.get(PATH, query: query)
 
-        if data['next_slot']
-          next_date  = Date.parse(data['next_slot']).to_s
-          next_page  = client.get(PATH, query: query.merge(start_date: next_date))
-          data['availabilities'] = (data['availabilities'] || []) + (next_page['availabilities'] || [])
-          data['total']          = (data['total'] || 0) + (next_page['total'] || 0)
-          data.delete('next_slot')
-          data['next_slot'] = next_page['next_slot'] if next_page.key?('next_slot')
-        end
+        merge_next_page(client, query, data) if data['next_slot']
 
-        Collection.new(data, client: client, query: query, path: PATH)
+        Collection.new(data, query: query, path: PATH)
       end
 
       private
+
+      def merge_next_page(client, query, current_page)
+        next_date = Date.parse(current_page['next_slot']).to_s
+        next_page = client.get(PATH, query: query.merge(start_date: next_date))
+        merge_page_data(current_page, next_page)
+      end
+
+      def merge_page_data(current_page, next_page)
+        current_page['availabilities'] =
+          current_page.fetch('availabilities', []) + next_page.fetch('availabilities', [])
+        current_page['total']          = current_page.fetch('total', 0) + next_page.fetch('total', 0)
+        current_page.delete('next_slot')
+        current_page['next_slot'] = next_page['next_slot'] if next_page.key?('next_slot')
+      end
 
       def build_query(visit_motive_ids, agenda_ids, start_date, limit, extra)
         {

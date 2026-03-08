@@ -56,6 +56,25 @@ module TocDoc
         TocDoc::Response::Availability.new(data)
       end
 
+      # Fetches the next window of availabilities (starting the day after the
+      # last date in +collection+) and merges them in.
+      #
+      # If the follow-up response itself contains a +next_slot+ key — meaning
+      # that window also has no slots — a second request is made transparently
+      # from that date before merging.
+      #
+      # @param collection [TocDoc::Availability::Collection]
+      # @return [TocDoc::Availability::Collection] the same collection, extended
+      def next_slots(collection)
+        last_date = collection.raw_availabilities.last&.date
+        return collection unless last_date
+
+        next_date = (last_date + 1).to_s
+        page = get(collection.path, query: collection.query.merge(start_date: next_date))
+        page = resolve_collection_next_slot(collection, page)
+        collection.merge_page!(page)
+      end
+
       private
 
       # Builds the query hash sent to the availabilities endpoint.
@@ -90,6 +109,32 @@ module TocDoc
         acc['total']          = (acc['total'] || 0) + (latest['total'] || 0)
         acc.delete('next_slot')
         acc['next_slot'] = latest['next_slot'] if latest.key?('next_slot')
+      end
+
+      # When the fetched page has a +next_slot+ key (no slots in that window),
+      # follows it with a second request and combines both pages into one hash.
+      #
+      # @param collection [TocDoc::Availability::Collection]
+      # @param page [Hash] the first follow-up page body
+      # @return [Hash] a merged page body ready to pass to {TocDoc::Availability::Collection#merge_page!}
+      def resolve_collection_next_slot(collection, page)
+        return page unless page.key?('next_slot')
+
+        next_page = fetch_slot_page(collection, page['next_slot'])
+        page['availabilities'] = page.fetch('availabilities', []) + next_page.fetch('availabilities', [])
+        page['total']          = page.fetch('total', 0) + next_page.fetch('total', 0)
+        page.delete('next_slot')
+        page
+      end
+
+      # Fetches a page starting from the given +next_slot+ date string.
+      #
+      # @param collection [TocDoc::Availability::Collection]
+      # @param slot [String] ISO-8601 date string from a +next_slot+ key
+      # @return [Hash] raw response body
+      def fetch_slot_page(collection, slot)
+        start_date = Date.parse(slot).to_s
+        get(collection.path, query: collection.query.merge(start_date: start_date))
       end
     end
   end

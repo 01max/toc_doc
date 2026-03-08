@@ -211,52 +211,52 @@ RSpec.describe TocDoc::Connection do
     end
 
     it 'stops after the first page when the block returns nil' do
-        json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2]}'] }
+      json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2]}'] }
 
-        block_calls = 0
-        result = json_client.send(:paginate, '/items') do |_acc, _resp|
-          block_calls += 1
-          nil
-        end
-
-        expect(block_calls).to eq(1)
-        expect(result).to eq({ 'items' => [1, 2] })
+      block_calls = 0
+      result = json_client.send(:paginate, '/items') do |_acc, _resp|
+        block_calls += 1
+        nil
       end
 
-      it 'fetches a second page when the block returns next-page options' do
-        page_responses = [
-          [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2],"page":1}'],
-          [200, { 'Content-Type' => 'application/json' }, '{"items":[3,4],"page":2}']
-        ]
-        json_stubs.get('/items') { page_responses.shift }
+      expect(block_calls).to eq(1)
+      expect(result).to eq({ 'items' => [1, 2] })
+    end
 
-        block_calls = 0
-        result = json_client.send(:paginate, '/items') do |acc, last_resp|
-          block_calls += 1
-          latest = last_resp.body
+    it 'fetches a second page when the block returns next-page options' do
+      page_responses = [
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2],"page":1}'],
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[3,4],"page":2}']
+      ]
+      json_stubs.get('/items') { page_responses.shift }
 
-          # First yield: acc IS latest (same object), nothing to merge.
-          # Second yield: merge new-page data into acc.
-          acc['items'] = (acc['items'] || []) + (latest['items'] || []) unless acc.equal?(latest)
+      block_calls = 0
+      result = json_client.send(:paginate, '/items') do |acc, last_resp|
+        block_calls += 1
+        latest = last_resp.body
 
-          block_calls < 2 ? { query: { page: block_calls + 1 } } : nil
-        end
+        # First yield: acc IS latest (same object), nothing to merge.
+        # Second yield: merge new-page data into acc.
+        acc['items'] = (acc['items'] || []) + (latest['items'] || []) unless acc.equal?(latest)
 
-        expect(block_calls).to eq(2)
-        expect(result['items']).to eq([1, 2, 3, 4])
+        block_calls < 2 ? { query: { page: block_calls + 1 } } : nil
       end
 
-      it 'does not make a second request when the block returns nil on the first call' do
-        request_count = 0
-        json_stubs.get('/items') do
-          request_count += 1
-          [200, { 'Content-Type' => 'application/json' }, '{"items":[]}']
-        end
+      expect(block_calls).to eq(2)
+      expect(result['items']).to eq([1, 2, 3, 4])
+    end
 
-        json_client.send(:paginate, '/items') { |_acc, _resp| nil }
-
-        expect(request_count).to eq(1)
+    it 'does not make a second request when the block returns nil on the first call' do
+      request_count = 0
+      json_stubs.get('/items') do
+        request_count += 1
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[]}']
       end
+
+      json_client.send(:paginate, '/items') { |_acc, _resp| nil }
+
+      expect(request_count).to eq(1)
+    end
 
     it 'supports three or more pages' do
       pages = [
