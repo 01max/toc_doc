@@ -71,7 +71,7 @@ module TocDoc
     # Delegates to {TocDoc::Availability.where} — see that method for full
     # parameter documentation.
     #
-    # @return [TocDoc::Response::Availability]
+    # @return [TocDoc::Availability::Collection]
     def availabilities(**)
       TocDoc::Availability.where(**)
     end

@@ -2,7 +2,7 @@
 
 require 'json'
 
-RSpec.describe TocDoc::Response::Availability do
+RSpec.describe TocDoc::Availability::Collection do
   let(:raw_hash) { JSON.parse(fixture('availabilities.json')) }
 
   subject(:response) { described_class.new(raw_hash) }
@@ -16,28 +16,28 @@ RSpec.describe TocDoc::Response::Availability do
   describe '#next_slot' do
     context 'when the next_slot key is present (no slots in loaded dates)' do
       it 'returns the next_slot value from the response' do
-        r = described_class.new('total' => 0, 'next_slot' => '2026-03-24T09:00:00.000+01:00',
-                                'availabilities' => [{ 'date' => '2026-03-04', 'slots' => [] }])
+        r = described_class.new({'total' => 0, 'next_slot' => '2026-03-24T09:00:00.000+01:00',
+                                 'availabilities' => [{ 'date' => '2026-03-04', 'slots' => [] }]})
         expect(r.next_slot).to eq('2026-03-24T09:00:00.000+01:00')
       end
     end
 
     context 'when the next_slot key is absent and slots exist' do
       it 'returns the first slot of the first date that has one' do
-        r = described_class.new(
+        r = described_class.new({
           'total' => 1,
           'availabilities' => [
             { 'date' => '2026-03-04', 'slots' => [] },
             { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
           ]
-        )
+        })
         expect(r.next_slot).to eq('2026-03-09T14:50:00.000+01:00')
       end
     end
 
     context 'when the next_slot key is absent and no slots exist' do
       it 'returns nil' do
-        expect(described_class.new('total' => 0, 'availabilities' => []).next_slot).to be_nil
+        expect(described_class.new({'total' => 0, 'availabilities' => []}).next_slot).to be_nil
       end
     end
 
@@ -46,47 +46,43 @@ RSpec.describe TocDoc::Response::Availability do
     end
   end
 
-  describe '#availabilities' do
+  describe '#each / #to_a' do
     it 'returns an array of TocDoc::Availability objects' do
-      expect(response.availabilities).to all(be_a(TocDoc::Availability))
+      expect(response.to_a).to all(be_a(TocDoc::Availability))
     end
 
     it 'has the correct length' do
-      expect(response.availabilities.length).to eq(2)
+      expect(response.to_a.length).to eq(2)
     end
 
     it 'correctly maps date on the first entry' do
-      expect(response.availabilities.first.date).to eq(Date.new(2026, 2, 28))
+      expect(response.to_a.first.date).to eq(Date.new(2026, 2, 28))
     end
 
     it 'correctly maps slots on the first entry' do
-      expect(response.availabilities.first.slots.length).to eq(3)
+      expect(response.to_a.first.slots.length).to eq(3)
     end
 
     it 'correctly maps the second entry' do
-      second = response.availabilities.last
+      second = response.to_a.last
       expect(second.date).to eq(Date.new(2026, 3, 1))
       expect(second.slots.length).to eq(2)
     end
 
     it 'excludes dates with no slots' do
-      r = described_class.new(
+      r = described_class.new({
         'total' => 1,
         'availabilities' => [
           { 'date' => '2026-03-04', 'slots' => [] },
           { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
         ]
-      )
-      expect(r.availabilities.length).to eq(1)
-      expect(r.availabilities.first.date).to eq(Date.new(2026, 3, 9))
+      })
+      expect(r.to_a.length).to eq(1)
+      expect(r.to_a.first.date).to eq(Date.new(2026, 3, 9))
     end
 
     it 'returns an empty array when missing' do
-      expect(described_class.new('total' => 0).availabilities).to eq([])
-    end
-
-    it 'memoises the result' do
-      expect(response.availabilities).to equal(response.availabilities)
+      expect(described_class.new({'total' => 0}).to_a).to eq([])
     end
   end
 
@@ -103,22 +99,15 @@ RSpec.describe TocDoc::Response::Availability do
 
   describe '#raw_availabilities' do
     it 'includes entries with empty slots' do
-      r = described_class.new(
+      r = described_class.new({
         'total' => 1,
         'availabilities' => [
           { 'date' => '2026-03-04', 'slots' => [] },
           { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
         ]
-      )
+      })
       expect(r.raw_availabilities.length).to eq(2)
       expect(r.raw_availabilities.first.date).to eq(Date.new(2026, 3, 4))
-    end
-  end
-
-  describe 'dot-notation access for extra fields' do
-    it 'exposes unknown top-level fields via method_missing' do
-      r = described_class.new(raw_hash.merge('custom_field' => 'hello'))
-      expect(r.custom_field).to eq('hello')
     end
   end
 end
