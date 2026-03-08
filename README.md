@@ -1,6 +1,6 @@
 # TocDoc
 
-A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-based client with modular resource endpoints, configurable defaults, optional auto-pagination, and a clean error hierarchy.
+A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-based client with configurable defaults, model-driven resource querying, and a clean error hierarchy.
 
 [![Gem Version](https://badge.fury.io/rb/toc_doc.svg)](https://badge.fury.io/rb/toc_doc)
 [![CI](https://github.com/01max/toc_doc/actions/workflows/main.yml/badge.svg)](https://github.com/01max/toc_doc/actions)
@@ -65,18 +65,17 @@ gem install toc_doc
 ```ruby
 require 'toc_doc'
 
-# Use the pre-configured module-level client …
-response = TocDoc.availabilities(
+collection = TocDoc::Availability.where(
   visit_motive_ids: 7_767_829,
   agenda_ids:       1_101_600,
   practice_ids:     377_272,
   telehealth:       false
 )
 
-response.total      # => 5
-response.next_slot  # => "2026-02-28T10:00:00.000+01:00"
+collection.total      # => 5
+collection.next_slot  # => "2026-02-28T10:00:00.000+01:00"
 
-response.availabilities.each do |avail|
+collection.each do |avail|
   puts "#{avail.date}: #{avail.slots.map { |s| s.strftime('%H:%M') }.join(', ')}"
 end
 ```
@@ -95,7 +94,7 @@ TocDoc.configure do |config|
   config.per_page     = 10
 end
 
-TocDoc.availabilities(visit_motive_ids: 123, agenda_ids: 456)
+TocDoc::Availability.where(visit_motive_ids: 123, agenda_ids: 456)
 ```
 
 Calling `TocDoc.reset!` restores all options to their defaults.  
@@ -103,14 +102,24 @@ Use `TocDoc.options` to inspect the current configuration hash.
 
 ### Per-client configuration
 
-Instantiate independent clients with different options:
+Instantiate independent clients with different options and query via `TocDoc::Availability.where`:
 
 ```ruby
-de_client = TocDoc::Client.new(api_endpoint: 'https://www.doctolib.de')
-it_client = TocDoc::Client.new(api_endpoint: 'https://www.doctolib.it', per_page: 3)
+# Germany
+TocDoc.configure { |c| c.api_endpoint = 'https://www.doctolib.de'; c.per_page = 3 }
+TocDoc::Availability.where(visit_motive_ids: 123, agenda_ids: 456)
 
-de_client.availabilities(visit_motive_ids: 123, agenda_ids: 456)
-it_client.availabilities(visit_motive_ids: 789, agenda_ids: 101)
+# Reset and switch to Italy
+TocDoc.reset!
+TocDoc.configure { |c| c.api_endpoint = 'https://www.doctolib.it' }
+TocDoc::Availability.where(visit_motive_ids: 789, agenda_ids: 101)
+```
+
+Alternatively, use `TocDoc::Client` directly for lower-level access ().
+
+```ruby
+client = TocDoc::Client.new(api_endpoint: 'https://www.doctolib.de', per_page: 5)
+client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids: '456', start_date: Date.today.to_s, limit: 5 })
 ```
 
 ### All configuration options
@@ -118,10 +127,9 @@ it_client.availabilities(visit_motive_ids: 789, agenda_ids: 101)
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 0.1.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.2.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
-| `per_page` | `5` | Default number of results returned per request, platform's max is currently at `15`. |
-| `auto_paginate` | `false` | When `true`, automatically fetches all pages and merges results. |
+| `per_page` | `15` | Default number of availability dates per request (capped at `15`). |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
 | `connection_options` | `{}` | Options passed directly to `Faraday.new`. |
 
@@ -135,7 +143,6 @@ All primary options can be set via environment variables before the gem is loade
 | `TOCDOC_USER_AGENT` | `user_agent` |
 | `TOCDOC_MEDIA_TYPE` | `default_media_type` |
 | `TOCDOC_PER_PAGE` | `per_page` |
-| `TOCDOC_AUTO_PAGINATE` | `auto_paginate` (`"true"` / anything else) |
 | `TOCDOC_RETRY_MAX` | Maximum Faraday retry attempts (default `3`) |
 
 ---
@@ -147,7 +154,7 @@ All primary options can be set via environment variables before the gem is loade
 Retrieve open appointment slots for a given visit motive and agenda.
 
 ```ruby
-client.availabilities(
+TocDoc::Availability.where(
   visit_motive_ids: visit_motive_id,   # Integer, String, or Array
   agenda_ids:       agenda_id,         # Integer, String, or Array
   start_date:       Date.today,        # Date or String (default: today)
@@ -158,18 +165,20 @@ client.availabilities(
 )
 ```
 
+`TocDoc.availabilities(...)` is a module-level shortcut with the same signature.
+
 **Multiple IDs** are accepted as arrays; the gem serialises them with the
 dash-separated format Doctolib expects:
 
 ```ruby
-client.availabilities(
+TocDoc::Availability.where(
   visit_motive_ids: [7_767_829, 7_767_830],
   agenda_ids:       [1_101_600, 1_101_601]
 )
 # → GET /availabilities.json?visit_motive_ids=7767829-7767830&agenda_ids=1101600-1101601&…
 ```
 
-**Return value:** a `TocDoc::Response::Availability` (see [Response objects](#response-objects)).
+**Return value:** a `TocDoc::Availability::Collection` (see [Response objects](#response-objects)).
 
 ---
 
@@ -178,20 +187,22 @@ client.availabilities(
 All API responses are wrapped in lightweight Ruby objects that provide
 dot-notation access and a `#to_h` round-trip helper.
 
-### `TocDoc::Response::Availability`
+### `TocDoc::Availability::Collection`
 
-Returned by `#availabilities`.
+Returned by `TocDoc::Availability.where`; also accessible via the `TocDoc.availabilities` module-level shortcut.
+Implements `Enumerable`, yielding `TocDoc::Availability` instances that have at least one slot.
 
 | Method | Type | Description |
 |---|---|---|
 | `#total` | `Integer` | Total number of available slots across all dates. |
 | `#next_slot` | `String \| nil` | ISO 8601 datetime of the nearest available slot. `nil` when none remain. |
-| `#availabilities` | `Array<TocDoc::Availability>` | One entry per date. |
-| `#to_h` | `Hash` | Plain-hash representation including expanded availability entries. |
+| `#each` | — | Yields each `TocDoc::Availability` that has at least one slot (excludes empty-slot dates). |
+| `#raw_availabilities` | `Array<TocDoc::Availability>` | All date entries, including those with no slots. |
+| `#to_h` | `Hash` | Plain-hash representation (only dates with slots in the `availabilities` key). |
 
 ### `TocDoc::Availability`
 
-Each element of `Response::Availability#availabilities`.
+Represents a single availability date entry. Each element yielded by the collection.
 
 | Method | Type | Description |
 |---|---|---|
@@ -202,15 +213,15 @@ Each element of `Response::Availability#availabilities`.
 **Example:**
 
 ```ruby
-response = TocDoc.availabilities(visit_motive_ids: 123, agenda_ids: 456)
+collection = TocDoc::Availability.where(visit_motive_ids: 123, agenda_ids: 456)
 
-response.total      # => 5
-response.next_slot  # => "2026-02-28T10:00:00.000+01:00"
+collection.total      # => 5
+collection.next_slot  # => "2026-02-28T10:00:00.000+01:00"
 
-response.availabilities.first.date   # => #<Date: 2026-02-28>
-response.availabilities.first.slots  # => [#<DateTime: 2026-02-28T10:00:00+01:00>, ...]
+collection.first.date   # => #<Date: 2026-02-28>
+collection.first.slots  # => [#<DateTime: 2026-02-28T10:00:00+01:00>, ...]
 
-response.to_h
+collection.to_h
 # => {
 #      "total"          => 5,
 #      "next_slot"      => "2026-02-28T10:00:00.000+01:00",
@@ -222,35 +233,36 @@ response.to_h
 
 ## Pagination
 
-The Doctolib availability endpoint is paginated by `start_date` and `limit`.
-TocDoc can manage this automatically.
+The Doctolib availability endpoint is window-based: each request returns up to
+`limit` dates starting from `start_date`.
 
-### Automatic pagination
+### Automatic next-slot resolution
 
-Set `auto_paginate: true` on the client (or at module level) to fetch all pages
-and have results merged into a single `Response::Availability` object:
+`TocDoc::Availability.where` automatically follows `next_slot` once: if the
+first API response contains a `next_slot` key (indicating no available slots in
+the requested window), a second request is issued transparently from that date
+before the collection is returned.
+
+### Manual window advancement
+
+To fetch additional date windows, call `TocDoc::Availability.where` again with a
+later `start_date`:
 
 ```ruby
-client = TocDoc::Client.new(auto_paginate: true, per_page: 5)
-
-all_slots = client.availabilities(
+first_page = TocDoc::Availability.where(
   visit_motive_ids: 7_767_829,
   agenda_ids:       1_101_600,
   start_date:       Date.today
 )
 
-all_slots.total             # total across every page
-all_slots.availabilities    # every date entry, concatenated
-```
-
-Pagination stops automatically when the API returns `next_slot: null`.
-
-### Module-level toggle
-
-```ruby
-TocDoc.configure { |c| c.auto_paginate = true }
-
-TocDoc.availabilities(visit_motive_ids: 123, agenda_ids: 456)
+if first_page.any?
+  next_start = first_page.raw_availabilities.last.date + 1
+  next_page  = TocDoc::Availability.where(
+    visit_motive_ids: 7_767_829,
+    agenda_ids:       1_101_600,
+    start_date:       next_start
+  )
+end
 ```
 
 ---
@@ -262,7 +274,7 @@ so you can rescue the whole hierarchy with a single clause:
 
 ```ruby
 begin
-  TocDoc.availabilities(visit_motive_ids: 0, agenda_ids: 0)
+  TocDoc::Availability.where(visit_motive_ids: 0, agenda_ids: 0)
 rescue TocDoc::Error => e
   puts "Doctolib error: #{e.message}"
 end
@@ -319,13 +331,14 @@ bundle exec rake install
 
 ### Adding new endpoints
 
-1. Create `lib/toc_doc/client/<resource>.rb` and define a module
-   `TocDoc::Client::<Resource>` with your endpoint methods.
-2. Call `get`/`post`/`paginate` (from `TocDoc::Connection`) to issue requests.
-3. Create `lib/toc_doc/models/response/<resource>.rb` (and any model classes)
-   inheriting from `TocDoc::Resource`.
-4. Include the new module in `TocDoc::Client` (`lib/toc_doc/client.rb`).
-5. Add corresponding specs under `spec/toc_doc/client/`.
+1. Create `lib/toc_doc/models/<resource>.rb` with a model class inheriting from
+   `TocDoc::Resource`. Add a class-level `.where` (or equivalent) query method
+   that calls `TocDoc.client.get` / `.post` to issue requests.
+2. If the endpoint is paginated, create
+   `lib/toc_doc/models/<resource>/collection.rb` with an `Enumerable` collection
+   class (see `TocDoc::Availability::Collection` for the pattern).
+3. Require the new files from `lib/toc_doc/models.rb`.
+4. Add specs under `spec/toc_doc/models/`.
 
 ### Generating documentation
 

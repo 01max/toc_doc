@@ -1,5 +1,25 @@
 ## [Unreleased]
 
+## [1.2.0] - 2026-03-08
+
+### Added
+
+- **`TocDoc::Availability::Collection`** — new `Enumerable` collection class returned by `TocDoc::Availability.where`; provides `#total`, `#next_slot`, `#each`, `#raw_availabilities`, `#to_h`, and `#merge_page!`
+- **`TocDoc::Availability.where`** — class-level query method replacing `Client#availabilities`; automatically follows a `next_slot` response key with a second request before returning the collection
+- **`TocDoc.availabilities`** — top-level shortcut delegating to `TocDoc::Availability.where`
+- **Dependabot** — automated Bundler dependency updates via `.github/dependabot.yml`
+
+### Changed
+
+- **Connection** — `#get` and `#paginate` are now public on `TocDoc::Connection`, allowing model classes to call them directly via `TocDoc.client`
+- **`TocDoc::UriUtils`** — updated module-level example to reflect actual usage (`TocDoc::Availability` with `extend`, not the removed `Client::Availabilities`)
+
+### Removed
+
+- **`TocDoc::Client::Availabilities`** — endpoint module removed; availability querying now lives in `TocDoc::Availability.where` and `TocDoc::Availability::Collection`
+- **`TocDoc::Response::Availability`** — response wrapper model removed; replaced by `TocDoc::Availability::Collection`
+- **`auto_paginate`** — configuration key, default, and all related logic removed from `TocDoc::Configurable` and `TocDoc::Default`
+
 ## [1.1.0] - 2026-03-06
 
 ### Changed

@@ -2,10 +2,6 @@
 
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
-## 1.2
-
-- [ ] Rework Availability's client, model and collection architecture.
-
 ## 1.3
 
 - [ ] Search (autocomplete)
@@ -99,4 +95,6 @@
 ### Parse raw API data
 - [x] Parse date / datetime
 
-[def]: PO
+## 1.2
+
+- [x] Rework Availability's client, model and collection architecture.
