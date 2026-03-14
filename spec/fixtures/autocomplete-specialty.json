@@ -4,78 +4,78 @@
       "city": "Paris",
       "owner_type": "Organization",
       "value": 100001,
-      "name": "Pharmacie de l'Exemple",
-      "name_with_title": "Pharmacie de l'Exemple",
-      "main_name": "Pharmacie de l'Exemple",
+      "name": "Pharmacie Homéopathique de l'Exemple",
+      "name_with_title": "Pharmacie Homéopathique de l'Exemple",
+      "main_name": "Pharmacie Homéopathique de l'Exemple",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/paris/pharmacie-de-l-exemple"
+      "link": "/pharmacie/paris/pharmacie-homeopathique-de-l-exemple"
     },
     {
       "city": "Paris",
       "owner_type": "Organization",
       "value": 100002,
-      "name": "Pharmacie du Centre",
-      "name_with_title": "Pharmacie du Centre",
-      "main_name": "Pharmacie du Centre",
+      "name": "Pharmacie Homéopathique du Centre",
+      "name_with_title": "Pharmacie Homéopathique du Centre",
+      "main_name": "Pharmacie Homéopathique du Centre",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/paris/pharmacie-du-centre"
+      "link": "/pharmacie/paris/pharmacie-homeopathique-du-centre"
     },
     {
       "city": "Paris",
       "owner_type": "Organization",
       "value": 100003,
-      "name": "Pharmacie de la Place",
-      "name_with_title": "Pharmacie de la Place",
-      "main_name": "Pharmacie de la Place",
+      "name": "Pharmacie Homéopathique de la Place",
+      "name_with_title": "Pharmacie Homéopathique de la Place",
+      "main_name": "Pharmacie Homéopathique de la Place",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/paris/pharmacie-de-la-place"
+      "link": "/pharmacie/paris/pharmacie-homeopathique-de-la-place"
     },
     {
       "city": "Marseille",
       "owner_type": "Organization",
       "value": 100004,
-      "name": "Pharmacie du Port",
-      "name_with_title": "Pharmacie du Port",
-      "main_name": "Pharmacie du Port",
+      "name": "Pharmacie Homéopathique du Port",
+      "name_with_title": "Pharmacie Homéopathique du Port",
+      "main_name": "Pharmacie Homéopathique du Port",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/marseille/pharmacie-du-port"
+      "link": "/pharmacie/marseille/pharmacie-homeopathique-du-port"
     },
     {
       "city": "Annecy",
       "owner_type": "Organization",
       "value": 100005,
-      "name": "Pharmacie du Lac",
-      "name_with_title": "Pharmacie du Lac",
-      "main_name": "Pharmacie du Lac",
+      "name": "Pharmacie Homéopathique du Lac",
+      "name_with_title": "Pharmacie Homéopathique du Lac",
+      "main_name": "Pharmacie Homéopathique du Lac",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/annecy/pharmacie-du-lac"
+      "link": "/pharmacie/annecy/pharmacie-homeopathique-du-lac"
     },
     {
       "city": "Reims",
       "owner_type": "Organization",
       "value": 100006,
-      "name": "Cabinet médical de la Cathédrale",
-      "name_with_title": "Cabinet médical de la Cathédrale",
-      "main_name": "Cabinet médical de la Cathédrale",
+      "name": "Cabinet médical d'homéopathie de la Cathédrale",
+      "name_with_title": "Cabinet médical d'homéopathie de la Cathédrale",
+      "main_name": "Cabinet médical d'homéopathie de la Cathédrale",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Cabinet médical",
-      "link": "/cabinet-medical/reims/cabinet-medical-de-la-cathedrale"
+      "link": "/cabinet-medical/reims/cabinet-medical-d-homeopathie-de-la-cathedrale"
     },
     {
       "city": "Castelnau-le-Lez",
       "owner_type": "Organization",
       "value": 100007,
-      "name": "Centre de santé du Village",
-      "name_with_title": "Centre de santé du Village",
-      "main_name": "Centre de santé du Village",
+      "name": "Centre de santé d'homéopathie du Village",
+      "name_with_title": "Centre de santé d'homéopathie du Village",
+      "main_name": "Centre de santé d'homéopathie du Village",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Centre de santé",
-      "link": "/centre-de-sante/castelnau-le-lez/centre-de-sante-du-village"
+      "link": "/centre-de-sante/castelnau-le-lez/centre-de-sante-d-homeopathie-du-village"
     }
   ],
   "specialities": [
