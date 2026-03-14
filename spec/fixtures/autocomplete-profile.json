@@ -1,15 +1,15 @@
 {
   "profiles": [
     {
-      "city": "Rouen",
+      "city": "Lyon",
       "owner_type": "Account",
-      "value": 2672,
-      "name": "Dr Emilie Chartaux",
-      "name_with_title": "Dr Emilie Chartaux",
-      "main_name": "Chartaux ",
-      "cloudinary_public_id": "otomfomxz7bv2h5uhv0v",
+      "value": 1001,
+      "name": "Dr Alice Dupont",
+      "name_with_title": "Dr Alice Dupont",
+      "main_name": "Dupont",
+      "cloudinary_public_id": "default_practitioner_avatar",
       "kind": "Dermatologue et vénérologue",
-      "link": "/dermatologue/rouen/emilie-chartaux"
+      "link": "/dermatologue/lyon/alice-dupont"
     }
   ],
   "specialities": [],

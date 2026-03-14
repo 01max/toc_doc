@@ -3,79 +3,79 @@
     {
       "city": "Paris",
       "owner_type": "Organization",
-      "value": 1065417,
-      "name": "Pharmacie Homeopathique Ledru-Rollin",
-      "name_with_title": "Pharmacie Homeopathique Ledru-Rollin",
-      "main_name": "Pharmacie Homeopathique Ledru-Rollin",
+      "value": 100001,
+      "name": "Pharmacie Homéopathique de l'Exemple",
+      "name_with_title": "Pharmacie Homéopathique de l'Exemple",
+      "main_name": "Pharmacie Homéopathique de l'Exemple",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/paris/pharmacie-homeopathique-ledru-rollin"
+      "link": "/pharmacie/paris/pharmacie-homeopathique-de-l-exemple"
     },
     {
       "city": "Paris",
       "owner_type": "Organization",
-      "value": 372392,
-      "name": "PHARMACIE HOMEOPATHIQUE CENTRALE",
-      "name_with_title": "PHARMACIE HOMEOPATHIQUE CENTRALE",
-      "main_name": "PHARMACIE HOMEOPATHIQUE CENTRALE",
-      "cloudinary_public_id": "lekoqtuqjzpf6pr9opfv",
+      "value": 100002,
+      "name": "Pharmacie Homéopathique du Centre",
+      "name_with_title": "Pharmacie Homéopathique du Centre",
+      "main_name": "Pharmacie Homéopathique du Centre",
+      "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/paris/pharmacie-homeopathique-centrale"
+      "link": "/pharmacie/paris/pharmacie-homeopathique-du-centre"
     },
     {
       "city": "Paris",
       "owner_type": "Organization",
-      "value": 268143,
-      "name": "Pharmacie Homéopathique de l'Europe",
-      "name_with_title": "Pharmacie Homéopathique de l'Europe",
-      "main_name": "Pharmacie Homéopathique de l'Europe",
-      "cloudinary_public_id": "c2urzkmduzeeeehv36c1",
+      "value": 100003,
+      "name": "Pharmacie Homéopathique de la Place",
+      "name_with_title": "Pharmacie Homéopathique de la Place",
+      "main_name": "Pharmacie Homéopathique de la Place",
+      "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/paris/pharmacie-homeopathique-de-l-europe-dr-eric-myon"
+      "link": "/pharmacie/paris/pharmacie-homeopathique-de-la-place"
     },
     {
       "city": "Marseille",
       "owner_type": "Organization",
-      "value": 765789,
-      "name": "Pharmacie homéopathique de la Canebiere",
-      "name_with_title": "Pharmacie homéopathique de la Canebiere",
-      "main_name": "Pharmacie homéopathique de la Canebiere",
-      "cloudinary_public_id": "xkzl3rgmtm6j8l9yybtv",
+      "value": 100004,
+      "name": "Pharmacie Homéopathique du Port",
+      "name_with_title": "Pharmacie Homéopathique du Port",
+      "main_name": "Pharmacie Homéopathique du Port",
+      "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/marseille/pharmacie-homeopathique-de-la-canebiere"
+      "link": "/pharmacie/marseille/pharmacie-homeopathique-du-port"
     },
     {
       "city": "Annecy",
       "owner_type": "Organization",
-      "value": 778366,
-      "name": "La Pharmacie Homeopathique",
-      "name_with_title": "La Pharmacie Homeopathique",
-      "main_name": "La Pharmacie Homeopathique",
+      "value": 100005,
+      "name": "Pharmacie Homéopathique du Lac",
+      "name_with_title": "Pharmacie Homéopathique du Lac",
+      "main_name": "Pharmacie Homéopathique du Lac",
       "cloudinary_public_id": "default_organization_avatar",
       "kind": "Pharmacie",
-      "link": "/pharmacie/annecy/la-pharmacie-homeopathique"
+      "link": "/pharmacie/annecy/pharmacie-homeopathique-du-lac"
     },
     {
       "city": "Reims",
       "owner_type": "Organization",
-      "value": 176136,
-      "name": "Cabinet médical d'homéopathie du Chapitre",
-      "name_with_title": "Cabinet médical d'homéopathie du Chapitre",
-      "main_name": "Cabinet médical d'homéopathie du Chapitre",
-      "cloudinary_public_id": "jhhdlyekqbkuo6t0wmes",
+      "value": 100006,
+      "name": "Cabinet médical d'homéopathie de la Cathédrale",
+      "name_with_title": "Cabinet médical d'homéopathie de la Cathédrale",
+      "main_name": "Cabinet médical d'homéopathie de la Cathédrale",
+      "cloudinary_public_id": "default_organization_avatar",
       "kind": "Cabinet médical",
-      "link": "/cabinet-medical/reims/cabinet-d-homeopathie-du-chapitre"
+      "link": "/cabinet-medical/reims/cabinet-medical-d-homeopathie-de-la-cathedrale"
     },
     {
       "city": "Castelnau-le-Lez",
       "owner_type": "Organization",
-      "value": 88198,
-      "name": "Centre de santé d'homéopathie de Castelnau le Lez",
-      "name_with_title": "Centre de santé d'homéopathie de Castelnau le Lez",
-      "main_name": "Centre de santé d'homéopathie de Castelnau le Lez",
-      "cloudinary_public_id": "msuwxg5uuuideancwvyp",
+      "value": 100007,
+      "name": "Centre de santé d'homéopathie du Village",
+      "name_with_title": "Centre de santé d'homéopathie du Village",
+      "main_name": "Centre de santé d'homéopathie du Village",
+      "cloudinary_public_id": "default_organization_avatar",
       "kind": "Centre de santé",
-      "link": "/centre-de-sante/castelnau-le-lez/centre-de-sante-d-homeopathie-de-castelnau-le-lez"
+      "link": "/centre-de-sante/castelnau-le-lez/centre-de-sante-d-homeopathie-du-village"
     }
   ],
   "specialities": [

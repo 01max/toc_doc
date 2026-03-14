@@ -55,20 +55,20 @@ RSpec.describe TocDoc::Profile do
     subject(:profile) do
       described_class.build(
         'owner_type' => 'Account',
-        'name' => 'Dr Emilie Chartaux',
-        'city' => 'Rouen',
+        'name' => 'Dr Alice Dupont',
+        'city' => 'Lyon',
         'kind' => 'Dermatologue et vénérologue',
-        'link' => '/dermatologue/rouen/emilie-chartaux',
-        'value' => 2672
+        'link' => '/dermatologue/lyon/alice-dupont',
+        'value' => 1001
       )
     end
 
     it 'exposes name' do
-      expect(profile.name).to eq('Dr Emilie Chartaux')
+      expect(profile.name).to eq('Dr Alice Dupont')
     end
 
     it 'exposes city' do
-      expect(profile.city).to eq('Rouen')
+      expect(profile.city).to eq('Lyon')
     end
 
     it 'exposes kind' do
@@ -76,19 +76,19 @@ RSpec.describe TocDoc::Profile do
     end
 
     it 'exposes link' do
-      expect(profile.link).to eq('/dermatologue/rouen/emilie-chartaux')
+      expect(profile.link).to eq('/dermatologue/lyon/alice-dupont')
     end
 
     it 'exposes value' do
-      expect(profile.value).to eq(2672)
+      expect(profile.value).to eq(1001)
     end
 
     it 'supports bracket access' do
-      expect(profile['name']).to eq('Dr Emilie Chartaux')
+      expect(profile['name']).to eq('Dr Alice Dupont')
     end
 
     it 'round-trips to a plain Hash via #to_h' do
-      expect(profile.to_h).to include('name' => 'Dr Emilie Chartaux', 'city' => 'Rouen')
+      expect(profile.to_h).to include('name' => 'Dr Alice Dupont', 'city' => 'Lyon')
     end
   end
 end
