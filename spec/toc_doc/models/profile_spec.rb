@@ -57,8 +57,8 @@ RSpec.describe TocDoc::Profile do
         'owner_type' => 'Account',
         'name' => 'Dr Alice Dupont',
         'city' => 'Lyon',
-        'kind' => 'Médecin généraliste',
-        'link' => '/medecin-generaliste/lyon/alice-dupont',
+        'kind' => 'Dermatologue et vénérologue',
+        'link' => '/dermatologue/lyon/alice-dupont',
         'value' => 1001
       )
     end
@@ -72,11 +72,11 @@ RSpec.describe TocDoc::Profile do
     end
 
     it 'exposes kind' do
-      expect(profile.kind).to eq('Médecin généraliste')
+      expect(profile.kind).to eq('Dermatologue et vénérologue')
     end
 
     it 'exposes link' do
-      expect(profile.link).to eq('/medecin-generaliste/lyon/alice-dupont')
+      expect(profile.link).to eq('/dermatologue/lyon/alice-dupont')
     end
 
     it 'exposes value' do
