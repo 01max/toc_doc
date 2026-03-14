@@ -55,11 +55,11 @@ RSpec.describe TocDoc::Profile do
     subject(:profile) do
       described_class.build(
         'owner_type' => 'Account',
-        'name'       => 'Dr Emilie Chartaux',
-        'city'       => 'Rouen',
-        'kind'       => 'Dermatologue et vénérologue',
-        'link'       => '/dermatologue/rouen/emilie-chartaux',
-        'value'      => 2672
+        'name' => 'Dr Emilie Chartaux',
+        'city' => 'Rouen',
+        'kind' => 'Dermatologue et vénérologue',
+        'link' => '/dermatologue/rouen/emilie-chartaux',
+        'value' => 2672
       )
     end
 
