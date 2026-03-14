@@ -76,6 +76,19 @@ module TocDoc
       TocDoc::Availability.where(**)
     end
 
+    # Queries the autocomplete / search endpoint.
+    #
+    # Delegates to {TocDoc::Search.where} — see that method for full
+    # parameter documentation.
+    #
+    # @return [TocDoc::Search::Result] when called without +type:+
+    # @return [Array<TocDoc::Profile>] when +type:+ is +'profile'+,
+    #   +'practitioner'+, or +'organization'+
+    # @return [Array<TocDoc::Specialty>] when +type:+ is +'specialty'+
+    def search(**)
+      TocDoc::Search.where(**)
+    end
+
     # @!visibility private
     def method_missing(method_name, ...)
       if client.respond_to?(method_name)
