@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-15
+
+### Added
+
+- **`TocDoc::Speciality`** — new `Resource`-based model representing a speciality returned by the autocomplete endpoint; exposes `#value`, `#slug`, and `#name` via dot-notation
+- **`TocDoc::Profile`** — new `Resource`-based model for search profile results; `Profile.build(attrs)` factory returns a `Profile::Practitioner` or `Profile::Organization` based on the `owner_type` field; provides `#practitioner?` and `#organization?` predicates
+- **`TocDoc::Profile::Practitioner`** and **`TocDoc::Profile::Organization`** — typed profile subclasses
+- **`TocDoc::Search`** — new service class for the autocomplete endpoint (`/api/searchbar/autocomplete.json`); `Search.where(query:, type: nil, **options)` fetches results and returns a `Search::Result`, or a filtered array when `type:` is one of `'profile'`, `'practitioner'`, `'organization'`, or `'speciality'`
+- **`TocDoc::Search::Result`** — envelope returned by `Search.where`; exposes `#profiles` (typed via `Profile.build`) and `#specialities`; `#filter_by_type` narrows to a specific kind
+- **`TocDoc.search`** — top-level shortcut delegating to `TocDoc::Search.where`
+
 ## [1.2.0] - 2026-03-08
 
 ### Added

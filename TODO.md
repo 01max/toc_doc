@@ -2,12 +2,6 @@
 
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
-## 1.3
-
-- [ ] Search (autocomplete)
-  - [ ] search profile : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=devun
-  - [ ] search specialty : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=dentiste
-
 ## 1.4
 
 - [ ] Profile
@@ -33,7 +27,26 @@
 - [ ] Authentication module + headers
 - [ ] Auth specs
 
+# ???
+
+- [ ] Figure what is `organization_statuses` in the autocomplete endpoint and what to do with it.
+
 # DONE & RELEASED
+
+## 1.3
+
+- [x] Search (autocomplete)
+  - [x] search profile : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=devun
+  - [x] search specialty : https://www.doctolib.fr/api/searchbar/autocomplete.json?search=dentiste
+
+## 1.2
+
+- [x] Rework Availability's client, model and collection architecture.
+
+## 1.1
+
+### Parse raw API data
+- [x] Parse date / datetime
 
 ## 1.0
 
@@ -89,12 +102,3 @@
   - [x] release on GH
   - [x] gem.coop/@maxime
 - [x] Add test coverage tool
-
-## 1.1
-
-### Parse raw API data
-- [x] Parse date / datetime
-
-## 1.2
-
-- [x] Rework Availability's client, model and collection architecture.

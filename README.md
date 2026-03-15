@@ -27,6 +27,7 @@ A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-b
    - [ENV variables](#environment-variable-overrides)
 4. [Endpoints](#endpoints)
    - [Availabilities](#availabilities)
+   - [Search](#search)
 5. [Response objects](#response-objects)
 6. [Pagination](#pagination)
 7. [Error handling](#error-handling)
@@ -127,7 +128,7 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.2.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.3.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
 | `per_page` | `15` | Default number of availability dates per request (capped at `15`). |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
@@ -180,6 +181,34 @@ TocDoc::Availability.where(
 
 **Return value:** a `TocDoc::Availability::Collection` (see [Response objects](#response-objects)).
 
+### Search
+
+Query the Doctolib autocomplete endpoint to look up practitioners, organizations, and specialities.
+
+```ruby
+result = TocDoc::Search.where(query: 'dentiste')
+result.profiles      # => [#<TocDoc::Profile::Practitioner ...>, ...]
+result.specialities  # => [#<TocDoc::Speciality ...>, ...]
+```
+
+Pass `type:` to receive a filtered array directly:
+
+```ruby
+# Only specialities
+TocDoc::Search.where(query: 'cardio', type: 'speciality')
+# => [#<TocDoc::Speciality name="Cardiologue">, ...]
+
+# Only practitioners
+TocDoc::Search.where(query: 'dupont', type: 'practitioner')
+# => [#<TocDoc::Profile::Practitioner ...>, ...]
+```
+
+Valid `type:` values: `'profile'` (all profiles), `'practitioner'`, `'organization'`, `'speciality'`.
+
+`TocDoc.search(...)` is a module-level shortcut with the same signature.
+
+**Return value:** a `TocDoc::Search::Result` when `type:` is omitted, or a filtered `Array` otherwise (see [Response objects](#response-objects)).
+
 ---
 
 ## Response objects
@@ -227,6 +256,51 @@ collection.to_h
 #      "next_slot"      => "2026-02-28T10:00:00.000+01:00",
 #      "availabilities" => [{ "date" => "2026-02-28", "slots" => [...] }, ...]
 #    }
+```
+
+### `TocDoc::Search::Result`
+
+Returned by `TocDoc::Search.where` when `type:` is omitted.
+
+| Method | Type | Description |
+|---|---|---|
+| `#profiles` | `Array<TocDoc::Profile::Practitioner, TocDoc::Profile::Organization>` | All profile results, typed via `Profile.build`. |
+| `#specialities` | `Array<TocDoc::Speciality>` | All speciality results. |
+| `#filter_by_type(type)` | `Array` | Narrows results to `'profile'`, `'practitioner'`, `'organization'`, or `'speciality'`. |
+
+### `TocDoc::Profile`
+
+Represents a search profile result (practitioner or organization). Use `Profile.build(attrs)` to obtain the correctly typed subclass instance.
+
+| Method | Type | Description |
+|---|---|---|
+| `Profile.build(attrs)` | `Profile::Practitioner \| Profile::Organization` | Factory: returns `Practitioner` when `owner_type` is `"Account"`, `Organization` otherwise. |
+| `#practitioner?` | `Boolean` | `true` when this is a `Profile::Practitioner`. |
+| `#organization?` | `Boolean` | `true` when this is a `Profile::Organization`. |
+
+`TocDoc::Profile::Practitioner` and `TocDoc::Profile::Organization` are thin subclasses that inherit dot-notation attribute access from `TocDoc::Resource`.
+
+### `TocDoc::Speciality`
+
+Represents a speciality returned by the autocomplete endpoint. Inherits dot-notation attribute access from `TocDoc::Resource`.
+
+| Method | Type | Description |
+|---|---|---|
+| `#value` | `Integer` | Numeric speciality identifier. |
+| `#slug` | `String` | URL-friendly identifier. |
+| `#name` | `String` | Human-readable speciality name. |
+
+**Example:**
+
+```ruby
+result = TocDoc::Search.where(query: 'dermato')
+
+result.profiles.first.class          # => TocDoc::Profile::Practitioner
+result.profiles.first.practitioner?  # => true
+result.profiles.first.name           # => "Dr. Jane Smith"
+
+result.specialities.first.slug   # => "dermatologue"
+result.specialities.first.name   # => "Dermatologue"
 ```
 
 ---
