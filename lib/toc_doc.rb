@@ -84,7 +84,7 @@ module TocDoc
     # @return [TocDoc::Search::Result] when called without +type:+
     # @return [Array<TocDoc::Profile>] when +type:+ is +'profile'+,
     #   +'practitioner'+, or +'organization'+
-    # @return [Array<TocDoc::Specialty>] when +type:+ is +'specialty'+
+    # @return [Array<TocDoc::Speciality>] when +type:+ is +'speciality'+
     def search(**)
       TocDoc::Search.where(**)
     end

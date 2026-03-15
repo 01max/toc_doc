@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'toc_doc/models/profile'
-require 'toc_doc/models/specialty'
+require 'toc_doc/models/speciality'
 
 module TocDoc
   class Search
@@ -15,7 +15,7 @@ module TocDoc
     # @example
     #   result = TocDoc::Search.where(query: 'dentiste')
     #   result.profiles      #=> [#<TocDoc::Profile::Practitioner>, ...]
-    #   result.specialities  #=> [#<TocDoc::Specialty>, ...]
+    #   result.specialities  #=> [#<TocDoc::Speciality>, ...]
     class Result
       # @param data [Hash] raw parsed response body from the autocomplete endpoint
       def initialize(data)
@@ -29,21 +29,21 @@ module TocDoc
       # @return [Array<TocDoc::Profile::Practitioner, TocDoc::Profile::Organization>]
       attr_reader :profiles
 
-      # All specialty results as {TocDoc::Specialty} instances.
+      # All speciality results as {TocDoc::Speciality} instances.
       #
-      # @return [Array<TocDoc::Specialty>]
+      # @return [Array<TocDoc::Speciality>]
       attr_reader :specialities
 
       # Returns a subset of results narrowed to the given type.
       #
-      # @param type [String] one of +'profile'+, +'practitioner'+, +'organization'+, +'specialty'+
-      # @return [Array<TocDoc::Profile>, Array<TocDoc::Specialty>]
+      # @param type [String] one of +'profile'+, +'practitioner'+, +'organization'+, +'speciality'+
+      # @return [Array<TocDoc::Profile>, Array<TocDoc::Speciality>]
       def filter_by_type(type)
         case type
         when 'profile'      then profiles
         when 'practitioner' then profiles.select(&:practitioner?)
         when 'organization' then profiles.select(&:organization?)
-        when 'specialty'    then specialities
+        when 'speciality'   then specialities
         end
       end
 
@@ -54,7 +54,7 @@ module TocDoc
       end
 
       def build_specialities(raw)
-        Array(raw).map { |attrs| TocDoc::Specialty.new(attrs) }
+        Array(raw).map { |attrs| TocDoc::Speciality.new(attrs) }
       end
     end
   end

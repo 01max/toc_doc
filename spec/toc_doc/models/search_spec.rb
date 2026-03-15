@@ -51,9 +51,9 @@ RSpec.describe TocDoc::Search do
         end
       end
 
-      context "with type: 'specialty'" do
+      context "with type: 'speciality'" do
         it 'returns an empty array (fixture has no specialities)' do
-          result = TocDoc::Search.where(query: 'dentiste', type: 'specialty')
+          result = TocDoc::Search.where(query: 'dentiste', type: 'speciality')
           expect(result).to eq([])
         end
       end
@@ -67,19 +67,19 @@ RSpec.describe TocDoc::Search do
       end
     end
 
-    context 'with autocomplete-specialty.json fixture (organization + specialty results)' do
-      before { stub_search('autocomplete-specialty.json') }
+    context 'with autocomplete-speciality.json fixture (organization + speciality results)' do
+      before { stub_search('autocomplete-speciality.json') }
 
       it 'returns Profile::Organization instances for type: profile' do
         result = TocDoc::Search.where(query: 'dentiste', type: 'profile')
         expect(result).to all(be_a(TocDoc::Profile::Organization))
       end
 
-      it 'returns Specialty instances for type: specialty' do
-        result = TocDoc::Search.where(query: 'dentiste', type: 'specialty')
+      it 'returns Speciality instances for type: speciality' do
+        result = TocDoc::Search.where(query: 'dentiste', type: 'speciality')
         expect(result).to be_an(Array)
         expect(result).not_to be_empty
-        expect(result).to all(be_a(TocDoc::Specialty))
+        expect(result).to all(be_a(TocDoc::Speciality))
       end
 
       it 'populates both profiles and specialities in the full result' do

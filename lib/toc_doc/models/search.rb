@@ -18,7 +18,7 @@ module TocDoc
   #   #=> [#<TocDoc::Profile::Practitioner>, ...]
   class Search
     PATH = '/api/searchbar/autocomplete.json'
-    VALID_TYPES = %w[profile practitioner organization specialty].freeze
+    VALID_TYPES = %w[profile practitioner organization speciality].freeze
 
     class << self
       # Queries the autocomplete endpoint and returns a {Search::Result} or a
@@ -29,17 +29,17 @@ module TocDoc
       #
       # @param query [String] the search term
       # @param type [String, nil] optional filter; one of +'profile'+,
-      #   +'practitioner'+, +'organization'+, +'specialty'+
+      #   +'practitioner'+, +'organization'+, +'speciality'+
       # @param options [Hash] additional query params forwarded verbatim to the API
       # @return [Search::Result] when +type:+ is +nil+
       # @return [Array<TocDoc::Profile>] when +type:+ is +'profile'+, +'practitioner'+,
       #   or +'organization'+
-      # @return [Array<TocDoc::Specialty>] when +type:+ is +'specialty'+
+      # @return [Array<TocDoc::Speciality>] when +type:+ is +'speciality'+
       # @raise [ArgumentError] if +type:+ is not +nil+ and not in {VALID_TYPES}
       #
       # @example
-      #   TocDoc::Search.where(query: 'derma', type: 'specialty')
-      #   #=> [#<TocDoc::Specialty name="Dermatologue">, ...]
+      #   TocDoc::Search.where(query: 'derma', type: 'speciality')
+      #   #=> [#<TocDoc::Speciality name="Dermatologue">, ...]
       def where(query:, type: nil, **options)
         if !type.nil? && !VALID_TYPES.include?(type)
           raise ArgumentError, "Invalid type #{type.inspect}. Must be one of: #{VALID_TYPES.join(', ')}"

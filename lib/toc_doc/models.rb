@@ -7,4 +7,4 @@ require 'toc_doc/models/availability'
 require 'toc_doc/models/availability/collection'
 
 require 'toc_doc/models/profile'
-require 'toc_doc/models/specialty'
+require 'toc_doc/models/speciality'
