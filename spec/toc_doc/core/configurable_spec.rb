@@ -33,4 +33,10 @@ RSpec.describe TocDoc::Configurable do
     instance = Class.new { extend TocDoc::Configurable }
     expect(instance.same_options?(instance.options)).to be(true)
   end
+
+  it 'returns false for an object that does not respond to to_hash' do
+    instance = Class.new { extend TocDoc::Configurable }
+    non_hash = Object.new
+    expect(instance.same_options?(non_hash)).to be(false)
+  end
 end

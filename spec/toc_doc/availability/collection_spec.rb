@@ -110,6 +110,48 @@ RSpec.describe TocDoc::Availability::Collection do
       expect(r.raw_availabilities.first.date).to eq(Date.new(2026, 3, 4))
     end
   end
+
+  describe '#merge_page!' do
+    it 'appends availabilities from the new page' do
+      page1 = { 'total' => 3,
+                'availabilities' => [{ 'date' => '2026-03-01', 'slots' => ['2026-03-01T09:00:00.000+01:00'] }] }
+      page2 = { 'total' => 2,
+                'availabilities' => [{ 'date' => '2026-03-02', 'slots' => ['2026-03-02T10:00:00.000+01:00'] }] }
+      collection = described_class.new(page1)
+      collection.merge_page!(page2)
+      expect(collection.to_a.length).to eq(2)
+      expect(collection.to_a.map(&:date)).to eq([Date.new(2026, 3, 1), Date.new(2026, 3, 2)])
+    end
+
+    it 'sums totals from both pages' do
+      page1 = { 'total' => 3, 'availabilities' => [] }
+      page2 = { 'total' => 2, 'availabilities' => [] }
+      collection = described_class.new(page1)
+      collection.merge_page!(page2)
+      expect(collection.total).to eq(5)
+    end
+
+    it 'returns self' do
+      collection = described_class.new({ 'total' => 1, 'availabilities' => [] })
+      result = collection.merge_page!({ 'total' => 0, 'availabilities' => [] })
+      expect(result).to be(collection)
+    end
+
+    it 'handles missing availabilities key in page_data' do
+      collection = described_class.new({ 'total' => 2,
+                                         'availabilities' => [{ 'date' => '2026-03-01',
+                                                                'slots' => ['2026-03-01T09:00:00.000+01:00'] }] })
+      collection.merge_page!({ 'total' => 1 })
+      expect(collection.to_a.length).to eq(1)
+      expect(collection.total).to eq(3)
+    end
+
+    it 'handles missing total key in page_data' do
+      collection = described_class.new({ 'total' => 2, 'availabilities' => [] })
+      collection.merge_page!({ 'availabilities' => [] })
+      expect(collection.total).to eq(2)
+    end
+  end
 end
 
 RSpec.describe TocDoc::Availability do
