@@ -19,35 +19,20 @@ module TocDoc
     class Result
       # @param data [Hash] raw parsed response body from the autocomplete endpoint
       def initialize(data)
-        @data = data
+        @profiles     = build_profiles(data['profiles'])
+        @specialities = build_specialities(data['specialities'])
       end
 
       # All profile results, typed as {TocDoc::Profile::Practitioner} or
       # {TocDoc::Profile::Organization} via {TocDoc::Profile.build}.
       #
       # @return [Array<TocDoc::Profile::Practitioner, TocDoc::Profile::Organization>]
-      def profiles
-        @profiles ||= Array(@data['profiles']).map do |attrs|
-          TocDoc::Profile.build(attrs)
-        end
-      end
+      attr_reader :profiles
 
       # All specialty results as {TocDoc::Specialty} instances.
       #
       # @return [Array<TocDoc::Specialty>]
-      def specialities
-        @specialities ||= Array(@data['specialities']).map do |attrs|
-          TocDoc::Specialty.new(attrs)
-        end
-      end
-
-      # Raw +organization_statuses+ array from the API response (always empty
-      # for now — no model exists yet).
-      #
-      # @return [Array]
-      def organization_statuses
-        Array(@data['organization_statuses'])
-      end
+      attr_reader :specialities
 
       # Returns a subset of results narrowed to the given type.
       #
@@ -60,6 +45,16 @@ module TocDoc
         when 'organization' then profiles.select(&:organization?)
         when 'specialty'    then specialities
         end
+      end
+
+      private
+
+      def build_profiles(raw)
+        Array(raw).map { |attrs| TocDoc::Profile.build(attrs) }
+      end
+
+      def build_specialities(raw)
+        Array(raw).map { |attrs| TocDoc::Specialty.new(attrs) }
       end
     end
   end
