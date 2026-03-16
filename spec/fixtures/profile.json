@@ -1,0 +1,582 @@
+{
+  "data": {
+    "profile": {
+      "is_directory": false,
+      "organization": false,
+      "profile_path": "/dentiste/bordeaux/jane-doe-bordeaux",
+      "slug": "jane-doe-bordeaux",
+      "id": 1542899,
+      "name": "DOE",
+      "name_with_title": "Dr Jane DOE",
+      "name_with_title_and_determiner": "le Dr Jane Doe",
+      "bio": "Le chirurgien-dentiste, aussi appelé dentiste, prend en charge les problèmes bucco-dentaires. Ce spécialiste de la dentition s'occupe aussi bien des dents, des gencives et des nerfs que des maxillaires. Les patients peuvent notamment le consulter pour un détartrage, le soin d'une carie, le soulagement de gencives irritées ou encore pour la réparation d'une dent abîmée.",
+      "website_url": null,
+      "country": "fr",
+      "organization_status_id": null,
+      "freemium": false,
+      "should_display_booking_card": true,
+      "subtitle": "Chirurgien-dentiste",
+      "smart_ranking_profile_page_viewed_tracking_details": {
+        "online_booking_enabled": "false",
+        "new_patients_blocked": true,
+        "speaks_user_locale_language": "true",
+        "profile_id": 1542899,
+        "practice_id": 125055
+      },
+      "speciality": {
+        "id": 1,
+        "kind": "medical",
+        "non_healthcare_professional": false,
+        "name": "Chirurgien-dentiste",
+        "slug": "dentiste"
+      },
+      "pictures": [],
+      "cover_picture": {
+        "public_id": "gnrh5fkg2q06hjk1xkjs"
+      },
+      "avatar_picture": {
+        "public_id": "default_doctor_avatar_m"
+      },
+      "is_practitioner": true,
+      "telehealth": false,
+      "skills_by_practice": {
+        "125055": [
+          {
+            "kind": "procedure",
+            "name": "Prothèse sur implant"
+          },
+          {
+            "kind": "procedure",
+            "name": "Blanchiment des dents"
+          },
+          {
+            "kind": "procedure",
+            "name": "Surfaçage"
+          },
+          {
+            "kind": "procedure",
+            "name": "Prophylaxie"
+          },
+          {
+            "kind": "subspeciality",
+            "name": "Parodontie"
+          },
+          {
+            "kind": "procedure",
+            "name": "Prothèse dentaire fixe ou amovible"
+          }
+        ]
+      },
+      "languages": [],
+      "formations": [],
+      "decorations": [],
+      "experience_periods": [],
+      "publications": [],
+      "associations": []
+    },
+    "fees": [],
+    "details": [
+      {
+        "insurance_card": null,
+        "practice_id": 125055,
+        "regulation_sector": null,
+        "regulation_sector_wording": null,
+        "home_visit": false,
+        "home_visit_phone_number": null,
+        "third_party_payer": null,
+        "blocking_rules": [],
+        "free_openings": null,
+        "covid_temporary_message": false,
+        "display_payment_means": false,
+        "payment_means": {
+          "check": false,
+          "cash": false,
+          "credit_card": false,
+          "bank_transfer": false
+        }
+      }
+    ],
+    "legals": {
+      "rpps": "00000000000",
+      "adeli": null,
+      "privacy_policy_link": null,
+      "trader_identifier": null,
+      "show_legals": true
+    },
+    "doctor_place_city": "Bordeaux",
+    "places": [
+      {
+        "id": "practice-125055",
+        "address": "1 Rue Anonyme",
+        "zipcode": "33000",
+        "city": "Bordeaux",
+        "floor": null,
+        "latitude": 44.8386722,
+        "longitude": -0.5780466,
+        "elevator": true,
+        "handicap": true,
+        "formal_name": "Centre de santé - Anonyme",
+        "organization_id": 96708,
+        "landline_number": "05 23 45 67 89",
+        "reception_info": null,
+        "full_address": "1 Rue Anonyme, 33000 Bordeaux",
+        "opening_hours": [
+          {
+            "day": 1,
+            "ranges": [
+              [
+                "08:00",
+                "13:00"
+              ],
+              [
+                "14:00",
+                "19:00"
+              ]
+            ],
+            "enabled": true
+          },
+          {
+            "day": 2,
+            "ranges": [
+              [
+                "08:00",
+                "13:00"
+              ],
+              [
+                "14:00",
+                "19:00"
+              ]
+            ],
+            "enabled": true
+          },
+          {
+            "day": 3,
+            "ranges": [
+              [
+                "08:00",
+                "13:00"
+              ],
+              [
+                "14:00",
+                "19:00"
+              ]
+            ],
+            "enabled": true
+          },
+          {
+            "day": 4,
+            "ranges": [
+              [
+                "08:00",
+                "13:00"
+              ],
+              [
+                "14:00",
+                "19:00"
+              ]
+            ],
+            "enabled": true
+          },
+          {
+            "day": 5,
+            "ranges": [
+              [
+                "08:00",
+                "13:00"
+              ],
+              [
+                "14:00",
+                "19:00"
+              ]
+            ],
+            "enabled": true
+          }
+        ],
+        "practice_floor": null,
+        "access_informations": [
+          "Entrée accessible"
+        ],
+        "name": "Centre de santé - Anonyme",
+        "short_name": "Centre de santé - Anonyme",
+        "organization_place": {
+          "name": "Pavillon de la mutualité - Bordeaux rue Anonyme",
+          "link": "/centre-de-sante/bordeaux/pavillon-de-la-mutualite-bordeaux-rue-anonyme"
+        },
+        "practice_ids": [
+          125055
+        ],
+        "is_aphp": false,
+        "aphp_url": "http://www.aphp.fr/contenu/combien-ca-coute",
+        "profile_description": null,
+        "parking": {
+          "name": "Parking Saint-Christoly",
+          "full_address": "15 Place Pey Berland, Bordeaux"
+        },
+        "private_parking": null,
+        "emergency_number_details": {
+          "number": "15",
+          "type": "Samu",
+          "display_title": false
+        },
+        "stations": [
+          {
+            "transport_type": "tram",
+            "lines": [
+              "A",
+              "B"
+            ],
+            "name": "Hôtel de Ville"
+          },
+          {
+            "transport_type": "tram",
+            "lines": [
+              "B"
+            ],
+            "name": "Gambetta"
+          },
+          {
+            "transport_type": "bus",
+            "lines": [
+              "5N",
+              "15"
+            ],
+            "name": "Galerie des Beaux Arts"
+          }
+        ]
+      }
+    ],
+    "bookable": true
+  },
+  "jsonld": {
+    "profile": {
+      "@context": "http://schema.org/",
+      "@type": "Physician",
+      "name": "Jane DOE",
+      "description": "Le chirurgien-dentiste, aussi appelé dentiste, prend en charge les problèmes bucco-dentaires. Ce spécialiste de la dentition s'occupe aussi bien des dents, des gencives et des nerfs que des maxillaires. Les patients peuvent notamment le consulter pour un détartrage, le soin d'une carie, le soulagement de gencives irritées ou encore pour la réparation d'une dent abîmée.",
+      "medicalSpecialty": "Chirurgien-dentiste",
+      "legalName": null,
+      "url": "/dentiste/bordeaux/jane-doe-bordeaux",
+      "image": "/no-image",
+      "address": {
+        "@type": "PostalAddress",
+        "name": "Centre de santé - Anonyme",
+        "streetAddress": "1 Rue Anonyme",
+        "postalCode": "33000",
+        "addressLocality": "Bordeaux"
+      },
+      "paymentAccepted": "",
+      "availableService": [
+        {
+          "@type": "MedicalProcedure",
+          "name": "Blanchiment des dents"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Parodontie"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Prophylaxie"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Prothèse dentaire fixe ou amovible"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Prothèse sur implant"
+        },
+        {
+          "@type": "MedicalProcedure",
+          "name": "Surfaçage"
+        }
+      ],
+      "telephone": "01 23 45 67 89",
+      "openingHours": [
+        "Mo 08:00-13:00, 14:00-19:00",
+        "Tu 08:00-13:00, 14:00-19:00",
+        "We 08:00-13:00, 14:00-19:00",
+        "Th 08:00-13:00, 14:00-19:00",
+        "Fr 08:00-13:00, 14:00-19:00"
+      ]
+    },
+    "breadcrumbs": {
+      "@context": "http://schema.org/",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "Organization",
+            "name": "Doctolib",
+            "id": "Doctolib",
+            "url": null
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "MedicalSpecialty",
+            "name": "Chirurgien-dentiste",
+            "id": "Chirurgien-dentiste",
+            "url": "/dentiste"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "State",
+            "name": "Gironde",
+            "id": "Gironde",
+            "url": "/dentiste/gironde"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "City",
+            "name": "Bordeaux",
+            "id": "Bordeaux",
+            "url": "/dentiste/bordeaux"
+          }
+        }
+      ]
+    }
+  },
+  "meta": {
+    "title": "Dr Jane DOE, Chirurgien-dentiste à Bordeaux - Doctolib",
+    "description": "Prenez RDV en ligne avec Dr Jane DOE: Chirurgien-dentiste. Adresse : 1 Rue Anonyme, 33000 Bordeaux.\n"
+  },
+  "seo": {
+    "our_company": {
+      "title": "Notre entreprise",
+      "links": [
+        {
+          "name": "À propos de nous",
+          "url": "https://about.doctolib.fr/?origin=home-footer&utm_button=footer&utm_content-group=homepage&utm_website=doctolib_patients",
+          "target": "_self",
+          "encoded": true,
+          "key": "about_us"
+        },
+        {
+          "name": "Consultation vidéo - Téléconsultation",
+          "url": "/video_consultation",
+          "target": "_blank",
+          "encoded": false,
+          "key": "video_consultation"
+        },
+        {
+          "name": "Carrières",
+          "url": "https://careers.doctolib.fr/?origin=home-footer&utm_button=footer&utm_content-group=homepage&utm_website=doctolib_patients",
+          "target": "_blank",
+          "encoded": true,
+          "key": "jobs"
+        },
+        {
+          "name": "Presse",
+          "url": "https://about.doctolib.fr/press/?origin=home-footer&utm_button=footer&utm_content-group=homepage&utm_page-url={page-url}&utm_website=doctolib_patients",
+          "target": "_self",
+          "encoded": true,
+          "key": "press"
+        },
+        {
+          "name": "Plan du site",
+          "url": "/sitemap",
+          "target": "_self",
+          "encoded": true,
+          "key": "sitemap"
+        },
+        {
+          "name": "Besoin d'aide ?",
+          "url": "https://doctolibpatient.zendesk.com/hc/fr?source=help_button",
+          "target": "_blank",
+          "encoded": true,
+          "key": "help"
+        },
+        {
+          "name": "Notifications frauduleuses (tentatives d'hameçonnage)",
+          "url": "https://doctolibpatient.zendesk.com/hc/fr/articles/360016664299?source=help_button",
+          "target": "_blank",
+          "encoded": false,
+          "key": "phishing"
+        },
+        {
+          "name": "Doctolib Deutschland",
+          "url": "https://www.doctolib.de",
+          "target": "_self",
+          "encoded": false,
+          "lang": "de",
+          "key": "doctolib_de"
+        },
+        {
+          "name": "Doctolib Italia",
+          "url": "https://www.doctolib.it",
+          "target": "_self",
+          "encoded": false,
+          "lang": "it",
+          "key": "doctolib_it"
+        },
+        {
+          "name": "Tout sur votre santé",
+          "url": "https://www.doctolib.fr/sante/",
+          "target": "_self",
+          "encoded": false,
+          "key": "health_hub"
+        }
+      ]
+    },
+    "about_doctolib_pro": {
+      "title": "Pour les soignants",
+      "links": [
+        {
+          "name": "Logiciel de gestion Doctolib Pro",
+          "url": "https://info.doctolib.fr?origin=home-footer&utm_button=footer&utm_content-group=profile_page&utm_website=doctolib_patients",
+          "target": "_blank",
+          "encoded": true,
+          "key": "bms"
+        },
+        {
+          "name": "Communauté Doctolib",
+          "url": "https://community.doctolib.fr/",
+          "target": "_blank",
+          "encoded": true,
+          "key": "community"
+        }
+      ]
+    },
+    "popular_links": {
+      "title": "Recherches fréquentes",
+      "links": [
+        {
+          "name": "Chirurgien-dentiste Bordeaux",
+          "url": "/dentiste/bordeaux"
+        },
+        {
+          "name": "Infirmier Bordeaux",
+          "url": "/infirmier/bordeaux"
+        },
+        {
+          "name": "Médecin généraliste Bordeaux",
+          "url": "/medecin-generaliste/bordeaux"
+        },
+        {
+          "name": "Pédiatre Bordeaux",
+          "url": "/pediatre/bordeaux"
+        },
+        {
+          "name": "Ophtalmologue Bordeaux",
+          "url": "/ophtalmologue/bordeaux"
+        },
+        {
+          "name": "Dermatologue et vénérologue Bordeaux",
+          "url": "/dermatologue/bordeaux"
+        },
+        {
+          "name": "Ostéopathe Bordeaux",
+          "url": "/osteopathe/bordeaux"
+        },
+        {
+          "name": "Masseur-kinésithérapeute Bordeaux",
+          "url": "/masseur-kinesitherapeute/bordeaux"
+        },
+        {
+          "name": "Opticien-lunetier Bordeaux",
+          "url": "/opticien-lunetier/bordeaux"
+        },
+        {
+          "name": "Pédicure-podologue Bordeaux",
+          "url": "/pedicure-podologue/bordeaux"
+        }
+      ]
+    },
+    "similar_links": {
+      "title": "Recherches associées",
+      "links": [
+        {
+          "name": "Chirurgien-dentiste Le Bouscat",
+          "url": "/dentiste/le-bouscat"
+        },
+        {
+          "name": "Chirurgien-dentiste Bassens",
+          "url": "/dentiste/bassens"
+        },
+        {
+          "name": "Chirurgien-dentiste Le Haillan",
+          "url": "/dentiste/le-haillan"
+        },
+        {
+          "name": "Chirurgien-dentiste Blanquefort",
+          "url": "/dentiste/blanquefort"
+        },
+        {
+          "name": "Chirurgien-dentiste Cadaujac",
+          "url": "/dentiste/cadaujac"
+        },
+        {
+          "name": "Chirurgien-dentiste Le Taillan-Médoc",
+          "url": "/dentiste/le-taillan-medoc"
+        },
+        {
+          "name": "Chirurgien-dentiste Ambarès-et-Lagrave",
+          "url": "/dentiste/ambares-et-lagrave"
+        },
+        {
+          "name": "Chirurgien-dentiste Montussan",
+          "url": "/dentiste/montussan"
+        },
+        {
+          "name": "Chirurgien-dentiste Saint-Aubin-de-Médoc",
+          "url": "/dentiste/saint-aubin-de-medoc"
+        },
+        {
+          "name": "Chirurgien-dentiste Le Pian-Médoc",
+          "url": "/dentiste/le-pian-medoc"
+        },
+        {
+          "name": "Chirurgien-dentiste Libourne",
+          "url": "/dentiste/libourne"
+        },
+        {
+          "name": "Chirurgien-dentiste Mios",
+          "url": "/dentiste/mios"
+        },
+        {
+          "name": "Chirurgien-dentiste Pauillac",
+          "url": "/dentiste/pauillac"
+        },
+        {
+          "name": "Chirurgien-dentiste Blaye",
+          "url": "/dentiste/blaye"
+        },
+        {
+          "name": "Chirurgien-dentiste Saint-Laurent-Médoc",
+          "url": "/dentiste/saint-laurent-medoc"
+        },
+        {
+          "name": "Chirurgien-dentiste Ludon-Médoc",
+          "url": "/dentiste/ludon-medoc"
+        },
+        {
+          "name": "Chirurgien-dentiste Hourtin",
+          "url": "/dentiste/hourtin"
+        },
+        {
+          "name": "Chirurgien-dentiste Arsac",
+          "url": "/dentiste/arsac"
+        },
+        {
+          "name": "Chirurgien-dentiste Galgon",
+          "url": "/dentiste/galgon"
+        },
+        {
+          "name": "Chirurgien-dentiste Listrac-Médoc",
+          "url": "/dentiste/listrac-medoc"
+        }
+      ]
+    }
+  }
+}

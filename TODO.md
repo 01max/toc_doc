@@ -5,8 +5,8 @@
 ## 1.4
 
 - [ ] Profile
-  - slug : https://www.doctolib.fr/profiles/mathilde-devun-lesparre-medoc.json
-  - id : https://www.doctolib.fr/profiles/926388.json
+  - from slug : https://www.doctolib.fr/profiles/jane-doe-bordeaux.json
+  - from id : https://www.doctolib.fr/profiles/926388.json
 
 ## 1.5
 
