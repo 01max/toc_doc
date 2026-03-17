@@ -22,29 +22,16 @@ module TocDoc
       #
       # @param attrs [Hash] raw attribute hash from the API response
       # @return [Profile::Practitioner, Profile::Organization]
-      def build(attrs = {}, full_profile: false)
-        if attrs['owner_type'] || attrs[:owner_type]
-          return partial_build(attrs) unless full_profile
+      def build(attrs = {}, force_full_profile: false)
+        if force_full_profile && (attrs['owner_type'] || attrs[:owner_type])
           return find(attrs['value'] || attrs[:value])
         end
 
-        if attrs['is_practitioner'] || attrs[:is_practitioner]
-          Practitioner.new(attrs)
-        elsif attrs['organization'] || attrs[:organization]
-          Organization.new(attrs)
-        else
-          raise ArgumentError, 'unable to determine profile type from attributes'
-        end
-      end
-
-      def partial_build(attrs = {})
         case attrs['owner_type'] || attrs[:owner_type]
-        when 'Account'
-          Practitioner.new(attrs)
-        when 'Organization'
-          Organization.new(attrs)
+        when 'Account'      then Practitioner.new(attrs)
+        when 'Organization' then Organization.new(attrs)
         else
-          Resource.new(attrs)
+          build_from_flags(attrs)
         end
       end
 
@@ -60,19 +47,31 @@ module TocDoc
       def find(identifier)
         raise ArgumentError, 'identifier cannot be nil' if identifier.nil?
 
-        path = format(PATH, identifier: identifier)
-        data = TocDoc.client.get(path)['data']
+        data = TocDoc.client.get(format(PATH, identifier: identifier))['data']
+        build(profile_attrs(data))
+      end
 
-        attrs = data['profile'].merge(
+      private
+
+      def build_from_flags(attrs)
+        if attrs['is_practitioner'] || attrs[:is_practitioner]
+          Practitioner.new(attrs)
+        elsif attrs['organization'] || attrs[:organization]
+          Organization.new(attrs)
+        else
+          raise ArgumentError, 'Unable to determine profile type from attributes: ' \
+        end
+      end
+
+      def profile_attrs(data)
+        data['profile'].merge(
           'speciality' => TocDoc::Speciality.new(data['profile']['speciality'] || {}),
-          'places'     => Array(data['places']).map { |p| TocDoc::Place.new(p) },
-          'legals'     => data['legals'],
-          'details'    => data['details'],
-          'fees'       => data['fees'],
-          'bookable'   => data['bookable']
+          'places' => Array(data['places']).map { |p| TocDoc::Place.new(p) },
+          'legals' => data['legals'],
+          'details' => data['details'],
+          'fees' => data['fees'],
+          'bookable' => data['bookable']
         )
-
-        build(attrs)
       end
     end
 
