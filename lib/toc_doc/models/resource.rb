@@ -13,7 +13,7 @@ module TocDoc
   #   resource.date   #=> "2026-02-28"
   #   resource[:date] #=> "2026-02-28"
   #   resource.to_h   #=> { "date" => "2026-02-28", "slots" => [] }
-  class Resource
+  class Resourceb
     class << self
       # Normalises a raw attribute hash to string keys, mirroring what
       # {#initialize} does internally. Useful in class-level factory methods
@@ -68,7 +68,7 @@ module TocDoc
     def ==(other)
       case other
       when Resource then @attrs == other.to_h
-      when Hash     then @attrs == other.transform_keys(&:to_s)
+      when Hash     then @attrs == self.class.normalize_attrs(other)
       else false
       end
     end
