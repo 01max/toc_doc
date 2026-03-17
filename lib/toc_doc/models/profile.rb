@@ -22,16 +22,14 @@ module TocDoc
       #
       # @param attrs [Hash] raw attribute hash from the API response
       # @return [Profile::Practitioner, Profile::Organization]
-      def build(attrs = {}, force_full_profile: false)
-        if force_full_profile && (attrs['owner_type'] || attrs[:owner_type])
-          return find(attrs['value'] || attrs[:value])
-        end
+      def build(attrs = {})
+        attrs = normalize_attrs(attrs)
+        return find(attrs['value']) if attrs['force_full_profile'] && attrs['owner_type']
 
-        case attrs['owner_type'] || attrs[:owner_type]
-        when 'Account'      then Practitioner.new(attrs)
-        when 'Organization' then Organization.new(attrs)
-        else
-          build_from_flags(attrs)
+        case attrs['owner_type']
+        when 'Account'      then Practitioner.new(attrs.merge('partial' => true))
+        when 'Organization' then Organization.new(attrs.merge('partial' => true))
+        else                     build_from_flags(attrs)
         end
       end
 
@@ -54,12 +52,12 @@ module TocDoc
       private
 
       def build_from_flags(attrs)
-        if attrs['is_practitioner'] || attrs[:is_practitioner]
+        if attrs['is_practitioner']
           Practitioner.new(attrs)
-        elsif attrs['organization'] || attrs[:organization]
+        elsif attrs['organization']
           Organization.new(attrs)
         else
-          raise ArgumentError, 'Unable to determine profile type from attributes: ' \
+          raise ArgumentError, "Unable to determine profile type from attributes: #{attrs.inspect}"
         end
       end
 
