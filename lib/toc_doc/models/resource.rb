@@ -13,7 +13,7 @@ module TocDoc
   #   resource.date   #=> "2026-02-28"
   #   resource[:date] #=> "2026-02-28"
   #   resource.to_h   #=> { "date" => "2026-02-28", "slots" => [] }
-  class Resourceb
+  class Resource
     class << self
       # Normalises a raw attribute hash to string keys, mirroring what
       # {#initialize} does internally. Useful in class-level factory methods
