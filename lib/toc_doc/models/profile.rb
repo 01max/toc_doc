@@ -14,6 +14,8 @@ module TocDoc
   class Profile < Resource
     PATH = '/profiles/%<identifier>s.json'
 
+    main_attrs :id, :partial
+
     class << self
       # Factory — returns a +Profile::Practitioner+ or +Profile::Organization+.
       #
@@ -53,9 +55,9 @@ module TocDoc
 
       def build_from_flags(attrs)
         if attrs['is_practitioner']
-          Practitioner.new(attrs)
+          Practitioner.new(attrs.merge('partial' => false))
         elsif attrs['organization']
-          Organization.new(attrs)
+          Organization.new(attrs.merge('partial' => false))
         else
           raise ArgumentError, "Unable to determine profile type from attributes: #{attrs.inspect}"
         end

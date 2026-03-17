@@ -24,6 +24,28 @@ module TocDoc
       def normalize_attrs(attrs)
         attrs.transform_keys(&:to_s)
       end
+
+      # Declares which attribute keys are shown in +#inspect+.
+      # When called with arguments, sets the list for this class.
+      # When called with no arguments, returns the list (or +nil+ if unset),
+      # walking the ancestor chain so subclasses inherit the declaration.
+      #
+      # Subclasses that never call +main_attrs+ fall back to showing all attrs.
+      #
+      # @example
+      #   main_attrs :id, :name, :slug
+      #
+      # @param keys [Array<Symbol, String>]
+      # @return [Array<String>, nil]
+      def main_attrs(*keys)
+        if keys.empty?
+          ancestor = ancestors.find { |a| a.instance_variable_defined?(:@main_attrs) }
+          ancestor&.instance_variable_get(:@main_attrs)
+        else
+          inherited = superclass.respond_to?(:main_attrs) ? (superclass.main_attrs || []) : []
+          @main_attrs = (inherited + keys.map(&:to_s)).uniq
+        end
+      end
     end
 
     # @param attrs [Hash] the raw attribute hash (string or symbol keys)
@@ -89,6 +111,13 @@ module TocDoc
     def method_missing(method_name, *_args)
       key = method_name.to_s
       @attrs.key?(key) ? @attrs[key] : super
+    end
+
+    # @!visibility private
+    def inspect
+      keys  = self.class.main_attrs || @attrs.keys
+      pairs = keys.map { |k| "@#{k}=#{@attrs[k.to_s].inspect}" }.join(', ')
+      "#<#{self.class} #{pairs}>"
     end
   end
 end
