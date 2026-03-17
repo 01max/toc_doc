@@ -14,14 +14,16 @@ module TocDoc
   #   resource[:date] #=> "2026-02-28"
   #   resource.to_h   #=> { "date" => "2026-02-28", "slots" => [] }
   class Resource
-    # Normalises a raw attribute hash to string keys, mirroring what
-    # {#initialize} does internally. Useful in class-level factory methods
-    # that need to inspect attrs before wrapping them in a Resource instance.
-    #
-    # @param attrs [Hash] raw hash with string or symbol keys
-    # @return [Hash{String => Object}]
-    def self.normalize_attrs(attrs)
-      attrs.transform_keys(&:to_s)
+    class << self
+      # Normalises a raw attribute hash to string keys, mirroring what
+      # {#initialize} does internally. Useful in class-level factory methods
+      # that need to inspect attrs before wrapping them in a Resource instance.
+      #
+      # @param attrs [Hash] raw hash with string or symbol keys
+      # @return [Hash{String => Object}]
+      def normalize_attrs(attrs)
+        attrs.transform_keys(&:to_s)
+      end
     end
 
     # @param attrs [Hash] the raw attribute hash (string or symbol keys)
