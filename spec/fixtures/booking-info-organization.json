@@ -1,0 +1,354 @@
+{
+  "data": {
+    "profile": {
+      "id": 325629,
+      "name_with_title_and_determiner": "Cabinet dentaire Anonyme",
+      "name_with_title": "Cabinet dentaire Anonyme",
+      "subtitle": "Cabinet dentaire",
+      "picture_url": "simkvxhkft48tker01ez",
+      "ineligible_to_mps": false,
+      "speciality": null,
+      "organization": true,
+      "organization_status_id": 2,
+      "redirect_url": null,
+      "place_slug": "lyon",
+      "privacy_link": null,
+      "bookable_on_request_enabled": false,
+      "country": "fr",
+      "self_payer_booking_enabled": false,
+      "ssn_enabled": false,
+      "telehealth_enabled": false
+    },
+    "specialities": [
+      {
+        "id": 1,
+        "kind": "medical",
+        "slug": "dentiste",
+        "name": "Chirurgien-dentiste"
+      }
+    ],
+    "visit_motive_categories": [],
+    "visit_motives": [
+      {
+        "id": 3251399,
+        "visit_motive_category_id": null,
+        "organization_id": 164993,
+        "speciality_id": 1,
+        "ref_visit_motive_id": 475,
+        "position": 1,
+        "telehealth": false,
+        "name": "Première consultation dentaire",
+        "new_patient_restrictions": [],
+        "age_referral_restrictions": [],
+        "configurations": null
+      },
+      {
+        "id": 3251402,
+        "visit_motive_category_id": null,
+        "organization_id": 164993,
+        "speciality_id": 1,
+        "ref_visit_motive_id": 2964,
+        "position": 3,
+        "telehealth": false,
+        "name": "Contrôle annuel et/ou détartrage",
+        "new_patient_restrictions": [
+          {
+            "insurance_sector": "all",
+            "agenda_ids": [
+              625223,
+              539683,
+              540331,
+              2167072,
+              1354235,
+              1655675
+            ]
+          }
+        ],
+        "age_referral_restrictions": [],
+        "configurations": null
+      },
+      {
+        "id": 3268102,
+        "visit_motive_category_id": null,
+        "organization_id": 164993,
+        "speciality_id": 1,
+        "ref_visit_motive_id": 1346,
+        "position": 5,
+        "telehealth": false,
+        "name": "Consultation d'implantologie",
+        "new_patient_restrictions": [],
+        "age_referral_restrictions": [],
+        "configurations": null
+      },
+      {
+        "id": 4017118,
+        "visit_motive_category_id": null,
+        "organization_id": 164993,
+        "speciality_id": 1,
+        "ref_visit_motive_id": 4785,
+        "position": 4,
+        "telehealth": false,
+        "name": "Consultation en vue d'une endodontie",
+        "new_patient_restrictions": [],
+        "age_referral_restrictions": [],
+        "configurations": null
+      }
+    ],
+    "agendas": [
+      {
+        "id": 539683,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            3251399,
+            3251402
+          ]
+        },
+        "visit_motive_ids": [
+          3251399,
+          3251402
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 43213675,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      },
+      {
+        "id": 540321,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            3268102
+          ]
+        },
+        "visit_motive_ids": [
+          3268102
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 24857685,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      },
+      {
+        "id": 540331,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            3251399,
+            3251402
+          ]
+        },
+        "visit_motive_ids": [
+          3251399,
+          3251402
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 43264486,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      },
+      {
+        "id": 625223,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            3251399,
+            3251402
+          ]
+        },
+        "visit_motive_ids": [
+          3251399,
+          3251402
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 47085937,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      },
+      {
+        "id": 1354235,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            3251399,
+            3251402
+          ]
+        },
+        "visit_motive_ids": [
+          3251399,
+          3251402
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 2840533,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      },
+      {
+        "id": 1655675,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            4017118
+          ]
+        },
+        "visit_motive_ids": [
+          4017118
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 56837701,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      },
+      {
+        "id": 2167072,
+        "booking_disabled": false,
+        "booking_temporary_disabled": false,
+        "anonymous": false,
+        "hide_practitioner": false,
+        "organization_id": 164993,
+        "visit_motive_ids_by_practice_id": {
+          "214473": [
+            3251399,
+            3251402
+          ]
+        },
+        "visit_motive_ids": [
+          3251399,
+          3251402
+        ],
+        "practice_id": 214473,
+        "speciality_id": 1,
+        "practitioner_id": 73882106,
+        "patient_base_id": 186960,
+        "insurance_sector_enabled": false,
+        "equipment_agendas_required": false,
+        "landline_number": "04 78 53 57 57"
+      }
+    ],
+    "places": [
+      {
+        "id": "practice-214473",
+        "name": "Cabinet dentaire Anonyme",
+        "city": "Lyon",
+        "zipcode": "69003",
+        "latitude": 45.7493901,
+        "longitude": 4.886792499999999,
+        "address": "1 Rue Anonyme",
+        "practice_ids": [
+          214473
+        ],
+        "slug": "lyon",
+        "landline_number": "04 78 53 57 57"
+      }
+    ],
+    "practitioners": [
+      {
+        "id": 2840533,
+        "profile_id": 22128,
+        "name": "DUPONT",
+        "name_with_title_and_determiner": "Dr Clémence Dupont",
+        "name_with_title": "Dr Clémence DUPONT",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "chvvzvhdgphupwtqcfht"
+      },
+      {
+        "id": 24857685,
+        "profile_id": 211920,
+        "name": "MARTIN",
+        "name_with_title_and_determiner": "le Dr Benjamin Martin",
+        "name_with_title": "Dr Benjamin MARTIN",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "s79jalzmtausavcygicc"
+      },
+      {
+        "id": 43213675,
+        "profile_id": 308373,
+        "name": "BERNARD",
+        "name_with_title_and_determiner": "le Dr Remi Bernard",
+        "name_with_title": "Dr Remi BERNARD",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "kikhpmt11dfzsedmmbpz"
+      },
+      {
+        "id": 43264486,
+        "profile_id": 308737,
+        "name": "PETIT",
+        "name_with_title_and_determiner": "le Dr Chloe Petit",
+        "name_with_title": "Dr Chloe PETIT",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "pedxn8o444qpwfc2iqas"
+      },
+      {
+        "id": 47085937,
+        "profile_id": 378583,
+        "name": "ROBERT",
+        "name_with_title_and_determiner": "le Dr Damien Robert",
+        "name_with_title": "Dr Damien ROBERT",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "dg4xgbrl8qjibgkyicif"
+      },
+      {
+        "id": 56837701,
+        "profile_id": 992368,
+        "name": "RICHARD",
+        "name_with_title_and_determiner": "le Dr Pauline Richard",
+        "name_with_title": "Dr Pauline RICHARD",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "dn8astwhyvbiqtfuxffp"
+      },
+      {
+        "id": 73882106,
+        "profile_id": 1375333,
+        "name": "DURAND",
+        "name_with_title_and_determiner": "Cassandre Durand",
+        "name_with_title": "Cassandre Durand",
+        "speciality": "Chirurgien-dentiste",
+        "cloudinary_public_id": "w18ehhzmbtpae8cbdc89"
+      }
+    ],
+    "user_never_made_patient_request": true,
+    "insurance_step_options": []
+  }
+}

@@ -5,7 +5,8 @@
 ## 1.5
 
 - [ ] Booking context
-  - https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388
+  - practitioner : https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388
+  - organization : https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=325629
 
 ## 1.6
 
