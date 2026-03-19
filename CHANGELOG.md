@@ -1,5 +1,23 @@
 ## [Unreleased]
 
+## [1.4.0] - 2026-03-19
+
+### Added
+
+- **`TocDoc::Place`** — new `Resource`-based model representing a practice location inside a profile response; exposes address/geo fields (`#address`, `#zipcode`, `#city`, `#full_address`, `#landline_number`, `#latitude`, `#longitude`, `#elevator`, `#handicap`, `#formal_name`) via dot-notation and adds `#coordinates` returning `[latitude, longitude]`
+- **`TocDoc::Profile.find`** — class method that fetches a full profile page by slug or numeric ID from `/profiles/:identifier.json`; returns a typed `Profile::Practitioner` or `Profile::Organization` with `partial: false`
+- **`TocDoc::Profile#skills`** — returns all skills across every practice as an array of `TocDoc::Resource` objects
+- **`TocDoc::Profile#skills_for(practice_id)`** — returns skills for a single practice
+- **`TocDoc.profile`** — top-level shortcut delegating to `TocDoc::Profile.find`
+- **`TocDoc::Resource.main_attrs`** — class macro declaring which attribute keys appear in `#inspect`; inheritable by subclasses
+- **`TocDoc::Resource.normalize_attrs`** — extracted as a public class method (string-key normalisation)
+- **`TocDoc::Resource#inspect`** — custom implementation using `main_attrs` when declared, falling back to all keys
+
+### Changed
+
+- **`TocDoc::Profile.build`** — updated to resolve full profile responses via boolean flags (`is_practitioner` / `organization`) in addition to the existing `owner_type` path used for search results; profiles built from search results are now tagged `partial: true`, full fetches `partial: false`; a `force_full_profile` flag on a search result transparently delegates to `Profile.find`
+- **`TocDoc::Profile`** — `main_attrs :id, :partial` declared so inspect output stays concise
+
 ## [1.3.0] - 2026-03-15
 
 ### Added

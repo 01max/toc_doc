@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.describe TocDoc::Profile do
+  let(:base_url) { 'https://www.doctolib.fr/profiles/jane-doe-bordeaux.json' }
+  let(:numeric_url) { 'https://www.doctolib.fr/profiles/1542899.json' }
+
+  def stub_profile(url = base_url)
+    stub_request(:get, url)
+      .to_return(
+        status: 200,
+        body: fixture('profile.json'),
+        headers: { 'Content-Type' => 'application/json' }
+      )
+  end
+
   describe '.build' do
     context "when owner_type is 'Account'" do
       subject(:profile) { described_class.build('owner_type' => 'Account', 'name' => 'Dr Smith') }
@@ -19,14 +31,111 @@ RSpec.describe TocDoc::Profile do
     end
 
     context 'when owner_type is anything else' do
-      it 'defaults to Profile::Organization' do
-        expect(described_class.build('owner_type' => 'Unknown')).to be_a(TocDoc::Profile::Organization)
+      it 'raises ArgumentError' do
+        expect { described_class.build('owner_type' => 'Unknown') }.to raise_error(ArgumentError)
       end
     end
 
     context 'when attrs are empty' do
-      it 'defaults to Profile::Organization' do
-        expect(described_class.build).to be_a(TocDoc::Profile::Organization)
+      it 'raises ArgumentError' do
+        expect { described_class.build }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when is_practitioner is true (profile-page flag)' do
+      it 'returns a Profile::Practitioner' do
+        expect(described_class.build('is_practitioner' => true)).to be_a(TocDoc::Profile::Practitioner)
+      end
+    end
+
+    context 'when organization is true (profile-page flag)' do
+      it 'returns a Profile::Organization' do
+        expect(described_class.build('organization' => true)).to be_a(TocDoc::Profile::Organization)
+      end
+    end
+  end
+
+  describe '.find' do
+    context 'with a slug identifier' do
+      before { stub_profile }
+
+      subject(:profile) { described_class.find('jane-doe-bordeaux') }
+
+      it 'returns a Profile::Practitioner' do
+        expect(profile).to be_a(TocDoc::Profile::Practitioner)
+      end
+
+      it 'exposes name' do
+        expect(profile.name).to eq('DOE')
+      end
+
+      it 'exposes name_with_title' do
+        expect(profile.name_with_title).to eq('Dr Jane DOE')
+      end
+
+      it 'exposes speciality as a TocDoc::Speciality' do
+        expect(profile.speciality).to be_a(TocDoc::Speciality)
+        expect(profile.speciality.name).to eq('Chirurgien-dentiste')
+      end
+
+      it 'exposes places as an array of TocDoc::Place' do
+        expect(profile.places).to all(be_a(TocDoc::Place))
+        expect(profile.places.length).to eq(1)
+      end
+
+      it 'exposes place city, address and full_address' do
+        place = profile.places.first
+        expect(place.city).to eq('Bordeaux')
+        expect(place.address).to eq('1 Rue Anonyme')
+        expect(place.full_address).to eq('1 Rue Anonyme, 33000 Bordeaux')
+      end
+
+      it 'exposes opening_hours as a raw Array of Hashes' do
+        expect(profile.places.first.opening_hours).to be_an(Array)
+        expect(profile.places.first.opening_hours.first['day']).to eq(1)
+      end
+
+      it 'exposes stations as a raw Array of Hashes' do
+        expect(profile.places.first.stations).to be_an(Array)
+        expect(profile.places.first.stations.first['transport_type']).to eq('tram')
+      end
+
+      it 'exposes legals as a raw Hash' do
+        expect(profile.legals).to be_a(Hash)
+        expect(profile.legals['rpps']).to eq('00000000000')
+      end
+
+      it 'exposes details as a raw Array of Hashes' do
+        expect(profile.details).to be_an(Array)
+        expect(profile.details.first['practice_id']).to eq(125_055)
+      end
+
+      it 'exposes bookable' do
+        expect(profile.bookable).to be true
+      end
+
+      it '#skills returns a flat Array of 6 Resource items' do
+        expect(profile.skills).to all(be_a(TocDoc::Resource))
+        expect(profile.skills.length).to eq(6)
+      end
+
+      it '#skills_for returns the skills for a given practice_id' do
+        expect(profile.skills_for(125_055).length).to eq(6)
+      end
+    end
+
+    context 'with a numeric identifier' do
+      before { stub_profile(numeric_url) }
+
+      it 'returns a Profile::Practitioner' do
+        expect(described_class.find(1_542_899)).to be_a(TocDoc::Profile::Practitioner)
+      end
+    end
+
+    context 'when identifier is nil' do
+      it 'raises ArgumentError without making any HTTP request' do
+        expect { described_class.find(nil) }.to raise_error(ArgumentError, /nil/)
+        expect(a_request(:get, /profiles/)).not_to have_been_made
       end
     end
   end
@@ -89,6 +198,14 @@ RSpec.describe TocDoc::Profile do
 
     it 'round-trips to a plain Hash via #to_h' do
       expect(profile.to_h).to include('name' => 'Dr Alice Dupont', 'city' => 'Lyon')
+    end
+  end
+
+  describe 'TocDoc.profile module-level delegation' do
+    before { stub_profile }
+
+    it 'delegates to Profile.find and returns a Profile::Practitioner' do
+      expect(TocDoc.profile('jane-doe-bordeaux')).to be_a(TocDoc::Profile::Practitioner)
     end
   end
 end

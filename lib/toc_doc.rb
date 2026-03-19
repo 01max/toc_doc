@@ -89,6 +89,17 @@ module TocDoc
       TocDoc::Search.where(**)
     end
 
+    # Fetches a full profile page by slug or numeric ID.
+    #
+    # Delegates to {TocDoc::Profile.find} — see that method for full
+    # parameter documentation.
+    #
+    # @param identifier [String, Integer] profile slug or numeric ID
+    # @return [TocDoc::Profile::Practitioner, TocDoc::Profile::Organization]
+    def profile(identifier)
+      TocDoc::Profile.find(identifier)
+    end
+
     # @!visibility private
     def method_missing(method_name, ...)
       if client.respond_to?(method_name)
