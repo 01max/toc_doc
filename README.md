@@ -28,6 +28,7 @@ A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-b
 4. [Endpoints](#endpoints)
    - [Availabilities](#availabilities)
    - [Search](#search)
+   - [Profile](#profile)
 5. [Response objects](#response-objects)
 6. [Pagination](#pagination)
 7. [Error handling](#error-handling)
@@ -128,7 +129,7 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.3.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.4.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
 | `per_page` | `15` | Default number of availability dates per request (capped at `15`). |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
@@ -209,6 +210,37 @@ Valid `type:` values: `'profile'` (all profiles), `'practitioner'`, `'organizati
 
 **Return value:** a `TocDoc::Search::Result` when `type:` is omitted, or a filtered `Array` otherwise (see [Response objects](#response-objects)).
 
+### Profile
+
+Fetch a full practitioner or organization profile page by slug or numeric ID.
+
+```ruby
+# by slug
+profile = TocDoc::Profile.find('jane-doe-bordeaux')
+
+# by numeric ID
+profile = TocDoc::Profile.find(1_542_899)
+
+# module-level shortcut
+profile = TocDoc.profile('jane-doe-bordeaux')
+```
+
+`Profile.find` returns a typed `TocDoc::Profile::Practitioner` or `TocDoc::Profile::Organization` instance with `partial: false` (i.e. full profile data).
+
+```ruby
+profile.name            # => "Dr. Jane Doe"
+profile.partial         # => false
+profile.practitioner?   # => true
+
+profile.skills          # => [#<TocDoc::Resource ...>, ...]
+profile.skills_for(377_272)  # => skills for a specific practice
+
+profile.places.first.city              # => "Bordeaux"
+profile.places.first.coordinates       # => [44.8386722, -0.5780466]
+```
+
+**Return value:** a `TocDoc::Profile::Practitioner` or `TocDoc::Profile::Organization` (see [Response objects](#response-objects)).
+
 ---
 
 ## Response objects
@@ -270,15 +302,40 @@ Returned by `TocDoc::Search.where` when `type:` is omitted.
 
 ### `TocDoc::Profile`
 
-Represents a search profile result (practitioner or organization). Use `Profile.build(attrs)` to obtain the correctly typed subclass instance.
+Represents a practitioner or organization profile. Can be a lightweight search result (`partial: true`) or a full profile page (`partial: false`).
 
 | Method | Type | Description |
 |---|---|---|
-| `Profile.build(attrs)` | `Profile::Practitioner \| Profile::Organization` | Factory: returns `Practitioner` when `owner_type` is `"Account"`, `Organization` otherwise. |
+| `Profile.find(identifier)` | `Profile::Practitioner \| Profile::Organization` | Fetches a full profile by slug or numeric ID. Returns `partial: false`. |
+| `Profile.build(attrs)` | `Profile::Practitioner \| Profile::Organization` | Factory used internally by `Search::Result`; resolves type from `owner_type` or boolean flags. Returns `partial: true` for search results. |
+| `#id` | `String \| Integer` | Profile identifier. |
+| `#partial` | `Boolean` | `true` when built from a search result, `false` when fetched via `Profile.find`. |
 | `#practitioner?` | `Boolean` | `true` when this is a `Profile::Practitioner`. |
 | `#organization?` | `Boolean` | `true` when this is a `Profile::Organization`. |
+| `#places` | `Array<TocDoc::Place>` | Practice locations (available on full profiles). |
+| `#skills` | `Array<TocDoc::Resource>` | All skills across every practice (available on full profiles). |
+| `#skills_for(practice_id)` | `Array<TocDoc::Resource>` | Skills for a single practice by its ID. |
 
-`TocDoc::Profile::Practitioner` and `TocDoc::Profile::Organization` are thin subclasses that inherit dot-notation attribute access from `TocDoc::Resource`.
+`TocDoc::Profile::Practitioner` and `TocDoc::Profile::Organization` are typed subclasses that inherit dot-notation attribute access from `TocDoc::Resource`.
+
+### `TocDoc::Place`
+
+Represents a practice location returned inside a full profile response. Inherits dot-notation attribute access from `TocDoc::Resource`.
+
+| Method | Type | Description |
+|---|---|---|
+| `#id` | `String` | Practice identifier (e.g. `"practice-125055"`). |
+| `#address` | `String` | Street address. |
+| `#zipcode` | `String` | Postal code. |
+| `#city` | `String` | City name. |
+| `#full_address` | `String` | Combined address string. |
+| `#landline_number` | `String \| nil` | Phone number, if available. |
+| `#latitude` | `Float` | Latitude. |
+| `#longitude` | `Float` | Longitude. |
+| `#elevator` | `Boolean` | Whether the practice has elevator access. |
+| `#handicap` | `Boolean` | Whether the practice is handicap-accessible. |
+| `#formal_name` | `String \| nil` | Formal practice name, if available. |
+| `#coordinates` | `Array<Float>` | Convenience method returning `[latitude, longitude]`. |
 
 ### `TocDoc::Speciality`
 

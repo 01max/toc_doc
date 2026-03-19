@@ -2,12 +2,6 @@
 
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
-## 1.4
-
-- [ ] Profile
-  - from slug : https://www.doctolib.fr/profiles/jane-doe-bordeaux.json
-  - from id : https://www.doctolib.fr/profiles/926388.json
-
 ## 1.5
 
 - [ ] Booking context
@@ -32,6 +26,12 @@
 - [ ] Figure what is `organization_statuses` in the autocomplete endpoint and what to do with it.
 
 # DONE & RELEASED
+
+## 1.4
+
+- [x] Profile
+  - from slug : https://www.doctolib.fr/profiles/jane-doe-bordeaux.json
+  - from id : https://www.doctolib.fr/profiles/926388.json
 
 ## 1.3
 
