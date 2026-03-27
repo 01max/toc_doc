@@ -139,7 +139,7 @@ DEPENDENCIES
   rubocop (~> 1.85)
   simplecov
   toc_doc!
-  webmock (~> 3.0)
+  webmock (~> 3.26)
   webrick
   yard (~> 0.9)
 
