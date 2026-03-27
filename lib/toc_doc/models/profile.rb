@@ -19,20 +19,19 @@ module TocDoc
     class << self
       # Factory — returns a +Profile::Practitioner+ or +Profile::Organization+.
       #
-      # Resolves type via +owner_type+ first (search context), then falls back
+      # Resolves type via +owner_type+ first (autocomplete context), then falls back
       # to the boolean flags present on profile-page responses.
       #
       # @param attrs [Hash] raw attribute hash from the API response
       # @return [Profile::Practitioner, Profile::Organization]
       def build(attrs = {})
         attrs = normalize_attrs(attrs)
-        return find(attrs['value']) if attrs['force_full_profile'] && attrs['owner_type']
 
-        case attrs['owner_type']
-        when 'Account'      then Practitioner.new(attrs.merge('partial' => true))
-        when 'Organization' then Organization.new(attrs.merge('partial' => true))
-        else                     build_from_flags(attrs)
-        end
+        return find(attrs['value']) if attrs['force_full_profile']
+
+        build_from_autocomplete(attrs) ||
+          build_from_booking_info(attrs) ||
+          build_from_full_profile(attrs)
       end
 
       # Fetches a full profile page by slug or numeric ID.
@@ -53,7 +52,20 @@ module TocDoc
 
       private
 
-      def build_from_flags(attrs)
+      # Autocomplete results carry an +owner_type+ key that tells us the
+      # profile type directly.  When +force_full_profile+ is set, fetches
+      # the full profile page instead of building a partial.
+      def build_from_autocomplete(attrs)
+        return unless attrs['owner_type']
+
+        case attrs['owner_type']
+        when 'Account'      then Practitioner.new(attrs.merge('partial' => true))
+        when 'Organization' then Organization.new(attrs.merge('partial' => true))
+        else                     raise ArgumentError, "Unknown owner_type: #{attrs['owner_type']}"
+        end
+      end
+
+      def build_from_full_profile(attrs)
         if attrs['is_practitioner']
           Practitioner.new(attrs.merge('partial' => false))
         elsif attrs['organization']
@@ -61,6 +73,17 @@ module TocDoc
         else
           raise ArgumentError, "Unable to determine profile type from attributes: #{attrs.inspect}"
         end
+      end
+
+      # Booking-info profiles carry `organization` (true/false) but lack
+      # `is_practitioner`.  Returns nil when the shape doesn't match so the
+      # caller can fall through to build_from_full_profile.
+      def build_from_booking_info(attrs)
+        return unless attrs.key?('organization') && !attrs.key?('is_practitioner')
+
+        return Organization.new(attrs.merge('partial' => true)) if attrs['organization']
+
+        Practitioner.new(attrs.merge('partial' => true))
       end
 
       def profile_attrs(data)
