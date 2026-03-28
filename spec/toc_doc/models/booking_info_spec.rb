@@ -100,6 +100,16 @@ RSpec.describe TocDoc::BookingInfo do
       it 'contains the correct agenda ID' do
         expect(info.agendas.map(&:id)).to include(2_359_638)
       end
+
+      it 'resolves visit_motives on each agenda as typed VisitMotive objects' do
+        expect(info.agendas.first.visit_motives).to all(be_a(TocDoc::VisitMotive))
+      end
+
+      it 'filters visit_motives to only those matching the agenda visit_motive_ids' do
+        agenda = info.agendas.first
+        resolved_ids = agenda.visit_motives.map(&:id)
+        expect(resolved_ids).to match_array(agenda.visit_motive_ids)
+      end
     end
 
     describe '#places' do
@@ -139,6 +149,14 @@ RSpec.describe TocDoc::BookingInfo do
         expect(info.to_h).to be_a(Hash)
         expect(info.to_h).to have_key('profile')
         expect(info.to_h).to have_key('visit_motives')
+      end
+    end
+
+    describe 'TocDoc.booking_info delegation' do
+      it 'delegates to BookingInfo.find and returns a BookingInfo' do
+        result = TocDoc.booking_info('jane-doe-bordeaux')
+        expect(result).to be_a(described_class)
+        expect(result.profile).to be_a(TocDoc::Profile::Practitioner)
       end
     end
   end
