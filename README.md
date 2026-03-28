@@ -29,6 +29,7 @@ A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-b
    - [Availabilities](#availabilities)
    - [Search](#search)
    - [Profile](#profile)
+   - [BookingInfo](#bookinginfo)
 5. [Response objects](#response-objects)
 6. [Pagination](#pagination)
 7. [Error handling](#error-handling)
@@ -129,7 +130,7 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.4.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.5.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
 | `per_page` | `15` | Default number of availability dates per request (capped at `15`). |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
@@ -241,6 +242,35 @@ profile.places.first.coordinates       # => [44.8386722, -0.5780466]
 
 **Return value:** a `TocDoc::Profile::Practitioner` or `TocDoc::Profile::Organization` (see [Response objects](#response-objects)).
 
+### BookingInfo
+
+Fetch the slot-selection funnel context for a practitioner or organization by slug or numeric ID.
+
+```ruby
+# by slug
+info = TocDoc::BookingInfo.find('jane-doe-bordeaux')
+
+# by numeric ID
+info = TocDoc::BookingInfo.find(1_542_899)
+
+# module-level shortcut
+info = TocDoc.booking_info('jane-doe-bordeaux')
+```
+
+`BookingInfo.find` hits `/online_booking/api/slot_selection_funnel/v1/info.json` and returns a `TocDoc::BookingInfo` instance containing the full booking context needed to drive the appointment-booking funnel.
+
+```ruby
+info.profile        # => #<TocDoc::Profile::Practitioner ...>
+info.specialities   # => [#<TocDoc::Speciality ...>, ...]
+info.visit_motives  # => [#<TocDoc::VisitMotive id=..., name="...">, ...]
+info.agendas        # => [#<TocDoc::Agenda id=..., practice_id=...>, ...]
+info.places         # => [#<TocDoc::Place ...>, ...]
+info.practitioners  # => [#<TocDoc::Profile::Practitioner partial=true>, ...]
+info.organization?  # => false
+```
+
+**Return value:** a `TocDoc::BookingInfo` (see [Response objects](#response-objects)).
+
 ---
 
 ## Response objects
@@ -336,6 +366,39 @@ Represents a practice location returned inside a full profile response. Inherits
 | `#handicap` | `Boolean` | Whether the practice is handicap-accessible. |
 | `#formal_name` | `String \| nil` | Formal practice name, if available. |
 | `#coordinates` | `Array<Float>` | Convenience method returning `[latitude, longitude]`. |
+
+### `TocDoc::BookingInfo`
+
+Returned by `TocDoc::BookingInfo.find`; also accessible via the `TocDoc.booking_info` module-level shortcut.
+
+| Method | Type | Description |
+|---|---|---|
+| `#profile` | `Profile::Practitioner \| Profile::Organization` | Typed profile built via `Profile.build`. |
+| `#specialities` | `Array<TocDoc::Speciality>` | Specialities associated with the booking context. |
+| `#visit_motives` | `Array<TocDoc::VisitMotive>` | Available visit motives (reasons for consultation). |
+| `#agendas` | `Array<TocDoc::Agenda>` | Agendas, each pre-resolved with their matching `VisitMotive` objects. |
+| `#places` | `Array<TocDoc::Place>` | Practice locations. |
+| `#practitioners` | `Array<TocDoc::Profile::Practitioner>` | Practitioners associated with this booking context (`partial: true`). |
+| `#organization?` | `Boolean` | Delegates to the inner profile. |
+
+### `TocDoc::VisitMotive`
+
+Represents a visit motive (reason for consultation) returned inside a `BookingInfo` response. Inherits dot-notation attribute access from `TocDoc::Resource`.
+
+| Method | Type | Description |
+|---|---|---|
+| `#id` | `Integer` | Visit motive identifier. |
+| `#name` | `String` | Human-readable name of the visit motive. |
+
+### `TocDoc::Agenda`
+
+Represents an agenda (calendar) returned inside a `BookingInfo` response. Inherits dot-notation attribute access from `TocDoc::Resource`.
+
+| Method | Type | Description |
+|---|---|---|
+| `#id` | `Integer` | Agenda identifier. |
+| `#practice_id` | `Integer` | ID of the associated practice. |
+| `#visit_motives` | `Array<TocDoc::VisitMotive>` | Visit motives pre-resolved via `visit_motive_ids` when built through `BookingInfo`. |
 
 ### `TocDoc::Speciality`
 
