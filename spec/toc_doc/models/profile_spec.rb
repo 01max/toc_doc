@@ -237,6 +237,18 @@ RSpec.describe TocDoc::Profile do
     end
   end
 
+  describe 'Profile::Practitioner#to_s' do
+    it 'returns name_with_title when present' do
+      p = TocDoc::Profile::Practitioner.new('name_with_title' => 'Dr Jane DOE', 'name' => 'DOE')
+      expect(p.to_s).to eq('Dr Jane DOE')
+    end
+
+    it 'falls back to name when name_with_title is absent' do
+      p = TocDoc::Profile::Practitioner.new('name' => 'DOE')
+      expect(p.to_s).to eq('DOE')
+    end
+  end
+
   describe 'TocDoc.profile module-level delegation' do
     before do
       stub_profile
