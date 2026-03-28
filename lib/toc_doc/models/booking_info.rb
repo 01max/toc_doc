@@ -60,28 +60,40 @@ module TocDoc
     #
     # @return [Array<TocDoc::Speciality>]
     def specialities
-      @specialities ||= Array(@data['specialities']).map { |speciality_attrs| Speciality.new(speciality_attrs) }
+      @specialities ||= Array(@data['specialities']).map do |speciality_attrs|
+        Speciality.new(speciality_attrs)
+      end
     end
 
     # All visit motives for this booking context.
     #
     # @return [Array<TocDoc::VisitMotive>]
     def visit_motives
-      @visit_motives ||= Array(@data['visit_motives']).map { |visit_motive_attrs| VisitMotive.new(visit_motive_attrs) }
+      @visit_motives ||= Array(@data['visit_motives']).map do |visit_motive_attrs|
+        VisitMotive.new(visit_motive_attrs)
+      end
     end
 
     # All agendas for this booking context.
     #
     # @return [Array<TocDoc::Agenda>]
     def agendas
-      @agendas ||= Array(@data['agendas']).map { |agenda_attrs| Agenda.new(agenda_attrs) }
+      @agendas ||= Array(@data['agendas']).map do |agenda_attrs|
+        agenda_visit_motives = visit_motives.select do |vm|
+          agenda_attrs['visit_motive_ids'].include?(vm.id)
+        end
+
+        Agenda.new(agenda_attrs.merge('visit_motives' => agenda_visit_motives))
+      end
     end
 
     # All practice locations for this booking context.
     #
     # @return [Array<TocDoc::Place>]
     def places
-      @places ||= Array(@data['places']).map { |place_attrs| Place.new(place_attrs) }
+      @places ||= Array(@data['places']).map do |place_attrs|
+        Place.new(place_attrs)
+      end
     end
 
     # All practitioners associated with this booking context.
