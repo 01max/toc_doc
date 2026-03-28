@@ -178,7 +178,9 @@ RSpec.describe TocDoc::Availability do
   end
 
   describe '.where' do
-    before { stub_availabilities }
+    before do
+      stub_availabilities
+    end
 
     it 'calls the correct endpoint' do
       TocDoc::Availability.where(

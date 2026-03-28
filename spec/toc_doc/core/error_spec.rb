@@ -24,7 +24,9 @@ RSpec.describe TocDoc::Middleware::RaiseError do
   end
 
   def stub(status)
-    stubs.get('/test') { [status, {}, ''] }
+    stubs.get('/test') do
+      [status, {}, '']
+    end
     conn.get('/test')
   end
 

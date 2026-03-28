@@ -17,7 +17,9 @@ RSpec.describe TocDoc::BookingInfo do
 
   describe '.find' do
     context 'with practitioner fixture' do
-      before { stub_booking_info('booking-info-practitioner.json', identifier: 'jane-doe-bordeaux') }
+      before do
+        stub_booking_info('booking-info-practitioner.json', identifier: 'jane-doe-bordeaux')
+      end
 
       subject(:info) { described_class.find('jane-doe-bordeaux') }
 
@@ -35,7 +37,9 @@ RSpec.describe TocDoc::BookingInfo do
     end
 
     context 'with organization fixture' do
-      before { stub_booking_info('booking-info-organization.json', identifier: 325_629) }
+      before do
+        stub_booking_info('booking-info-organization.json', identifier: 325_629)
+      end
 
       subject(:info) { described_class.find(325_629) }
 
@@ -61,7 +65,9 @@ RSpec.describe TocDoc::BookingInfo do
   end
 
   context 'with practitioner fixture' do
-    before { stub_booking_info('booking-info-practitioner.json', identifier: 'jane-doe-bordeaux') }
+    before do
+      stub_booking_info('booking-info-practitioner.json', identifier: 'jane-doe-bordeaux')
+    end
 
     subject(:info) { described_class.find('jane-doe-bordeaux') }
 
@@ -138,7 +144,9 @@ RSpec.describe TocDoc::BookingInfo do
   end
 
   context 'with organization fixture' do
-    before { stub_booking_info('booking-info-organization.json', identifier: 325_629) }
+    before do
+      stub_booking_info('booking-info-organization.json', identifier: 325_629)
+    end
 
     subject(:info) { described_class.find(325_629) }
 

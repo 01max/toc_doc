@@ -15,7 +15,9 @@ RSpec.describe TocDoc::Search do
 
   describe '.where' do
     context 'with autocomplete-profile.json fixture (practitioner results)' do
-      before { stub_search('autocomplete-profile.json') }
+      before do
+        stub_search('autocomplete-profile.json')
+      end
 
       it 'calls the correct endpoint' do
         TocDoc::Search.where(query: 'dentiste')
@@ -68,7 +70,9 @@ RSpec.describe TocDoc::Search do
     end
 
     context 'with autocomplete-speciality.json fixture (organization + speciality results)' do
-      before { stub_search('autocomplete-speciality.json') }
+      before do
+        stub_search('autocomplete-speciality.json')
+      end
 
       it 'returns Profile::Organization instances for type: profile' do
         result = TocDoc::Search.where(query: 'dentiste', type: 'profile')
@@ -96,7 +100,9 @@ RSpec.describe TocDoc::Search do
       stub_search('autocomplete-profile.json')
     end
 
-    after { TocDoc.reset! }
+    after do
+      TocDoc.reset!
+    end
 
     it 'TocDoc.search delegates to Search.where' do
       result = TocDoc.search(query: 'dentiste')

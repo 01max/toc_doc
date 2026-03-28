@@ -89,7 +89,9 @@ RSpec.describe TocDoc::Profile do
 
   describe '.find' do
     context 'with a slug identifier' do
-      before { stub_profile }
+      before do
+        stub_profile
+      end
 
       subject(:profile) { described_class.find('jane-doe-bordeaux') }
 
@@ -157,7 +159,9 @@ RSpec.describe TocDoc::Profile do
     end
 
     context 'with a numeric identifier' do
-      before { stub_profile(numeric_url) }
+      before do
+        stub_profile(numeric_url)
+      end
 
       it 'returns a Profile::Practitioner' do
         expect(described_class.find(1_542_899)).to be_a(TocDoc::Profile::Practitioner)
@@ -234,7 +238,9 @@ RSpec.describe TocDoc::Profile do
   end
 
   describe 'TocDoc.profile module-level delegation' do
-    before { stub_profile }
+    before do
+      stub_profile
+    end
 
     it 'delegates to Profile.find and returns a Profile::Practitioner' do
       expect(TocDoc.profile('jane-doe-bordeaux')).to be_a(TocDoc::Profile::Practitioner)
