@@ -43,13 +43,17 @@ RSpec.describe TocDoc do
 
   it 'provides a memoized client reflecting current options' do
     TocDoc.reset!
-    TocDoc.configure { |config| config.per_page = 7 }
+    TocDoc.configure do |config|
+      config.per_page = 7
+    end
 
     client = TocDoc.client
     expect(client.per_page).to eq(7)
     expect(TocDoc.client).to be(client)
 
-    TocDoc.configure { |config| config.per_page = 9 }
+    TocDoc.configure do |config|
+      config.per_page = 9
+    end
     new_client = TocDoc.client
 
     expect(new_client).not_to be(client)

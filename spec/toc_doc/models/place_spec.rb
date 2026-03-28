@@ -86,4 +86,10 @@ RSpec.describe TocDoc::Place do
   it 'round-trips to a plain Hash via #to_h' do
     expect(place.to_h).to include('city' => 'Bordeaux', 'zipcode' => '33000')
   end
+
+  describe '#coordinates' do
+    it 'returns [latitude, longitude]' do
+      expect(place.coordinates).to eq([44.8386722, -0.5780466])
+    end
+  end
 end

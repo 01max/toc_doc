@@ -100,6 +100,17 @@ module TocDoc
       TocDoc::Profile.find(identifier)
     end
 
+    # Fetches booking context data for a profile by slug or numeric ID.
+    #
+    # Delegates to {TocDoc::BookingInfo.find} — see that method for full
+    # parameter documentation.
+    #
+    # @param identifier [String, Integer] profile slug or numeric ID
+    # @return [TocDoc::BookingInfo]
+    def booking_info(identifier)
+      TocDoc::BookingInfo.find(identifier)
+    end
+
     # @!visibility private
     def method_missing(method_name, ...)
       if client.respond_to?(method_name)

@@ -48,7 +48,9 @@ RSpec.describe TocDoc::Connection do
 
   describe '#get' do
     it 'issues a GET request and exposes last_response' do
-      stubs.get('/path') { [200, {}, '{}'] }
+      stubs.get('/path') do
+        [200, {}, '{}']
+      end
 
       client.send(:get, '/path')
 
@@ -56,7 +58,9 @@ RSpec.describe TocDoc::Connection do
     end
 
     it 'forwards query params to the request URL' do
-      stubs.get('/search') { [200, {}, '{}'] }
+      stubs.get('/search') do
+        [200, {}, '{}']
+      end
 
       client.send(:get, '/search', q: 'flu')
 
@@ -66,7 +70,9 @@ RSpec.describe TocDoc::Connection do
 
   describe '#post' do
     it 'issues a POST request and exposes last_response' do
-      stubs.post('/appointments') { [201, {}, '{}'] }
+      stubs.post('/appointments') do
+        [201, {}, '{}']
+      end
 
       client.send(:post, '/appointments', '{"name":"test"}')
 
@@ -76,7 +82,9 @@ RSpec.describe TocDoc::Connection do
 
   describe '#put' do
     it 'issues a PUT request and exposes last_response' do
-      stubs.put('/appointments/1') { [200, {}, '{}'] }
+      stubs.put('/appointments/1') do
+        [200, {}, '{}']
+      end
 
       client.send(:put, '/appointments/1', '{}')
 
@@ -86,7 +94,9 @@ RSpec.describe TocDoc::Connection do
 
   describe '#patch' do
     it 'issues a PATCH request and exposes last_response' do
-      stubs.patch('/appointments/1') { [200, {}, '{}'] }
+      stubs.patch('/appointments/1') do
+        [200, {}, '{}']
+      end
 
       client.send(:patch, '/appointments/1', '{}')
 
@@ -96,7 +106,9 @@ RSpec.describe TocDoc::Connection do
 
   describe '#delete' do
     it 'issues a DELETE request and exposes last_response' do
-      stubs.delete('/appointments/1') { [204, {}, ''] }
+      stubs.delete('/appointments/1') do
+        [204, {}, '']
+      end
 
       client.send(:delete, '/appointments/1')
 
@@ -106,7 +118,9 @@ RSpec.describe TocDoc::Connection do
 
   describe '#head' do
     it 'issues a HEAD request and exposes last_response' do
-      stubs.head('/path') { [200, {}, ''] }
+      stubs.head('/path') do
+        [200, {}, '']
+      end
 
       client.send(:head, '/path')
 
@@ -116,25 +130,33 @@ RSpec.describe TocDoc::Connection do
 
   describe '#boolean_from_response?' do
     it 'returns true for a 200 response' do
-      stubs.get('/exists') { [200, {}, '{}'] }
+      stubs.get('/exists') do
+        [200, {}, '{}']
+      end
 
       expect(client.send(:boolean_from_response?, :get, '/exists')).to be(true)
     end
 
     it 'returns true for any 2xx response' do
-      stubs.get('/no-content') { [204, {}, ''] }
+      stubs.get('/no-content') do
+        [204, {}, '']
+      end
 
       expect(client.send(:boolean_from_response?, :get, '/no-content')).to be(true)
     end
 
     it 'returns false for a 404 response' do
-      stubs.get('/missing') { [404, {}, '{}'] }
+      stubs.get('/missing') do
+        [404, {}, '{}']
+      end
 
       expect(client.send(:boolean_from_response?, :get, '/missing')).to be(false)
     end
 
     it 'returns false for other non-2xx responses' do
-      stubs.get('/error') { [422, {}, '{}'] }
+      stubs.get('/error') do
+        [422, {}, '{}']
+      end
 
       expect(client.send(:boolean_from_response?, :get, '/error')).to be(false)
     end
@@ -203,7 +225,9 @@ RSpec.describe TocDoc::Connection do
     end
 
     it 'returns the first page body when no block is given' do
-      json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"data":[3]}'] }
+      json_stubs.get('/items') do
+        [200, { 'Content-Type' => 'application/json' }, '{"data":[3]}']
+      end
 
       result = json_client.send(:paginate, '/items')
 
@@ -211,7 +235,9 @@ RSpec.describe TocDoc::Connection do
     end
 
     it 'stops after the first page when the block returns nil' do
-      json_stubs.get('/items') { [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2]}'] }
+      json_stubs.get('/items') do
+        [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2]}']
+      end
 
       block_calls = 0
       result = json_client.send(:paginate, '/items') do |_acc, _resp|
@@ -228,7 +254,9 @@ RSpec.describe TocDoc::Connection do
         [200, { 'Content-Type' => 'application/json' }, '{"items":[1,2],"page":1}'],
         [200, { 'Content-Type' => 'application/json' }, '{"items":[3,4],"page":2}']
       ]
-      json_stubs.get('/items') { page_responses.shift }
+      json_stubs.get('/items') do
+        page_responses.shift
+      end
 
       block_calls = 0
       result = json_client.send(:paginate, '/items') do |acc, last_resp|
@@ -253,7 +281,9 @@ RSpec.describe TocDoc::Connection do
         [200, { 'Content-Type' => 'application/json' }, '{"items":[]}']
       end
 
-      json_client.send(:paginate, '/items') { |_acc, _resp| nil }
+      json_client.send(:paginate, '/items') do |_acc, _resp|
+        nil
+      end
 
       expect(request_count).to eq(1)
     end
@@ -264,7 +294,9 @@ RSpec.describe TocDoc::Connection do
         [200, { 'Content-Type' => 'application/json' }, '{"items":[2]}'],
         [200, { 'Content-Type' => 'application/json' }, '{"items":[3]}']
       ]
-      json_stubs.get('/items') { pages.shift }
+      json_stubs.get('/items') do
+        pages.shift
+      end
 
       block_calls = 0
       result = json_client.send(:paginate, '/items') do |acc, last_resp|

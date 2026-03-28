@@ -2,11 +2,6 @@
 
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
-## 1.5
-
-- [ ] Booking context
-  - https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388
-
 ## 1.6
 
 ### Better API usage
@@ -26,6 +21,12 @@
 - [ ] Figure what is `organization_statuses` in the autocomplete endpoint and what to do with it.
 
 # DONE & RELEASED
+
+## 1.5
+
+- [x] Booking context
+  - practitioner : https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388
+  - organization : https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=325629
 
 ## 1.4
 

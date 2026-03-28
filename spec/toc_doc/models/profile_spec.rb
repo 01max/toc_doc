@@ -53,11 +53,45 @@ RSpec.describe TocDoc::Profile do
         expect(described_class.build('organization' => true)).to be_a(TocDoc::Profile::Organization)
       end
     end
+
+    context 'when organization is true and is_practitioner is absent (booking-info shape)' do
+      subject(:profile) { described_class.build('organization' => true, 'name_with_title' => 'Cabinet Anonyme') }
+
+      it 'returns a Profile::Organization' do
+        expect(profile).to be_a(TocDoc::Profile::Organization)
+      end
+
+      it 'marks it as partial' do
+        expect(profile.partial).to be true
+      end
+    end
+
+    context 'when organization is false and is_practitioner is absent (booking-info shape)' do
+      subject(:profile) { described_class.build('organization' => false, 'name_with_title' => 'Dr Jane DOE') }
+
+      it 'returns a Profile::Practitioner' do
+        expect(profile).to be_a(TocDoc::Profile::Practitioner)
+      end
+
+      it 'marks it as partial' do
+        expect(profile.partial).to be true
+      end
+    end
+
+    context 'when is_practitioner is true (full profile)' do
+      subject(:profile) { described_class.build('is_practitioner' => true) }
+
+      it 'marks it as not partial' do
+        expect(profile.partial).to be false
+      end
+    end
   end
 
   describe '.find' do
     context 'with a slug identifier' do
-      before { stub_profile }
+      before do
+        stub_profile
+      end
 
       subject(:profile) { described_class.find('jane-doe-bordeaux') }
 
@@ -125,7 +159,9 @@ RSpec.describe TocDoc::Profile do
     end
 
     context 'with a numeric identifier' do
-      before { stub_profile(numeric_url) }
+      before do
+        stub_profile(numeric_url)
+      end
 
       it 'returns a Profile::Practitioner' do
         expect(described_class.find(1_542_899)).to be_a(TocDoc::Profile::Practitioner)
@@ -201,8 +237,22 @@ RSpec.describe TocDoc::Profile do
     end
   end
 
+  describe 'Profile::Practitioner#to_s' do
+    it 'returns name_with_title when present' do
+      p = TocDoc::Profile::Practitioner.new('name_with_title' => 'Dr Jane DOE', 'name' => 'DOE')
+      expect(p.to_s).to eq('Dr Jane DOE')
+    end
+
+    it 'falls back to name when name_with_title is absent' do
+      p = TocDoc::Profile::Practitioner.new('name' => 'DOE')
+      expect(p.to_s).to eq('DOE')
+    end
+  end
+
   describe 'TocDoc.profile module-level delegation' do
-    before { stub_profile }
+    before do
+      stub_profile
+    end
 
     it 'delegates to Profile.find and returns a Profile::Practitioner' do
       expect(TocDoc.profile('jane-doe-bordeaux')).to be_a(TocDoc::Profile::Practitioner)

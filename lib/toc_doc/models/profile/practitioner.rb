@@ -7,7 +7,7 @@ module TocDoc
       main_attrs :name_with_title
 
       def to_s
-        name_with_title || name
+        (respond_to?(:name_with_title) && name_with_title) || name
       end
     end
   end

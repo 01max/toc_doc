@@ -1,5 +1,21 @@
 ## [Unreleased]
 
+## [1.5.0] - 2026-03-28
+
+### Added
+
+- **`TocDoc::BookingInfo`** — new envelope class for the slot-selection funnel info endpoint (`/online_booking/api/slot_selection_funnel/v1/info.json`); `BookingInfo.find(identifier)` fetches booking context by profile slug or numeric ID and returns a typed `BookingInfo` instance
+- **`TocDoc::BookingInfo#profile`** — returns the typed profile (`Practitioner` or `Organization`) via `Profile.build`
+- **`TocDoc::BookingInfo#specialities`** — returns an array of `TocDoc::Speciality` objects
+- **`TocDoc::BookingInfo#visit_motives`** — returns an array of `TocDoc::VisitMotive` objects
+- **`TocDoc::BookingInfo#agendas`** — returns an array of `TocDoc::Agenda` objects, each pre-resolved with its matching `VisitMotive` objects via `visit_motive_ids`
+- **`TocDoc::BookingInfo#places`** — returns an array of `TocDoc::Place` objects
+- **`TocDoc::BookingInfo#practitioners`** — returns an array of `TocDoc::Profile::Practitioner` objects (marked `partial: true`)
+- **`TocDoc::BookingInfo#organization?`** — delegates to the inner profile
+- **`TocDoc::VisitMotive`** — new `Resource`-based model representing a visit motive (reason for consultation); exposes `#id` and `#name` via dot-notation
+- **`TocDoc::Agenda`** — new `Resource`-based model representing an agenda (calendar); exposes `#id` and `#practice_id` via dot-notation; supports pre-resolved `#visit_motives` when built through `BookingInfo`
+- **`TocDoc.booking_info`** — top-level shortcut delegating to `TocDoc::BookingInfo.find`
+
 ## [1.4.0] - 2026-03-19
 
 ### Added
