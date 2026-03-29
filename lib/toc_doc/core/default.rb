@@ -107,6 +107,18 @@ module TocDoc
         @connection_options ||= {}
       end
 
+      # Clears all memoized values so the next call to {.middleware} and
+      # {.connection_options} rebuilds them from scratch.
+      #
+      # Called by {TocDoc::Configurable#reset!} to ensure each reset produces a
+      # fresh middleware stack rather than reusing a stale memoized instance.
+      #
+      # @return [void]
+      def reset!
+        @middleware = nil
+        @connection_options = nil
+      end
+
       private
 
       def build_middleware
