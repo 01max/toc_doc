@@ -61,6 +61,16 @@ or install it directly:
 gem install toc_doc
 ```
 
+### Alternative: gem.coop
+
+If you prefer to install from [gem.coop](https://gem.coop), toc_doc is also [available there](https://beta.gem.coop/@maxime/toc_doc) :
+
+```ruby
+source 'https://gem.coop' do
+  gem 'toc_doc'
+end
+```
+
 ---
 
 ## Quick start
