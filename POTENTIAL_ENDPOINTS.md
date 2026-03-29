@@ -3,16 +3,16 @@
 - Interesting JSONs [GET]
   - [x] Availabilities
     - https://www.doctolib.fr/availabilities.json?visit_motive_ids=7767829&agenda_ids=1101600&practice_ids=377272&telehealth=false&start_date=2026-03-06&limit=5
-  - Practitioner ? 
+  - [x] Practitioner
     - https://www.doctolib.fr/pharmacie/paris/pharmacie-faidherbe.json
     - https://www.doctolib.fr/dentiste/bordeaux/mathilde-devun-lesparre-medoc.json
     - https://www.doctolib.fr/a/b/mathilde-devun-lesparre-medoc.json
     - https://www.doctolib.fr/profiles/mathilde-devun-lesparre-medoc.json
-  - Rassemblement practiciens / Place Practitioners collection
+  - [x] Rassemblement practiciens / Place Practitioners collection
     - https://www.doctolib.fr/profiles/pavillon-de-la-mutualite-bordeaux-rue-vital-carles.json
-  - Places
+  - [ ] Places
     - https://www.doctolib.fr/patient_app/place_autocomplete.json?query=47300
-  - Booking context
+  - [x] Booking context
     - https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=brigitte-devun-pujols&locale=fr
     - https://www.doctolib.fr/online_booking/api/slot_selection_funnel/v1/info.json?profile_slug=926388&locale=fr
 - Interesting NON JSONs

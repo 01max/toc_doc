@@ -2,23 +2,58 @@
 
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
-## 1.6
+## 1.6 — Safety and Correctness
 
-### Better API usage
-- [ ] Rate limiting
-- [ ] Caching
-- [ ] Logging
+### Default connection timeouts
+- [ ] Add `CONNECT_TIMEOUT` and `READ_TIMEOUT` constants to `Default`
+- [ ] Add config keys and ENV overrides (`TOCDOC_CONNECT_TIMEOUT`, `TOCDOC_READ_TIMEOUT`)
+- [ ] Wire into `Connection#faraday_options`
 
-## 2.0
+### Error hierarchy with HTTP context
+- [ ] Build error subclass tree (`ConnectionError`, `ResponseError`, `ClientError`, `NotFound`, `TooManyRequests`, `ServerError`)
+- [ ] Rewrite `RaiseError` middleware (`on_complete` pattern, status → subclass mapping)
+- [ ] Remove `Faraday::Response::RaiseError` from middleware stack
 
-### Auth / User-based actions
-- [ ] Research auth scheme
-- [ ] Authentication module + headers
-- [ ] Auth specs
+### Fixes
+- [ ] Fix middleware memoization leak (`Default.reset!`)
+- [ ] Warn on silent `per_page` clamping
+- [ ] Remove dead code (`base_middleware.rb`, `retry_options_fallback` duplication)
+
+## 1.7 — DevX
+
+- [ ] Logging middleware (`:logger` config key)
+- [ ] Resource: `define_singleton_method` on first access + `#attribute_names`
+- [ ] Deep `to_h` and `to_json` on `Resource` and `BookingInfo`
+- [ ] `Collection#filtered_entries` memoization
+- [ ] `BookingInfo#agendas` O(n*m) → hash lookup
+
+## 1.8 — HTTP Layer Robustness
+
+- [ ] Configurable availability pagination depth + `Collection#more?` / `#fetch_next_page`
+- [ ] Client-side rate limiter (token-bucket middleware)
+- [ ] Optional response caching (memory or ActiveSupport-compatible store)
+
+## 1.9 — Service Layer rework
+
+- [ ] `TocDoc::Services::Availabilities` — extract from `Availability.where`
+- [ ] `TocDoc::Services::Profiles` — extract from `Profile.find`
+- [ ] `TocDoc::Services::Search` — extract from `Search.where`
+- [ ] `TocDoc::Services::BookingInfos` — extract from `BookingInfo.find`
+- [ ] Update top-level shortcuts to delegate to services
+- [ ] Deprecation on old model-level finders
+
+## 2.0 — Breaking Changes
+
+- [ ] Remove deprecated model-level finders
+- [ ] `Place#coordinates` as `Data.define(:latitude, :longitude)`
+- [ ] Integration smoke test suite (gated by ENV, weekly CI cron)
+- [ ] Remove unused HTTP verbs from `Connection` (if auth doesn't ship)
 
 # ???
 
 - [ ] Figure what is `organization_statuses` in the autocomplete endpoint and what to do with it.
+- [ ] Authentication module
+- [ ] Place autocomplete endpoint ? (`/patient_app/place_autocomplete.json`)
 
 # DONE & RELEASED
 
