@@ -76,8 +76,13 @@ module TocDoc
 
     # Reset all configuration options to their {TocDoc::Default} values.
     #
+    # Calls {TocDoc::Default.reset!} first so that memoized values such as
+    # {TocDoc::Default.middleware} are cleared and rebuilt fresh on the next
+    # access, preventing stale middleware stacks from being reused.
+    #
     # @return [self]
     def reset!
+      TocDoc::Default.reset!
       TocDoc::Default.options.each do |key, value|
         public_send("#{key}=", value)
       end

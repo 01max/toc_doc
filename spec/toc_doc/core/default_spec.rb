@@ -70,4 +70,22 @@ RSpec.describe TocDoc::Default do
 
     expect(described_class.options).to eq(baseline)
   end
+
+  describe '.reset!' do
+    it 'produces a new middleware object on the next access' do
+      original = described_class.middleware
+
+      described_class.reset!
+
+      expect(described_class.middleware).not_to equal(original)
+    end
+
+    it 'produces a new connection_options object on the next access' do
+      original = described_class.connection_options
+
+      described_class.reset!
+
+      expect(described_class.connection_options).not_to equal(original)
+    end
+  end
 end

@@ -13,6 +13,14 @@ RSpec.describe TocDoc::Configurable do
     expect { instance.reset! }.to change { instance.api_endpoint }.to(TocDoc::Default.api_endpoint)
   end
 
+  it 'calls Default.reset! when reset! is invoked' do
+    instance = Class.new { extend TocDoc::Configurable }
+
+    expect(TocDoc::Default).to receive(:reset!).at_least(:once)
+
+    instance.reset!
+  end
+
   it 'returns options as a hash' do
     instance = Class.new { extend TocDoc::Configurable }
     instance.api_endpoint = 'https://example.test'
