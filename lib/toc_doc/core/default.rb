@@ -91,8 +91,9 @@ module TocDoc
 
       # The default Faraday middleware stack.
       #
-      # Includes retry logic, error raising, JSON parsing, and the default
-      # adapter.
+      # Stack order (outermost first): RaiseError, retry, JSON parsing, adapter.
+      # RaiseError is outermost so it wraps retry and maps the final response or
+      # re-raised transport exception into a typed {TocDoc::Error}.
       #
       # @return [Faraday::RackBuilder]
       def middleware
@@ -110,9 +111,8 @@ module TocDoc
 
       def build_middleware
         Faraday::RackBuilder.new do |builder|
-          builder.request :retry, retry_options
           builder.use TocDoc::Middleware::RaiseError
-          builder.response :raise_error
+          builder.request :retry, retry_options
           builder.response :json, content_type: /\bjson$/
           builder.adapter Faraday.default_adapter
         end

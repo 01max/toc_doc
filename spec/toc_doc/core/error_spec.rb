@@ -128,35 +128,118 @@ end
 RSpec.describe TocDoc::Middleware::RaiseError do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
 
+  # No Faraday :raise_error — our middleware owns all error mapping.
   let(:conn) do
     Faraday.new do |builder|
       builder.use TocDoc::Middleware::RaiseError
-      builder.response :raise_error
       builder.adapter :test, stubs
     end
   end
 
-  def stub(status)
-    stubs.get('/test') do
-      [status, {}, '']
-    end
+  def stub_status(status, body: '', headers: {})
+    stubs.get('/test') { [status, headers, body] }
     conn.get('/test')
   end
 
+  # --- success ---
+
   it 'does not raise for 200' do
-    expect { stub(200) }.not_to raise_error
+    expect { stub_status(200) }.not_to raise_error
   end
 
-  [400, 404, 422, 429, 500, 503].each do |status|
-    it "raises TocDoc::Error for #{status}" do
-      expect { stub(status) }.to raise_error(TocDoc::Error)
-    end
+  it 'does not raise for 201' do
+    expect { stub_status(201) }.not_to raise_error
   end
 
-  it 'does not expose Faraday in the raised class' do
-    stub(404)
+  # --- specific 4xx mappings ---
+
+  it 'raises TocDoc::BadRequest for 400' do
+    expect { stub_status(400) }.to raise_error(TocDoc::BadRequest)
+  end
+
+  it 'raises TocDoc::NotFound for 404' do
+    expect { stub_status(404) }.to raise_error(TocDoc::NotFound)
+  end
+
+  it 'raises TocDoc::UnprocessableEntity for 422' do
+    expect { stub_status(422) }.to raise_error(TocDoc::UnprocessableEntity)
+  end
+
+  it 'raises TocDoc::TooManyRequests for 429' do
+    expect { stub_status(429) }.to raise_error(TocDoc::TooManyRequests)
+  end
+
+  # --- generic 4xx fallback ---
+
+  it 'raises TocDoc::ClientError for unmapped 4xx (403)' do
+    expect { stub_status(403) }.to raise_error(TocDoc::ClientError)
+  end
+
+  it 'raises TocDoc::ClientError for unmapped 4xx (409)' do
+    expect { stub_status(409) }.to raise_error(TocDoc::ClientError)
+  end
+
+  # --- 5xx ---
+
+  it 'raises TocDoc::ServerError for 500' do
+    expect { stub_status(500) }.to raise_error(TocDoc::ServerError)
+  end
+
+  it 'raises TocDoc::ServerError for 503' do
+    expect { stub_status(503) }.to raise_error(TocDoc::ServerError)
+  end
+
+  # --- HTTP context carried on the error ---
+
+  it 'carries the HTTP status on the raised error' do
+    stub_status(404)
+  rescue TocDoc::ResponseError => e
+    expect(e.status).to eq(404)
+  end
+
+  it 'carries the response body on the raised error' do
+    stub_status(422, body: 'invalid')
+  rescue TocDoc::ResponseError => e
+    expect(e.body).to eq('invalid')
+  end
+
+  it 'carries response headers on the raised error' do
+    stub_status(400, headers: { 'x-request-id' => 'abc' })
+  rescue TocDoc::ResponseError => e
+    expect(e.headers).to include('x-request-id' => 'abc')
+  end
+
+  # --- Faraday not exposed ---
+
+  it 'does not expose Faraday in the raised error class' do
+    stub_status(404)
   rescue StandardError => e
     expect(e).not_to be_a(Faraday::Error)
     expect(e).to be_a(TocDoc::Error)
+  end
+
+  # --- transport / connection errors ---
+
+  it 'raises TocDoc::ConnectionError on Faraday::TimeoutError' do
+    stubs.get('/test') { raise Faraday::TimeoutError, 'timed out' }
+    expect { conn.get('/test') }.to raise_error(TocDoc::ConnectionError, 'timed out')
+  end
+
+  it 'raises TocDoc::ConnectionError on Faraday::ConnectionFailed' do
+    stubs.get('/test') { raise Faraday::ConnectionFailed, 'refused' }
+    expect { conn.get('/test') }.to raise_error(TocDoc::ConnectionError, 'refused')
+  end
+
+  it 'raises TocDoc::ConnectionError on Faraday::SSLError' do
+    stubs.get('/test') { raise Faraday::SSLError, 'ssl failure' }
+    expect { conn.get('/test') }.to raise_error(TocDoc::ConnectionError, 'ssl failure')
+  end
+
+  it 'does not expose Faraday in a ConnectionError' do
+    stubs.get('/test') { raise Faraday::TimeoutError, 'timeout' }
+    conn.get('/test')
+  rescue StandardError => e
+    expect(e).to be_a(TocDoc::ConnectionError)
+    expect(e).not_to be_a(Faraday::Error)
   end
 end
