@@ -31,6 +31,12 @@ module TocDoc
     # @return [Integer] the default maximum number of retries
     MAX_RETRY      = 3
 
+    # @return [Integer] the default TCP connect timeout in seconds
+    CONNECT_TIMEOUT = 5
+
+    # @return [Integer] the default read (response) timeout in seconds
+    READ_TIMEOUT    = 10
+
     class << self
       # Returns a hash of all default configuration values, suitable for
       # passing to {TocDoc::Configurable#reset!}.
@@ -43,7 +49,9 @@ module TocDoc
           default_media_type: default_media_type,
           per_page: per_page,
           middleware: middleware,
-          connection_options: connection_options
+          connection_options: connection_options,
+          connect_timeout: connect_timeout,
+          read_timeout: read_timeout
         }
       end
 
@@ -105,6 +113,30 @@ module TocDoc
       # @return [Hash]
       def connection_options
         @connection_options ||= {}
+      end
+
+      # The TCP connect timeout in seconds.
+      #
+      # Falls back to the `TOCDOC_CONNECT_TIMEOUT` environment variable, then
+      # {CONNECT_TIMEOUT}.  Invalid ENV values fall back to {CONNECT_TIMEOUT}.
+      #
+      # @return [Integer]
+      def connect_timeout
+        Integer(ENV.fetch('TOCDOC_CONNECT_TIMEOUT', CONNECT_TIMEOUT), 10)
+      rescue ArgumentError
+        CONNECT_TIMEOUT
+      end
+
+      # The read (response) timeout in seconds.
+      #
+      # Falls back to the `TOCDOC_READ_TIMEOUT` environment variable, then
+      # {READ_TIMEOUT}.  Invalid ENV values fall back to {READ_TIMEOUT}.
+      #
+      # @return [Integer]
+      def read_timeout
+        Integer(ENV.fetch('TOCDOC_READ_TIMEOUT', READ_TIMEOUT), 10)
+      rescue ArgumentError
+        READ_TIMEOUT
       end
 
       # Clears all memoized values so the next call to {.middleware} and

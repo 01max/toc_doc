@@ -3,7 +3,7 @@
 RSpec.describe TocDoc::Configurable do
   it 'lists valid configuration keys' do
     expect(described_class.keys).to include(*%i[api_endpoint user_agent middleware connection_options
-                                                default_media_type per_page])
+                                                default_media_type per_page connect_timeout read_timeout])
   end
 
   it 'resets to default options' do
@@ -11,6 +11,20 @@ RSpec.describe TocDoc::Configurable do
     instance.api_endpoint = 'https://override.example'
 
     expect { instance.reset! }.to change { instance.api_endpoint }.to(TocDoc::Default.api_endpoint)
+  end
+
+  it 'resets connect_timeout to the default value' do
+    instance = Class.new { extend TocDoc::Configurable }
+    instance.connect_timeout = 999
+
+    expect { instance.reset! }.to change { instance.connect_timeout }.to(TocDoc::Default::CONNECT_TIMEOUT)
+  end
+
+  it 'resets read_timeout to the default value' do
+    instance = Class.new { extend TocDoc::Configurable }
+    instance.read_timeout = 999
+
+    expect { instance.reset! }.to change { instance.read_timeout }.to(TocDoc::Default::READ_TIMEOUT)
   end
 
   it 'calls Default.reset! when reset! is invoked' do

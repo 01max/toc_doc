@@ -9,6 +9,8 @@ RSpec.describe TocDoc::Default do
       ENV.delete('TOCDOC_MEDIA_TYPE')
       ENV.delete('TOCDOC_PER_PAGE')
       ENV.delete('TOCDOC_AUTO_PAGINATE')
+      ENV.delete('TOCDOC_CONNECT_TIMEOUT')
+      ENV.delete('TOCDOC_READ_TIMEOUT')
       example.run
     ensure
       ENV.replace(original_env)
@@ -24,6 +26,8 @@ RSpec.describe TocDoc::Default do
     expect(options[:per_page]).to eq(TocDoc::Default::PER_PAGE)
     expect(options[:middleware]).not_to be_nil
     expect(options[:connection_options]).to eq({})
+    expect(options[:connect_timeout]).to eq(TocDoc::Default::CONNECT_TIMEOUT)
+    expect(options[:read_timeout]).to eq(TocDoc::Default::READ_TIMEOUT)
     expect(options).not_to have_key(:auto_paginate)
   end
 
@@ -61,6 +65,42 @@ RSpec.describe TocDoc::Default do
     ENV['TOCDOC_PER_PAGE'] = 'invalid'
 
     expect(described_class.per_page).to eq(TocDoc::Default::PER_PAGE)
+  end
+
+  describe '.connect_timeout' do
+    it 'returns the CONNECT_TIMEOUT constant by default' do
+      expect(described_class.connect_timeout).to eq(TocDoc::Default::CONNECT_TIMEOUT)
+    end
+
+    it 'returns the integer value of TOCDOC_CONNECT_TIMEOUT when set' do
+      ENV['TOCDOC_CONNECT_TIMEOUT'] = '30'
+
+      expect(described_class.connect_timeout).to eq(30)
+    end
+
+    it 'falls back to CONNECT_TIMEOUT on invalid ENV value' do
+      ENV['TOCDOC_CONNECT_TIMEOUT'] = 'not-a-number'
+
+      expect(described_class.connect_timeout).to eq(TocDoc::Default::CONNECT_TIMEOUT)
+    end
+  end
+
+  describe '.read_timeout' do
+    it 'returns the READ_TIMEOUT constant by default' do
+      expect(described_class.read_timeout).to eq(TocDoc::Default::READ_TIMEOUT)
+    end
+
+    it 'returns the integer value of TOCDOC_READ_TIMEOUT when set' do
+      ENV['TOCDOC_READ_TIMEOUT'] = '60'
+
+      expect(described_class.read_timeout).to eq(60)
+    end
+
+    it 'falls back to READ_TIMEOUT on invalid ENV value' do
+      ENV['TOCDOC_READ_TIMEOUT'] = 'bad'
+
+      expect(described_class.read_timeout).to eq(TocDoc::Default::READ_TIMEOUT)
+    end
   end
 
   it 'ignores unknown TOCDOC_* ENV keys' do

@@ -93,6 +93,7 @@ module TocDoc
     def faraday_options
       opts = connection_options.dup
       opts[:builder] = middleware if middleware
+      opts[:request] = { timeout: read_timeout, open_timeout: connect_timeout }
       opts
     end
 

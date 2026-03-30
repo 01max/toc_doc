@@ -29,6 +29,8 @@ module TocDoc
       connection_options
       default_media_type
       per_page
+      connect_timeout
+      read_timeout
     ].freeze
 
     # @!attribute [rw] api_endpoint
@@ -41,6 +43,10 @@ module TocDoc
     #   @return [Hash] additional Faraday connection options
     # @!attribute [rw] default_media_type
     #   @return [String] the Accept / Content-Type header value
+    # @!attribute [rw] connect_timeout
+    #   @return [Integer] TCP connect timeout in seconds
+    # @!attribute [rw] read_timeout
+    #   @return [Integer] read (response) timeout in seconds
     attr_accessor(*VALID_CONFIG_KEYS)
 
     # Set the number of results per page, clamped to
