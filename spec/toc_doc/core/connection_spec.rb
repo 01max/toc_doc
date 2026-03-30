@@ -24,6 +24,26 @@ RSpec.describe TocDoc::Connection do
     instance
   end
 
+  describe '#faraday_options' do
+    it 'includes request timeout options matching the configured values' do
+      opts = client.send(:faraday_options)
+
+      expect(opts[:request]).to eq(
+        timeout: TocDoc::Default::READ_TIMEOUT,
+        open_timeout: TocDoc::Default::CONNECT_TIMEOUT
+      )
+    end
+
+    it 'reflects custom connect_timeout and read_timeout when overridden' do
+      client.connect_timeout = 15
+      client.read_timeout    = 30
+
+      opts = client.send(:faraday_options)
+
+      expect(opts[:request]).to eq(timeout: 30, open_timeout: 15)
+    end
+  end
+
   describe '#agent' do
     it 'returns a Faraday::Connection' do
       expect(client.send(:agent)).to be_a(Faraday::Connection)

@@ -3,7 +3,7 @@
 RSpec.describe TocDoc::Configurable do
   it 'lists valid configuration keys' do
     expect(described_class.keys).to include(*%i[api_endpoint user_agent middleware connection_options
-                                                default_media_type per_page])
+                                                default_media_type per_page connect_timeout read_timeout])
   end
 
   it 'resets to default options' do
@@ -11,6 +11,28 @@ RSpec.describe TocDoc::Configurable do
     instance.api_endpoint = 'https://override.example'
 
     expect { instance.reset! }.to change { instance.api_endpoint }.to(TocDoc::Default.api_endpoint)
+  end
+
+  it 'resets connect_timeout to the default value' do
+    instance = Class.new { extend TocDoc::Configurable }
+    instance.connect_timeout = 999
+
+    expect { instance.reset! }.to change { instance.connect_timeout }.to(TocDoc::Default::CONNECT_TIMEOUT)
+  end
+
+  it 'resets read_timeout to the default value' do
+    instance = Class.new { extend TocDoc::Configurable }
+    instance.read_timeout = 999
+
+    expect { instance.reset! }.to change { instance.read_timeout }.to(TocDoc::Default::READ_TIMEOUT)
+  end
+
+  it 'calls Default.reset! when reset! is invoked' do
+    instance = Class.new { extend TocDoc::Configurable }
+
+    expect(TocDoc::Default).to receive(:reset!).at_least(:once)
+
+    instance.reset!
   end
 
   it 'returns options as a hash' do
@@ -38,5 +60,18 @@ RSpec.describe TocDoc::Configurable do
     instance = Class.new { extend TocDoc::Configurable }
     non_hash = Object.new
     expect(instance.same_options?(non_hash)).to be(false)
+  end
+
+  describe '#per_page=' do
+    subject(:instance) { Class.new { extend TocDoc::Configurable } }
+
+    it 'emits a warning to stderr when the value exceeds MAX_PER_PAGE' do
+      expect { instance.per_page = 99 }
+        .to output(/\[TocDoc\] per_page 99 exceeds MAX_PER_PAGE/).to_stderr
+    end
+
+    it 'does not emit a warning when the value is within MAX_PER_PAGE' do
+      expect { instance.per_page = 10 }.not_to output.to_stderr
+    end
   end
 end

@@ -29,6 +29,8 @@ module TocDoc
       connection_options
       default_media_type
       per_page
+      connect_timeout
+      read_timeout
     ].freeze
 
     # @!attribute [rw] api_endpoint
@@ -41,15 +43,26 @@ module TocDoc
     #   @return [Hash] additional Faraday connection options
     # @!attribute [rw] default_media_type
     #   @return [String] the Accept / Content-Type header value
+    # @!attribute [rw] connect_timeout
+    #   @return [Integer] TCP connect timeout in seconds
+    # @!attribute [rw] read_timeout
+    #   @return [Integer] read (response) timeout in seconds
     attr_accessor(*VALID_CONFIG_KEYS)
 
     # Set the number of results per page, clamped to
     # {TocDoc::Default::MAX_PER_PAGE}.
     #
+    # Emits a warning on +$stderr+ when +value+ exceeds the hard cap so callers
+    # are not silently surprised by the lower effective value.
+    #
     # @param value [Integer, #to_i] desired page size
     # @return [Integer] the effective page size after clamping
     def per_page=(value)
-      @per_page = [value.to_i, TocDoc::Default::MAX_PER_PAGE].min
+      int = value.to_i
+      if int > TocDoc::Default::MAX_PER_PAGE
+        warn "[TocDoc] per_page #{int} exceeds MAX_PER_PAGE (#{TocDoc::Default::MAX_PER_PAGE}); clamped."
+      end
+      @per_page = [int, TocDoc::Default::MAX_PER_PAGE].min
     end
 
     # Returns the list of recognised configurable attribute names.
@@ -76,8 +89,13 @@ module TocDoc
 
     # Reset all configuration options to their {TocDoc::Default} values.
     #
+    # Calls {TocDoc::Default.reset!} first so that memoized values such as
+    # {TocDoc::Default.middleware} are cleared and rebuilt fresh on the next
+    # access, preventing stale middleware stacks from being reused.
+    #
     # @return [self]
     def reset!
+      TocDoc::Default.reset!
       TocDoc::Default.options.each do |key, value|
         public_send("#{key}=", value)
       end

@@ -1,5 +1,19 @@
 ## [Unreleased]
 
+## [1.6.0] - 2026-03-30
+
+### Added
+
+- **Timeout configuration** — two new config keys: `connect_timeout` (TCP connect, default: `5`, env: `TOCDOC_CONNECT_TIMEOUT`) and `read_timeout` (response read, default: `10`, env: `TOCDOC_READ_TIMEOUT`); passed to Faraday as `open_timeout` and `timeout` respectively
+- **`per_page` guard** — `TocDoc::Configurable` now emits a warning when `per_page` exceeds the maximum value the Doctolib API can handle
+- **`TocDoc::Error` hierarchy** — structured error subclasses; `TocDoc::ResponseError` carries `status`, `body`, and `headers`; specific subclasses: `BadRequest` (400), `NotFound` (404), `UnprocessableEntity` (422), `TooManyRequests` (429), `ClientError` (other 4xx), `ServerError` (5xx); `TocDoc::ConnectionError` raised on network/transport failures
+- **`TocDoc::Middleware::RaiseError`** — reworked to map HTTP error codes to structured `TocDoc::Error` subclasses; wraps Faraday transport errors (`TimeoutError`, `ConnectionFailed`, `SSLError`) into `TocDoc::ConnectionError`
+- **`Default.reset!`** — class method to reset memoized middleware defaults, preventing middleware stack leak between configurations
+
+### Changed
+
+- **Max retry** — retry limit logic moved from `BaseMiddleware` into `TocDoc::Default`, eliminating the `BaseMiddleware` class; retry count now derived solely from `Default::MAX_RETRY`
+
 ## [1.5.0] - 2026-03-28
 
 ### Added

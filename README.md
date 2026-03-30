@@ -140,9 +140,11 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.5.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.6.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
-| `per_page` | `15` | Default number of availability dates per request (capped at `15`). |
+| `per_page` | `15` | Default number of availability dates per request (capped at `15`). Emits a warning if the value exceeds the cap. |
+| `connect_timeout` | `5` | TCP connect timeout in seconds, passed to Faraday as `open_timeout`. Override via `TOCDOC_CONNECT_TIMEOUT`. |
+| `read_timeout` | `10` | Response read timeout in seconds, passed to Faraday as `timeout`. Override via `TOCDOC_READ_TIMEOUT`. |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
 | `connection_options` | `{}` | Options passed directly to `Faraday.new`. |
 
@@ -156,6 +158,8 @@ All primary options can be set via environment variables before the gem is loade
 | `TOCDOC_USER_AGENT` | `user_agent` |
 | `TOCDOC_MEDIA_TYPE` | `default_media_type` |
 | `TOCDOC_PER_PAGE` | `per_page` |
+| `TOCDOC_CONNECT_TIMEOUT` | `connect_timeout` (default `5`) |
+| `TOCDOC_READ_TIMEOUT` | `read_timeout` (default `10`) |
 | `TOCDOC_RETRY_MAX` | Maximum Faraday retry attempts (default `3`) |
 
 ---
@@ -484,8 +488,34 @@ rescue TocDoc::Error => e
 end
 ```
 
-The default middleware stack also includes `Faraday::Response::RaiseError` for
-HTTP-level failures, and a `Faraday::Retry::Middleware` that automatically
+### Error classes
+
+| Class | Raised when |
+|---|---|
+| `TocDoc::Error` | Base class for all TocDoc errors. |
+| `TocDoc::ConnectionError` | Network/transport failure before a response is received (DNS, timeout, SSL). The original cause is available via `#cause`. |
+| `TocDoc::ResponseError` | HTTP response received but indicates an error. Carries `#status`, `#body`, and `#headers`. |
+| `TocDoc::ClientError` | 4xx response not matched by a more specific class. |
+| `TocDoc::BadRequest` | HTTP 400. |
+| `TocDoc::NotFound` | HTTP 404. |
+| `TocDoc::UnprocessableEntity` | HTTP 422. |
+| `TocDoc::TooManyRequests` | HTTP 429. |
+| `TocDoc::ServerError` | 5xx response. |
+
+```ruby
+begin
+  TocDoc::Profile.find('unknown-slug')
+rescue TocDoc::NotFound => e
+  puts e.status    # => 404
+  puts e.body      # => '{"error":"not found"}'
+rescue TocDoc::ConnectionError => e
+  puts e.cause     # original Faraday exception
+rescue TocDoc::ServerError => e
+  puts "Server error: #{e.status}"
+end
+```
+
+The default middleware stack includes a `Faraday::Retry::Middleware` that automatically
 retries (up to 3 times, with exponential back-off) on:
 
 - `429 Too Many Requests`

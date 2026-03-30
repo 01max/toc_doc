@@ -24,7 +24,7 @@ module TocDoc
 
     # Perform a GET request.
     #
-    # @param path [String] API path (relative to {Configurable#api_endpoint})
+    # @param path [String] API path (relative to {TocDoc::Configurable#api_endpoint})
     # @param options [Hash] query / header options forwarded to {#request}
     # @return [Object] parsed response body
     def get(path, options = {})
@@ -93,6 +93,7 @@ module TocDoc
     def faraday_options
       opts = connection_options.dup
       opts[:builder] = middleware if middleware
+      opts[:request] = { timeout: read_timeout, open_timeout: connect_timeout }
       opts
     end
 

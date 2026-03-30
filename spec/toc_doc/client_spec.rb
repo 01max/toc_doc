@@ -14,9 +14,10 @@ RSpec.describe TocDoc::Client do
     expect(client.per_page).to eq(10)
   end
 
-  it 'caps per_page at MAX_PER_PAGE' do
-    client = described_class.new(per_page: 99)
-
+  it 'caps per_page at MAX_PER_PAGE and warns' do
+    client = nil
+    expect { client = described_class.new(per_page: 99) }
+      .to output(/\[TocDoc\] per_page 99 exceeds MAX_PER_PAGE/).to_stderr
     expect(client.per_page).to eq(TocDoc::Default::MAX_PER_PAGE)
   end
 end

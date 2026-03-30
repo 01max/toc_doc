@@ -17,7 +17,12 @@ module TocDoc
   #   TocDoc::Search.where(query: 'dentiste', type: 'practitioner')
   #   #=> [#<TocDoc::Profile::Practitioner>, ...]
   class Search
+    # API path for the autocomplete / searchbar endpoint.
+    # @return [String]
     PATH = '/api/searchbar/autocomplete.json'
+
+    # Accepted values for the +type:+ keyword in {.where}.
+    # @return [Array<String>]
     VALID_TYPES = %w[profile practitioner organization speciality].freeze
 
     class << self

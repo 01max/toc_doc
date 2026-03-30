@@ -2,22 +2,6 @@
 
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
-## 1.6 — Safety and Correctness
-
-### Default connection timeouts
-- [ ] Add `CONNECT_TIMEOUT` and `READ_TIMEOUT` constants to `Default`
-- [ ] Add config keys and ENV overrides (`TOCDOC_CONNECT_TIMEOUT`, `TOCDOC_READ_TIMEOUT`)
-- [ ] Wire into `Connection#faraday_options`
-
-### Error hierarchy with HTTP context
-- [ ] Build error subclass tree (`ConnectionError`, `ResponseError`, `ClientError`, `NotFound`, `TooManyRequests`, `ServerError`)
-- [ ] Rewrite `RaiseError` middleware (`on_complete` pattern, status → subclass mapping)
-- [ ] Remove `Faraday::Response::RaiseError` from middleware stack
-
-### Fixes
-- [ ] Fix middleware memoization leak (`Default.reset!`)
-- [ ] Warn on silent `per_page` clamping
-- [ ] Remove dead code (`base_middleware.rb`, `retry_options_fallback` duplication)
 
 ## 1.7 — DevX
 
@@ -56,6 +40,23 @@
 - [ ] Place autocomplete endpoint ? (`/patient_app/place_autocomplete.json`)
 
 # DONE & RELEASED
+
+## 1.6
+
+### Default connection timeouts
+- [x] Add `CONNECT_TIMEOUT` and `READ_TIMEOUT` constants to `Default`
+- [x] Add config keys and ENV overrides (`TOCDOC_CONNECT_TIMEOUT`, `TOCDOC_READ_TIMEOUT`)
+- [x] Wire into `Connection#faraday_options`
+
+### Error hierarchy with HTTP context
+- [x] Build error subclass tree (`ConnectionError`, `ResponseError`, `ClientError`, `NotFound`, `TooManyRequests`, `ServerError`)
+- [x] Rewrite `RaiseError` middleware (`on_complete` pattern, status → subclass mapping)
+- [x] Remove `Faraday::Response::RaiseError` from middleware stack
+
+### Fixes
+- [x] Fix middleware memoization leak (`Default.reset!`)
+- [x] Warn on silent `per_page` clamping
+- [x] Remove dead code (`base_middleware.rb`, `retry_options_fallback` duplication)
 
 ## 1.5
 
