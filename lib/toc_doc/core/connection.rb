@@ -24,7 +24,7 @@ module TocDoc
 
     # Perform a GET request.
     #
-    # @param path [String] API path (relative to {Configurable#api_endpoint})
+    # @param path [String] API path (relative to {TocDoc::Configurable#api_endpoint})
     # @param options [Hash] query / header options forwarded to {#request}
     # @return [Object] parsed response body
     def get(path, options = {})
