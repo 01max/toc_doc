@@ -164,26 +164,19 @@ module TocDoc
 
       def retry_options
         {
-          max: Integer(ENV.fetch('TOCDOC_RETRY_MAX', MAX_RETRY), 10),
+          max: retry_max,
           interval: 0.5,
           interval_randomness: 0.5,
           backoff_factor: 2,
           retry_statuses: [429, 500, 502, 503, 504],
           methods: %i[get head options]
         }
-      rescue ArgumentError
-        retry_options_fallback
       end
 
-      def retry_options_fallback
-        {
-          max: MAX_RETRY,
-          interval: 0.5,
-          interval_randomness: 0.5,
-          backoff_factor: 2,
-          retry_statuses: [429, 500, 502, 503, 504],
-          methods: %i[get head options]
-        }
+      def retry_max
+        Integer(ENV.fetch('TOCDOC_RETRY_MAX', MAX_RETRY), 10)
+      rescue ArgumentError
+        MAX_RETRY
       end
     end
   end
