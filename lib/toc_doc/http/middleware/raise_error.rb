@@ -4,6 +4,7 @@ require 'faraday'
 
 module TocDoc
   # @api private
+  # Namespace for Faraday middleware used internally by {TocDoc}.
   module Middleware
     # Faraday middleware that translates HTTP error responses and transport-level
     # failures into typed {TocDoc::Error} subclasses, keeping Faraday as an

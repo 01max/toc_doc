@@ -12,6 +12,8 @@ module TocDoc
   #   profile.practitioner?  #=> true
   #   profile.name           #=> "Dr Smith"
   class Profile < Resource
+    # API path template for a full profile page (+sprintf+-style, requires +identifier+).
+    # @return [String]
     PATH = '/profiles/%<identifier>s.json'
 
     main_attrs :id, :partial

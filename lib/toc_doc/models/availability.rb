@@ -17,6 +17,8 @@ module TocDoc
 
     attr_reader :date, :slots
 
+    # API path for the availabilities endpoint.
+    # @return [String]
     PATH = '/availabilities.json'
 
     class << self

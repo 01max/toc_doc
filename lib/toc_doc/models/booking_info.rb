@@ -22,6 +22,8 @@ module TocDoc
   #   info.visit_motives  #=> [#<TocDoc::VisitMotive>, ...]
   #   info.organization?  #=> false
   class BookingInfo
+    # API path for the slot-selection funnel info endpoint.
+    # @return [String]
     PATH = '/online_booking/api/slot_selection_funnel/v1/info.json'
 
     class << self

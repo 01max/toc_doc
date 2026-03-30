@@ -27,6 +27,12 @@ module TocDoc
   #   place.latitude         #=> 44.8386722
   #   place.elevator         #=> true
   class Place < Resource
+    # Returns the geographic coordinates of the place.
+    #
+    # @return [Array(Float, Float)] +[latitude, longitude]+
+    #
+    # @example
+    #   place.coordinates  #=> [44.8386722, -0.5780466]
     def coordinates
       [latitude, longitude]
     end
