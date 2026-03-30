@@ -61,4 +61,17 @@ RSpec.describe TocDoc::Configurable do
     non_hash = Object.new
     expect(instance.same_options?(non_hash)).to be(false)
   end
+
+  describe '#per_page=' do
+    subject(:instance) { Class.new { extend TocDoc::Configurable } }
+
+    it 'emits a warning to stderr when the value exceeds MAX_PER_PAGE' do
+      expect { instance.per_page = 99 }
+        .to output(/\[TocDoc\] per_page 99 exceeds MAX_PER_PAGE/).to_stderr
+    end
+
+    it 'does not emit a warning when the value is within MAX_PER_PAGE' do
+      expect { instance.per_page = 10 }.not_to output.to_stderr
+    end
+  end
 end

@@ -52,10 +52,17 @@ module TocDoc
     # Set the number of results per page, clamped to
     # {TocDoc::Default::MAX_PER_PAGE}.
     #
+    # Emits a warning on +$stderr+ when +value+ exceeds the hard cap so callers
+    # are not silently surprised by the lower effective value.
+    #
     # @param value [Integer, #to_i] desired page size
     # @return [Integer] the effective page size after clamping
     def per_page=(value)
-      @per_page = [value.to_i, TocDoc::Default::MAX_PER_PAGE].min
+      int = value.to_i
+      if int > TocDoc::Default::MAX_PER_PAGE
+        warn "[TocDoc] per_page #{int} exceeds MAX_PER_PAGE (#{TocDoc::Default::MAX_PER_PAGE}); clamped."
+      end
+      @per_page = [int, TocDoc::Default::MAX_PER_PAGE].min
     end
 
     # Returns the list of recognised configurable attribute names.
