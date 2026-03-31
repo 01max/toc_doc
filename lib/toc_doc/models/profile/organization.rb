@@ -3,6 +3,8 @@
 module TocDoc
   class Profile
     # An organization profile.
-    class Organization < Profile; end
+    class Organization < Profile
+      main_attrs :name
+    end
   end
 end

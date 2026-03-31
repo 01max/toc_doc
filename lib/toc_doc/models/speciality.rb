@@ -12,5 +12,6 @@ module TocDoc
   #   speciality.slug   #=> "homeopathe"
   #   speciality.name   #=> "Homéopathe"
   class Speciality < Resource
+    main_attrs :name, :slug
   end
 end

@@ -23,6 +23,16 @@ RSpec.describe TocDoc::Place do
     )
   end
 
+  describe '#inspect' do
+    it 'includes declared main_attrs' do
+      expect(place.inspect).to include('@id=').and include('@city=').and include('@full_address=')
+    end
+
+    it 'excludes undeclared attrs' do
+      expect(place.inspect).not_to include('@latitude=')
+    end
+  end
+
   it 'exposes id' do
     expect(place.id).to eq('practice-125055')
   end
