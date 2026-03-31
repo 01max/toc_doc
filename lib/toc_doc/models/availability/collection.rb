@@ -88,15 +88,16 @@ module TocDoc
       def merge_page!(page_data)
         @data['availabilities'] = @data.fetch('availabilities', []) + page_data.fetch('availabilities', [])
         @data['total']          = @data.fetch('total', 0) + page_data.fetch('total', 0)
+        @filtered_entries = nil
         self
       end
 
       private
 
       def filtered_entries
-        Array(@data['availabilities'])
-          .select { |entry| Array(entry['slots']).any? }
-          .map { |entry| TocDoc::Availability.new(entry) }
+        @filtered_entries ||= Array(@data['availabilities'])
+                              .select { |entry| Array(entry['slots']).any? }
+                              .map { |entry| TocDoc::Availability.new(entry) }
       end
     end
   end

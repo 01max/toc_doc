@@ -84,6 +84,21 @@ RSpec.describe TocDoc::Availability::Collection do
     it 'returns an empty array when missing' do
       expect(described_class.new({ 'total' => 0 }).to_a).to eq([])
     end
+
+    it 'returns the same Availability objects on repeated calls (memoization)' do
+      first_call  = response.to_a
+      second_call = response.to_a
+      first_call.zip(second_call).each do |a, b|
+        expect(a).to equal(b)
+      end
+    end
+
+    it 'returns a fresh result after merge_page! (cache invalidation)' do
+      first_call = response.to_a
+      response.merge_page!({ 'total' => 0, 'availabilities' => [] })
+      second_call = response.to_a
+      expect(first_call).not_to equal(second_call)
+    end
   end
 
   describe '#to_h' do
