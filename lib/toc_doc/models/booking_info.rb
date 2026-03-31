@@ -78,14 +78,19 @@ module TocDoc
 
     # All agendas for this booking context.
     #
+    # Visit motives are resolved via a hash index keyed by ID, so lookup is O(1)
+    # per motive rather than O(n) per agenda. Unknown visit_motive_ids are
+    # silently dropped.
+    #
     # @return [Array<TocDoc::Agenda>]
     def agendas
-      @agendas ||= Array(@data['agendas']).map do |agenda_attrs|
-        agenda_visit_motives = visit_motives.select do |vm|
-          agenda_attrs['visit_motive_ids'].include?(vm.id)
-        end
+      @agendas ||= begin
+        vm_index = visit_motives.to_h { |vm| [vm.id, vm] }
 
-        Agenda.new(agenda_attrs.merge('visit_motives' => agenda_visit_motives))
+        Array(@data['agendas']).map do |agenda_attrs|
+          agenda_visit_motives = Array(agenda_attrs['visit_motive_ids']).filter_map { |id| vm_index[id] }
+          Agenda.new(agenda_attrs.merge('visit_motives' => agenda_visit_motives))
+        end
       end
     end
 

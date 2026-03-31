@@ -110,6 +110,19 @@ RSpec.describe TocDoc::BookingInfo do
         resolved_ids = agenda.visit_motives.map(&:id)
         expect(resolved_ids).to match_array(agenda.visit_motive_ids)
       end
+
+      context 'when an agenda references an unknown visit_motive_id' do
+        subject(:info) do
+          data = JSON.parse(fixture('booking-info-practitioner.json'))
+          data['data']['agendas'].first['visit_motive_ids'] = [999_999]
+          instance = described_class.new(data['data'])
+          instance
+        end
+
+        it 'silently drops unknown ids and returns an empty visit_motives list' do
+          expect(info.agendas.first.visit_motives).to be_empty
+        end
+      end
     end
 
     describe '#places' do
