@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 module TocDoc
   # A lightweight wrapper providing dot-notation access to response fields.
   # Backed by a Hash, with +method_missing+ for attribute access and +#to_h+ for
@@ -73,11 +75,20 @@ module TocDoc
       @attrs[key.to_s] = value
     end
 
-    # Return a plain Hash representation (shallow copy).
+    # Return a plain Hash representation with all nested {Resource} values
+    # recursively converted to plain Hashes.
     #
     # @return [Hash{String => Object}]
     def to_h
-      @attrs.dup
+      @attrs.transform_values { |v| deep_convert(v) }
+    end
+
+    # Serialize the resource to a JSON string.
+    #
+    # @param args [Array] forwarded to +Hash#to_json+
+    # @return [String]
+    def to_json(*)
+      to_h.to_json(*)
     end
 
     # Equality comparison.
@@ -129,6 +140,24 @@ module TocDoc
         super
       end
     end
+
+    private
+
+    # Recursively converts {Resource} instances, Hashes, and Arrays to plain
+    # Ruby structures so that +to_h+ is fully serializable.
+    #
+    # @param value [Object]
+    # @return [Object]
+    def deep_convert(value)
+      case value
+      when Resource then value.to_h
+      when Hash     then value.transform_values { |v| deep_convert(v) }
+      when Array    then value.map { |v| deep_convert(v) }
+      else value
+      end
+    end
+
+    public
 
     # @!visibility private
     def inspect
