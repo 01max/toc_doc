@@ -100,17 +100,34 @@ module TocDoc
       @attrs.key?(method_name.to_s) || super
     end
 
+    # Returns the list of attribute names present on this resource.
+    #
+    # @return [Array<String>] attribute names as strings
+    #
+    # @example
+    #   resource = TocDoc::Resource.new('date' => '2026-02-28', 'slots' => [])
+    #   resource.attribute_names #=> ["date", "slots"]
+    def attribute_names
+      @attrs.keys
+    end
+
     # Provides dot-notation access to response fields.
     #
-    # Any method call whose name matches a key in the underlying attribute
-    # hash is dispatched here.
+    # On first access, defines a singleton method so that subsequent calls
+    # bypass +method_missing+ entirely. The defined method reads live from
+    # +@attrs+, so mutations via +[]=+ are always reflected.
     #
     # @param method_name [Symbol] the method name
     # @return [Object] the attribute value
     # @raise [NoMethodError] when the key does not exist
     def method_missing(method_name, *_args)
       key = method_name.to_s
-      @attrs.key?(key) ? @attrs[key] : super
+      if @attrs.key?(key)
+        define_singleton_method(key) { @attrs[key] }
+        @attrs[key]
+      else
+        super
+      end
     end
 
     # @!visibility private

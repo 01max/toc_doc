@@ -94,4 +94,33 @@ RSpec.describe TocDoc::Resource do
       expect(r['date']).to eq('2026-02-28')
     end
   end
+
+  describe '#attribute_names' do
+    it 'returns the attribute keys as strings' do
+      expect(resource.attribute_names).to eq(%w[date total])
+    end
+
+    it 'reflects keys added via []=' do
+      resource[:new_key] = 99
+      expect(resource.attribute_names).to include('new_key')
+    end
+  end
+
+  describe 'singleton method definition on first dot-notation access' do
+    it 'defines a real method after first access so #method works' do
+      resource.date
+      expect(resource.method(:date)).to be_a(Method)
+    end
+
+    it 'subsequent calls return the correct value' do
+      resource.date
+      expect(resource.date).to eq('2026-02-28')
+    end
+
+    it 'reflects mutations via []= through the defined singleton method' do
+      resource.date
+      resource[:date] = '2099-01-01'
+      expect(resource.date).to eq('2099-01-01')
+    end
+  end
 end
