@@ -92,9 +92,25 @@ module TocDoc
     # @return [Hash] merged Faraday connection options
     def faraday_options
       opts = connection_options.dup
-      opts[:builder] = middleware if middleware
+      opts[:builder] = effective_middleware
       opts[:request] = { timeout: read_timeout, open_timeout: connect_timeout }
       opts
+    end
+
+    # Returns the appropriate middleware stack for this client.
+    #
+    # When a logger is configured, builds a fresh stack with the logger injected
+    # so that the shared memoized default stack is never mutated.
+    # Falls back to the memoized {TocDoc::Default.middleware} when no logger is
+    # set.
+    #
+    # @return [Faraday::RackBuilder]
+    def effective_middleware
+      if logger
+        TocDoc::Default.build_middleware(logger: logger)
+      else
+        middleware
+      end
     end
 
     # Sets default HTTP headers on a Faraday connection.

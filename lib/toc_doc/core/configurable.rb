@@ -31,6 +31,7 @@ module TocDoc
       per_page
       connect_timeout
       read_timeout
+      logger
     ].freeze
 
     # @!attribute [rw] api_endpoint
@@ -47,6 +48,8 @@ module TocDoc
     #   @return [Integer] TCP connect timeout in seconds
     # @!attribute [rw] read_timeout
     #   @return [Integer] read (response) timeout in seconds
+    # @!attribute [rw] logger
+    #   @return [Logger, :stdout, nil] logger for HTTP request logging; +nil+ disables logging
     attr_accessor(*VALID_CONFIG_KEYS)
 
     # Set the number of results per page, clamped to

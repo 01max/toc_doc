@@ -4,6 +4,7 @@ require 'faraday'
 require 'faraday/retry'
 
 require 'toc_doc/http/middleware/raise_error'
+require 'toc_doc/http/middleware/logging'
 
 module TocDoc
   # Provides sensible default values for every configurable option.
@@ -43,16 +44,9 @@ module TocDoc
       #
       # @return [Hash{Symbol => Object}]
       def options
-        {
-          api_endpoint: api_endpoint,
-          user_agent: user_agent,
-          default_media_type: default_media_type,
-          per_page: per_page,
-          middleware: middleware,
-          connection_options: connection_options,
-          connect_timeout: connect_timeout,
-          read_timeout: read_timeout
-        }
+        { api_endpoint:, user_agent:, default_media_type:, per_page:,
+          middleware:, connection_options:, connect_timeout:, read_timeout:,
+          logger: nil }
       end
 
       # The base API endpoint URL.
@@ -97,7 +91,7 @@ module TocDoc
         PER_PAGE
       end
 
-      # The default Faraday middleware stack.
+      # The default (memoized) Faraday middleware stack, built without a logger.
       #
       # Stack order (outermost first): RaiseError, retry, JSON parsing, adapter.
       # RaiseError is outermost so it wraps retry and maps the final response or
@@ -106,6 +100,29 @@ module TocDoc
       # @return [Faraday::RackBuilder]
       def middleware
         @middleware ||= build_middleware
+      end
+
+      # Builds a Faraday middleware stack, optionally injecting a logger.
+      #
+      # When +logger+ is non-nil, {TocDoc::Middleware::Logging} is inserted
+      # between {TocDoc::Middleware::RaiseError} and the retry middleware so
+      # each logical request is logged exactly once after all retries are
+      # exhausted.
+      #
+      # Accepts +:stdout+ as a shorthand that writes to +$stdout+.
+      #
+      # @param logger [Logger, :stdout, nil] the logger to inject; +nil+ omits
+      #   the logging middleware entirely
+      # @return [Faraday::RackBuilder]
+      def build_middleware(logger: nil)
+        resolved = resolve_logger(logger)
+        Faraday::RackBuilder.new do |builder|
+          builder.use TocDoc::Middleware::RaiseError
+          builder.use TocDoc::Middleware::Logging, logger: resolved if resolved
+          builder.request :retry, retry_options
+          builder.response :json, content_type: /\bjson$/
+          builder.adapter Faraday.default_adapter
+        end
       end
 
       # Default Faraday connection options (empty by default).
@@ -153,12 +170,15 @@ module TocDoc
 
       private
 
-      def build_middleware
-        Faraday::RackBuilder.new do |builder|
-          builder.use TocDoc::Middleware::RaiseError
-          builder.request :retry, retry_options
-          builder.response :json, content_type: /\bjson$/
-          builder.adapter Faraday.default_adapter
+      def resolve_logger(logger)
+        case logger
+        when :stdout
+          require 'logger'
+          Logger.new($stdout, progname: 'TocDoc')
+        when nil, false
+          nil
+        else
+          logger
         end
       end
 

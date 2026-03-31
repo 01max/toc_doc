@@ -13,7 +13,7 @@ module TocDoc
   #   avail.slots      #=> [#<DateTime: 2026-02-28T10:00:00.000+01:00>]
   #   avail.raw_slots  #=> ["2026-02-28T10:00:00.000+01:00"]
   class Availability < Resource
-    main_attrs :date, :slots
+    main_attrs :date
 
     extend TocDoc::UriUtils
 
