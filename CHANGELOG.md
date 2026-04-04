@@ -1,5 +1,23 @@
 ## [Unreleased]
 
+## [1.7.0] - 2026-04-04
+
+### Added
+
+- **`TocDoc::Middleware::Logging`** — new Faraday middleware that logs every outgoing request URL and the response status; plugged in automatically between the retry and raise-error layers; enabled via the new `logger` config key (accepts any Logger-compatible object; `nil` disables logging)
+- **`logger` config key** — module-level and per-client option; also available as a `TocDoc::Default::LOGGER` constant (defaults to `nil`); each client instance carries its own logger, so multiple clients can log to different destinations simultaneously
+- **`TocDoc::Resource#attribute_names`** — instance method returning the sorted list of attribute keys present on a resource instance
+- **`TocDoc::Resource` singleton method definition on first access** — reader methods are now defined as true singleton methods on the instance the first time an attribute is accessed, eliminating repeated `respond_to?` / `method_missing` dispatch on subsequent calls
+
+### Changed
+
+- **`TocDoc::Resource#to_h`** — now performs a deep conversion: nested `Resource` objects and arrays of `Resource` objects are recursively converted; previously returned a shallow hash with raw attribute values
+- **`TocDoc::Resource#to_json`** — delegates to the new deep `to_h`, so JSON output is fully recursive
+- **`TocDoc::BookingInfo#to_h`** and **`#to_json`** — override `Resource`'s implementation to include all typed sub-objects (`profile`, `specialities`, `visit_motives`, `agendas`, `places`, `practitioners`) as deeply converted hashes
+- **`TocDoc::BookingInfo#agendas`** — visit-motive resolution changed from O(n*m) nested iteration to O(n+m) hash lookup; no change to the public interface
+- **`TocDoc::Availability::Collection#filtered_entries`** — result is now memoized; cache is invalidated automatically when `#merge_page!` appends a new page, preventing redundant filtering on repeated `#each` / `#to_a` calls
+- **`#inspect`** for `TocDoc::Availability`, `TocDoc::Place`, `TocDoc::Speciality`, and `TocDoc::Profile::Organization`** — `main_attrs` declared on each class so inspect output stays concise; `TocDoc::Profile` and `TocDoc::Resource` inspect also improved
+
 ## [1.6.0] - 2026-03-30
 
 ### Added

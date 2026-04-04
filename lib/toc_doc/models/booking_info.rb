@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'toc_doc/models/profile'
 require 'toc_doc/models/speciality'
 require 'toc_doc/models/place'
@@ -78,14 +79,19 @@ module TocDoc
 
     # All agendas for this booking context.
     #
+    # Visit motives are resolved via a hash index keyed by ID, so lookup is O(1)
+    # per motive rather than O(n) per agenda. Unknown visit_motive_ids are
+    # silently dropped.
+    #
     # @return [Array<TocDoc::Agenda>]
     def agendas
-      @agendas ||= Array(@data['agendas']).map do |agenda_attrs|
-        agenda_visit_motives = visit_motives.select do |vm|
-          agenda_attrs['visit_motive_ids'].include?(vm.id)
-        end
+      @agendas ||= begin
+        vm_index = visit_motives.to_h { |vm| [vm.id, vm] }
 
-        Agenda.new(agenda_attrs.merge('visit_motives' => agenda_visit_motives))
+        Array(@data['agendas']).map do |agenda_attrs|
+          agenda_visit_motives = Array(agenda_attrs['visit_motive_ids']).filter_map { |id| vm_index[id] }
+          Agenda.new(agenda_attrs.merge('visit_motives' => agenda_visit_motives))
+        end
       end
     end
 
@@ -120,11 +126,35 @@ module TocDoc
       profile.organization?
     end
 
-    # Returns the raw data hash.
+    # Returns the raw data hash as received from the API.
     #
     # @return [Hash]
-    def to_h
+    def raw
       @data
+    end
+
+    # Returns a hydrated hash with all typed collections serialized to plain
+    # Hashes. Unlike {#raw}, nested objects are converted via their own
+    # +#to_h+ methods.
+    #
+    # @return [Hash{String => Object}]
+    def to_h
+      {
+        'profile' => profile.to_h,
+        'specialities' => specialities.map(&:to_h),
+        'visit_motives' => visit_motives.map(&:to_h),
+        'agendas' => agendas.map(&:to_h),
+        'places' => places.map(&:to_h),
+        'practitioners' => practitioners.map(&:to_h)
+      }
+    end
+
+    # Serialize the booking info to a JSON string.
+    #
+    # @param args [Array] forwarded to +Hash#to_json+
+    # @return [String]
+    def to_json(*)
+      to_h.to_json(*)
     end
   end
 end

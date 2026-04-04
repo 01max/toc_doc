@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 module TocDoc
   # A lightweight wrapper providing dot-notation access to response fields.
   # Backed by a Hash, with +method_missing+ for attribute access and +#to_h+ for
@@ -14,6 +16,8 @@ module TocDoc
   #   resource[:date] #=> "2026-02-28"
   #   resource.to_h   #=> { "date" => "2026-02-28", "slots" => [] }
   class Resource
+    attr_reader :attrs
+
     class << self
       # Normalises a raw attribute hash to string keys, mirroring what
       # {#initialize} does internally. Useful in class-level factory methods
@@ -73,11 +77,20 @@ module TocDoc
       @attrs[key.to_s] = value
     end
 
-    # Return a plain Hash representation (shallow copy).
+    # Return a plain Hash representation with all nested {Resource} values
+    # recursively converted to plain Hashes.
     #
     # @return [Hash{String => Object}]
     def to_h
-      @attrs.dup
+      @attrs.transform_values { |v| deep_convert(v) }
+    end
+
+    # Serialize the resource to a JSON string.
+    #
+    # @param args [Array] forwarded to +Hash#to_json+
+    # @return [String]
+    def to_json(*)
+      to_h.to_json(*)
     end
 
     # Equality comparison.
@@ -100,24 +113,80 @@ module TocDoc
       @attrs.key?(method_name.to_s) || super
     end
 
+    # Returns the list of attribute names present on this resource.
+    #
+    # @return [Array<String>] attribute names as strings
+    #
+    # @example
+    #   resource = TocDoc::Resource.new('date' => '2026-02-28', 'slots' => [])
+    #   resource.attribute_names #=> ["date", "slots"]
+    def attribute_names
+      @attrs.keys
+    end
+
     # Provides dot-notation access to response fields.
     #
-    # Any method call whose name matches a key in the underlying attribute
-    # hash is dispatched here.
+    # On first access, defines a singleton method so that subsequent calls
+    # bypass +method_missing+ entirely. The defined method reads live from
+    # +@attrs+, so mutations via +[]=+ are always reflected.
     #
     # @param method_name [Symbol] the method name
     # @return [Object] the attribute value
     # @raise [NoMethodError] when the key does not exist
     def method_missing(method_name, *_args)
       key = method_name.to_s
-      @attrs.key?(key) ? @attrs[key] : super
+      if @attrs.key?(key)
+        define_singleton_method(key) { @attrs[key] }
+        @attrs[key]
+      else
+        super
+      end
     end
 
-    # @!visibility private
+    # Returns a human-readable representation of the resource showing only the
+    # declared {.main_attrs} (or all attrs when none are declared).
+    #
+    # @return [String]
     def inspect
-      keys  = self.class.main_attrs || @attrs.keys
-      pairs = keys.map { |k| "@#{k}=#{@attrs[k.to_s].inspect}" }.join(', ')
+      pairs = inspect_hash.map do |key, value|
+        "@#{key}=#{value.inspect}"
+      end.join(', ')
+
       "#<#{self.class} #{pairs}>"
+    end
+
+    private
+
+    # Builds the key/value pairs used by {#inspect}.
+    #
+    # For each target key, the raw value from +@attrs+ is used when present.
+    # When the key is absent from +@attrs+ but the resource responds to the
+    # method (e.g. a computed attribute defined by a subclass), the method
+    # return value is used as a fallback.
+    #
+    # @return [Hash{String => Object}]
+    def inspect_hash
+      target_keys = self.class.main_attrs || @attrs.keys
+
+      target_keys.to_h do |target_key|
+        value = @attrs[target_key.to_s]
+        value = send(target_key) if value.nil? && respond_to?(target_key)
+        [target_key, value]
+      end
+    end
+
+    # Recursively converts {Resource} instances, Hashes, and Arrays to plain
+    # Ruby structures so that +to_h+ is fully serializable.
+    #
+    # @param value [Object]
+    # @return [Object]
+    def deep_convert(value)
+      case value
+      when Resource then value.to_h
+      when Hash     then value.transform_values { |v| deep_convert(v) }
+      when Array    then value.map { |v| deep_convert(v) }
+      else value
+      end
     end
   end
 end

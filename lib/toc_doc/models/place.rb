@@ -27,6 +27,8 @@ module TocDoc
   #   place.latitude         #=> 44.8386722
   #   place.elevator         #=> true
   class Place < Resource
+    main_attrs :id, :city, :full_address
+
     # Returns the geographic coordinates of the place.
     #
     # @return [Array(Float, Float)] +[latitude, longitude]+

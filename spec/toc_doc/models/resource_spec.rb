@@ -55,10 +55,62 @@ RSpec.describe TocDoc::Resource do
       expect(resource.to_h).to eq('date' => '2026-02-28', 'total' => 5)
     end
 
-    it 'returns a copy (not the internal hash)' do
+    it 'returns a copy (mutations do not affect the resource)' do
       h = resource.to_h
       h['date'] = 'changed'
       expect(resource.date).to eq('2026-02-28')
+    end
+
+    context 'when an attribute value is a nested Resource' do
+      let(:inner) { described_class.new('name' => 'inner') }
+      let(:outer) { described_class.new('child' => inner, 'count' => 1) }
+
+      it 'recursively converts the nested Resource to a plain Hash' do
+        expect(outer.to_h['child']).to eq('name' => 'inner')
+      end
+
+      it 'does not return Resource instances in the output' do
+        expect(outer.to_h.values).to all(satisfy { |v| !v.is_a?(described_class) })
+      end
+    end
+
+    context 'when an attribute value is an Array containing Resources' do
+      let(:r1) { described_class.new('x' => 1) }
+      let(:r2) { described_class.new('x' => 2) }
+      let(:resource_with_array) { described_class.new('items' => [r1, r2, 'plain']) }
+
+      it 'converts Resource elements to plain Hashes' do
+        expect(resource_with_array.to_h['items']).to eq([{ 'x' => 1 }, { 'x' => 2 }, 'plain'])
+      end
+    end
+
+    context 'when an attribute value is a Hash containing a Resource' do
+      let(:inner) { described_class.new('val' => 42) }
+      let(:resource_with_hash) { described_class.new('meta' => { 'nested' => inner }) }
+
+      it 'recursively converts Resource values inside Hashes' do
+        expect(resource_with_hash.to_h['meta']).to eq('nested' => { 'val' => 42 })
+      end
+    end
+  end
+
+  describe '#to_json' do
+    it 'returns a String' do
+      expect(resource.to_json).to be_a(String)
+    end
+
+    it 'round-trips through JSON.parse back to the plain hash' do
+      expect(JSON.parse(resource.to_json)).to eq(resource.to_h)
+    end
+
+    context 'when the resource contains nested Resources' do
+      let(:inner) { described_class.new('name' => 'inner') }
+      let(:outer) { described_class.new('child' => inner) }
+
+      it 'serializes nested Resources correctly' do
+        parsed = JSON.parse(outer.to_json)
+        expect(parsed['child']).to eq('name' => 'inner')
+      end
     end
   end
 
@@ -92,6 +144,73 @@ RSpec.describe TocDoc::Resource do
       r = described_class.new(date: '2026-02-28')
       expect(r.date).to eq('2026-02-28')
       expect(r['date']).to eq('2026-02-28')
+    end
+  end
+
+  describe '#attribute_names' do
+    it 'returns the attribute keys as strings' do
+      expect(resource.attribute_names).to eq(%w[date total])
+    end
+
+    it 'reflects keys added via []=' do
+      resource[:new_key] = 99
+      expect(resource.attribute_names).to include('new_key')
+    end
+  end
+
+  describe '#inspect' do
+    context 'when main_attrs is not declared' do
+      it 'shows all attribute keys' do
+        expect(resource.inspect).to include('@date=').and include('@total=')
+      end
+    end
+
+    context 'when main_attrs is declared on a subclass' do
+      let(:klass) do
+        Class.new(described_class) { main_attrs :date }
+      end
+
+      it 'shows only declared attrs' do
+        r = klass.new('date' => '2026-02-28', 'total' => 5)
+        expect(r.inspect).to include('@date=')
+        expect(r.inspect).not_to include('@total=')
+      end
+    end
+
+    context 'when a declared attr is absent from @attrs but accessible via a reader' do
+      let(:klass) do
+        Class.new(described_class) do
+          main_attrs :computed
+          def computed = 'derived_value'
+        end
+      end
+
+      it 'falls back to the method return value' do
+        r = klass.new({})
+        expect(r.inspect).to include('@computed="derived_value"')
+      end
+    end
+
+    it 'formats as #<ClassName @key=value>' do
+      expect(resource.inspect).to match(/\A#<TocDoc::Resource @/)
+    end
+  end
+
+  describe 'singleton method definition on first dot-notation access' do
+    it 'defines a real method after first access so #method works' do
+      resource.date
+      expect(resource.method(:date)).to be_a(Method)
+    end
+
+    it 'subsequent calls return the correct value' do
+      resource.date
+      expect(resource.date).to eq('2026-02-28')
+    end
+
+    it 'reflects mutations via []= through the defined singleton method' do
+      resource.date
+      resource[:date] = '2099-01-01'
+      expect(resource.date).to eq('2099-01-01')
     end
   end
 end

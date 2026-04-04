@@ -7,6 +7,26 @@ RSpec.describe TocDoc::Availability do
     described_class.new('date' => '2026-02-28', 'slots' => slots)
   end
 
+  describe '#inspect' do
+    it 'includes the raw date string' do
+      expect(availability.inspect).to include('@date=')
+    end
+
+    it 'includes the raw slots array' do
+      expect(availability.inspect).to include('@slots=')
+    end
+
+    it 'shows the raw ISO 8601 date string, not a parsed Date object' do
+      expect(availability.inspect).to include('"2026-02-28"')
+      expect(availability.inspect).not_to include('#<Date')
+    end
+
+    it 'shows the raw slot strings, not parsed DateTime objects' do
+      expect(availability.inspect).to include('"2026-02-28T10:00:00.000+01:00"')
+      expect(availability.inspect).not_to include('#<DateTime')
+    end
+  end
+
   describe '#date' do
     it 'returns a parsed Date object' do
       expect(availability.date).to eq(Date.new(2026, 2, 28))

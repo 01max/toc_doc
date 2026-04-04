@@ -3,14 +3,6 @@
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
 
-## 1.7 — DevX
-
-- [ ] Logging middleware (`:logger` config key)
-- [ ] Resource: `define_singleton_method` on first access + `#attribute_names`
-- [ ] Deep `to_h` and `to_json` on `Resource` and `BookingInfo`
-- [ ] `Collection#filtered_entries` memoization
-- [ ] `BookingInfo#agendas` O(n*m) → hash lookup
-
 ## 1.8 — HTTP Layer Robustness
 
 - [ ] Configurable availability pagination depth + `Collection#more?` / `#fetch_next_page`
@@ -40,6 +32,15 @@
 - [ ] Place autocomplete endpoint ? (`/patient_app/place_autocomplete.json`)
 
 # DONE & RELEASED
+
+## 1.7
+
+- [x] Logging middleware (`:logger` config key)
+- [x] Resource: `define_singleton_method` on first access + `#attribute_names`
+- [x] Deep `to_h` and `to_json` on `Resource` and `BookingInfo`
+- [x] `Collection#filtered_entries` memoization
+- [x] `BookingInfo#agendas` O(n*m) → hash lookup
+- [x] Improve `#inspect` for `Availability`, `Place`, `Speciality`, `Profile::Organization`
 
 ## 1.6
 

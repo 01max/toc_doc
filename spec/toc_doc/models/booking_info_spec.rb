@@ -110,6 +110,19 @@ RSpec.describe TocDoc::BookingInfo do
         resolved_ids = agenda.visit_motives.map(&:id)
         expect(resolved_ids).to match_array(agenda.visit_motive_ids)
       end
+
+      context 'when an agenda references an unknown visit_motive_id' do
+        subject(:info) do
+          data = JSON.parse(fixture('booking-info-practitioner.json'))
+          data['data']['agendas'].first['visit_motive_ids'] = [999_999]
+          instance = described_class.new(data['data'])
+          instance
+        end
+
+        it 'silently drops unknown ids and returns an empty visit_motives list' do
+          expect(info.agendas.first.visit_motives).to be_empty
+        end
+      end
     end
 
     describe '#places' do
@@ -144,11 +157,61 @@ RSpec.describe TocDoc::BookingInfo do
       end
     end
 
+    describe '#raw' do
+      it 'returns the original data hash as-is' do
+        expect(info.raw).to be_a(Hash)
+        expect(info.raw).to have_key('profile')
+        expect(info.raw).to have_key('visit_motives')
+      end
+
+      it 'returns a Hash with raw (un-hydrated) profile data' do
+        expect(info.raw['profile']).to be_a(Hash)
+      end
+    end
+
     describe '#to_h' do
-      it 'returns the raw data hash' do
+      it 'returns a Hash' do
         expect(info.to_h).to be_a(Hash)
-        expect(info.to_h).to have_key('profile')
-        expect(info.to_h).to have_key('visit_motives')
+      end
+
+      it 'includes all expected keys' do
+        expect(info.to_h.keys).to match_array(
+          %w[profile specialities visit_motives agendas places practitioners]
+        )
+      end
+
+      it 'serializes profile as a plain Hash' do
+        expect(info.to_h['profile']).to be_a(Hash)
+      end
+
+      it 'serializes specialities as an Array of plain Hashes' do
+        expect(info.to_h['specialities']).to all(be_a(Hash))
+      end
+
+      it 'serializes visit_motives as an Array of plain Hashes' do
+        expect(info.to_h['visit_motives']).to all(be_a(Hash))
+      end
+
+      it 'serializes agendas as an Array of plain Hashes' do
+        expect(info.to_h['agendas']).to all(be_a(Hash))
+      end
+
+      it 'serializes places as an Array of plain Hashes' do
+        expect(info.to_h['places']).to all(be_a(Hash))
+      end
+
+      it 'serializes practitioners as an Array of plain Hashes' do
+        expect(info.to_h['practitioners']).to all(be_a(Hash))
+      end
+    end
+
+    describe '#to_json' do
+      it 'returns a String' do
+        expect(info.to_json).to be_a(String)
+      end
+
+      it 'round-trips through JSON.parse back to the hydrated hash' do
+        expect(JSON.parse(info.to_json)).to eq(info.to_h)
       end
     end
 
