@@ -16,6 +16,8 @@ module TocDoc
   #   resource[:date] #=> "2026-02-28"
   #   resource.to_h   #=> { "date" => "2026-02-28", "slots" => [] }
   class Resource
+    attr_reader :attrs
+
     class << self
       # Normalises a raw attribute hash to string keys, mirroring what
       # {#initialize} does internally. Useful in class-level factory methods
@@ -141,7 +143,37 @@ module TocDoc
       end
     end
 
+    # Returns a human-readable representation of the resource showing only the
+    # declared {.main_attrs} (or all attrs when none are declared).
+    #
+    # @return [String]
+    def inspect
+      pairs = inspect_hash.map do |key, value|
+        "@#{key}=#{value.inspect}"
+      end.join(', ')
+
+      "#<#{self.class} #{pairs}>"
+    end
+
     private
+
+    # Builds the key/value pairs used by {#inspect}.
+    #
+    # For each target key, the raw value from +@attrs+ is used when present.
+    # When the key is absent from +@attrs+ but the resource responds to the
+    # method (e.g. a computed attribute defined by a subclass), the method
+    # return value is used as a fallback.
+    #
+    # @return [Hash{String => Object}]
+    def inspect_hash
+      target_keys = self.class.main_attrs || @attrs.keys
+
+      target_keys.to_h do |target_key|
+        value = @attrs[target_key.to_s]
+        value = send(target_key) if value.nil? && respond_to?(target_key)
+        [target_key, value]
+      end
+    end
 
     # Recursively converts {Resource} instances, Hashes, and Arrays to plain
     # Ruby structures so that +to_h+ is fully serializable.
@@ -155,15 +187,6 @@ module TocDoc
       when Array    then value.map { |v| deep_convert(v) }
       else value
       end
-    end
-
-    public
-
-    # @!visibility private
-    def inspect
-      keys  = self.class.main_attrs || @attrs.keys
-      pairs = keys.map { |k| "@#{k}=#{@attrs[k.to_s].inspect}" }.join(', ')
-      "#<#{self.class} #{pairs}>"
     end
   end
 end

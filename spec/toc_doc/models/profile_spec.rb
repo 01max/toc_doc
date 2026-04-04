@@ -249,6 +249,61 @@ RSpec.describe TocDoc::Profile do
     end
   end
 
+  describe '#id' do
+    it 'returns the id key when present' do
+      profile = TocDoc::Profile::Practitioner.new('id' => 42)
+      expect(profile.id).to eq(42)
+    end
+
+    it 'falls back to the value key used in autocomplete responses' do
+      profile = TocDoc::Profile::Practitioner.new('value' => 1001)
+      expect(profile.id).to eq(1001)
+    end
+
+    it 'returns nil when neither id nor value is present' do
+      expect(TocDoc::Profile::Practitioner.new.id).to be_nil
+    end
+  end
+
+  describe '#load_full_profile!' do
+    let(:partial_profile) do
+      TocDoc::Profile::Practitioner.new('id' => 42, 'name' => 'DOE', 'partial' => true)
+    end
+
+    context 'when the profile is partial' do
+      before do
+        stub_profile('https://www.doctolib.fr/profiles/42.json')
+      end
+
+      it 'replaces attrs with the full profile and returns self' do
+        result = partial_profile.load_full_profile!
+        expect(result).to be(partial_profile)
+        expect(partial_profile.partial).to be false
+      end
+    end
+
+    context 'when the profile is not partial' do
+      it 'returns nil without making a network request' do
+        full_profile = TocDoc::Profile::Practitioner.new('id' => 42, 'partial' => false)
+        result = full_profile.load_full_profile!
+        expect(result).to be_nil
+        expect(a_request(:get, /profiles/)).not_to have_been_made
+      end
+    end
+  end
+
+  describe '#inspect' do
+    it 'includes id and partial in the output' do
+      profile = TocDoc::Profile::Practitioner.new('id' => 42, 'partial' => true)
+      expect(profile.inspect).to include('@id=').and include('@partial=')
+    end
+
+    it 'does not include undeclared attrs in the output' do
+      profile = TocDoc::Profile::Practitioner.new('id' => 42, 'partial' => false, 'name' => 'DOE')
+      expect(profile.inspect).not_to include('@name=')
+    end
+  end
+
   describe 'TocDoc.profile module-level delegation' do
     before do
       stub_profile

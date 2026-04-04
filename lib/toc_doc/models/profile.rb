@@ -165,6 +165,28 @@ module TocDoc
     def organization?
       is_a?(Organization)
     end
+
+    # Returns the profile ID, falling back to the +value+ key used in
+    # autocomplete responses when +id+ is absent.
+    #
+    # @return [Integer, String, nil]
+    def id
+      self['id'] || self['value']
+    end
+
+    # Replaces this profile's attributes with those from the full profile page,
+    # making a network request only when the profile is currently partial.
+    # Returns +self+ for chaining.
+    #
+    # @return [self]
+    def load_full_profile!
+      return unless partial
+
+      full_profile = self.class.find(id)
+      @attrs = full_profile.instance_variable_get(:@attrs)
+      @partial = false
+      self
+    end
   end
 end
 

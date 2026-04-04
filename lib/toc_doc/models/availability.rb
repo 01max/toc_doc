@@ -9,15 +9,19 @@ module TocDoc
   # @example
   #   avail = TocDoc::Availability.new('date' => '2026-02-28', 'slots' => ['2026-02-28T10:00:00.000+01:00'])
   #   avail.date       #=> #<Date: 2026-02-28>
-  #   avail.raw_date   #=> "2026-02-28"
+  #   avail['date']    #=> "2026-02-28"
   #   avail.slots      #=> [#<DateTime: 2026-02-28T10:00:00.000+01:00>]
-  #   avail.raw_slots  #=> ["2026-02-28T10:00:00.000+01:00"]
+  #   avail['slots']   #=> ["2026-02-28T10:00:00.000+01:00"]
   class Availability < Resource
-    main_attrs :date
+    main_attrs :date, :slots
 
     extend TocDoc::UriUtils
 
-    attr_reader :date, :slots
+    # @return [Date, nil] the parsed availability date
+    attr_reader :date
+
+    # @return [Array<DateTime>] the parsed slot datetimes
+    attr_reader :slots
 
     # API path for the availabilities endpoint.
     # @return [String]
@@ -98,6 +102,11 @@ module TocDoc
 
     private
 
+    # Extracts the +date+ and +slots+ keys from the raw attribute hash,
+    # providing an empty array fallback for missing slots.
+    #
+    # @param attrs [Hash{String => Object}] normalized attribute hash
+    # @return [Hash{String => Object}]
     def build_raw(attrs)
       {
         'date' => attrs['date'],

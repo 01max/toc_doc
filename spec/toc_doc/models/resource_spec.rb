@@ -158,6 +158,44 @@ RSpec.describe TocDoc::Resource do
     end
   end
 
+  describe '#inspect' do
+    context 'when main_attrs is not declared' do
+      it 'shows all attribute keys' do
+        expect(resource.inspect).to include('@date=').and include('@total=')
+      end
+    end
+
+    context 'when main_attrs is declared on a subclass' do
+      let(:klass) do
+        Class.new(described_class) { main_attrs :date }
+      end
+
+      it 'shows only declared attrs' do
+        r = klass.new('date' => '2026-02-28', 'total' => 5)
+        expect(r.inspect).to include('@date=')
+        expect(r.inspect).not_to include('@total=')
+      end
+    end
+
+    context 'when a declared attr is absent from @attrs but accessible via a reader' do
+      let(:klass) do
+        Class.new(described_class) do
+          main_attrs :computed
+          def computed = 'derived_value'
+        end
+      end
+
+      it 'falls back to the method return value' do
+        r = klass.new({})
+        expect(r.inspect).to include('@computed="derived_value"')
+      end
+    end
+
+    it 'formats as #<ClassName @key=value>' do
+      expect(resource.inspect).to match(/\A#<TocDoc::Resource @/)
+    end
+  end
+
   describe 'singleton method definition on first dot-notation access' do
     it 'defines a real method after first access so #method works' do
       resource.date

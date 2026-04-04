@@ -12,8 +12,18 @@ RSpec.describe TocDoc::Availability do
       expect(availability.inspect).to include('@date=')
     end
 
-    it 'excludes undeclared attrs' do
-      expect(availability.inspect).not_to include('@slots=')
+    it 'includes the raw slots array' do
+      expect(availability.inspect).to include('@slots=')
+    end
+
+    it 'shows the raw ISO 8601 date string, not a parsed Date object' do
+      expect(availability.inspect).to include('"2026-02-28"')
+      expect(availability.inspect).not_to include('#<Date')
+    end
+
+    it 'shows the raw slot strings, not parsed DateTime objects' do
+      expect(availability.inspect).to include('"2026-02-28T10:00:00.000+01:00"')
+      expect(availability.inspect).not_to include('#<DateTime')
     end
   end
 
