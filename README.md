@@ -140,11 +140,12 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.6.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.7.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
 | `per_page` | `15` | Default number of availability dates per request (capped at `15`). Emits a warning if the value exceeds the cap. |
 | `connect_timeout` | `5` | TCP connect timeout in seconds, passed to Faraday as `open_timeout`. Override via `TOCDOC_CONNECT_TIMEOUT`. |
 | `read_timeout` | `10` | Response read timeout in seconds, passed to Faraday as `timeout`. Override via `TOCDOC_READ_TIMEOUT`. |
+| `logger` | `nil` | Logger-compatible object (e.g. `Logger.new($stdout)`). When set, `TocDoc::Middleware::Logging` logs each request URL and response status. `nil` disables logging. |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
 | `connection_options` | `{}` | Options passed directly to `Faraday.new`. |
 
