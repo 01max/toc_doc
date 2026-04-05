@@ -229,6 +229,7 @@ RSpec.describe TocDoc::Availability::Collection do
       end
     end
   end
+end
 
 RSpec.describe TocDoc::Availability do
   let(:base_url) { 'https://www.doctolib.fr/availabilities.json' }
