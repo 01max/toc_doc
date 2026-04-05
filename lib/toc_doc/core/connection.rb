@@ -99,15 +99,15 @@ module TocDoc
 
     # Returns the appropriate middleware stack for this client.
     #
-    # When a logger is configured, builds a fresh stack with the logger injected
-    # so that the shared memoized default stack is never mutated.
-    # Falls back to the memoized {TocDoc::Default.middleware} when no logger is
-    # set.
+    # When a logger, rate limiter, or cache is configured, builds a fresh stack
+    # with those features injected so the shared memoized default stack is never
+    # mutated.  Falls back to the memoized {TocDoc::Default.middleware} when
+    # none of those options are set.
     #
     # @return [Faraday::RackBuilder]
     def effective_middleware
-      if logger
-        TocDoc::Default.build_middleware(logger: logger)
+      if logger || rate_limit || cache
+        TocDoc::Default.build_middleware(logger: logger, rate_limit: rate_limit, cache: cache)
       else
         middleware
       end

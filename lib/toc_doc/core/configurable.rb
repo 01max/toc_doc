@@ -32,6 +32,9 @@ module TocDoc
       connect_timeout
       read_timeout
       logger
+      pagination_depth
+      rate_limit
+      cache
     ].freeze
 
     # @!attribute [rw] api_endpoint
@@ -50,6 +53,12 @@ module TocDoc
     #   @return [Integer] read (response) timeout in seconds
     # @!attribute [rw] logger
     #   @return [Logger, :stdout, nil] logger for HTTP request logging; +nil+ disables logging
+    # @!attribute [rw] pagination_depth
+    #   @return [Integer] number of +next_slot+ hops to follow automatically (0 disables)
+    # @!attribute [rw] rate_limit
+    #   @return [Numeric, Hash, nil] client-side rate limit config; +nil+ disables
+    # @!attribute [rw] cache
+    #   @return [Symbol, Hash, Object, nil] response cache config; +nil+ disables
     attr_accessor(*VALID_CONFIG_KEYS)
 
     # Set the number of results per page, clamped to
@@ -66,6 +75,23 @@ module TocDoc
         warn "[TocDoc] per_page #{int} exceeds MAX_PER_PAGE (#{TocDoc::Default::MAX_PER_PAGE}); clamped."
       end
       @per_page = [int, TocDoc::Default::MAX_PER_PAGE].min
+    end
+
+    # Set the number of +next_slot+ hops to follow automatically, clamped to 0
+    # when a negative value is given.
+    #
+    # Emits a warning on +$stderr+ when +value+ is negative so callers are not
+    # silently surprised.
+    #
+    # @param value [Integer, #to_i] desired pagination depth
+    # @return [Integer] the effective depth after clamping
+    def pagination_depth=(value)
+      int = value.to_i
+      if int.negative?
+        warn "[TocDoc] pagination_depth #{int} is negative; clamped to 0."
+        int = 0
+      end
+      @pagination_depth = int
     end
 
     # Returns the list of recognised configurable attribute names.

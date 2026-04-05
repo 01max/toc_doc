@@ -140,12 +140,15 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.7.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.8.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
 | `per_page` | `15` | Default number of availability dates per request (capped at `15`). Emits a warning if the value exceeds the cap. |
 | `connect_timeout` | `5` | TCP connect timeout in seconds, passed to Faraday as `open_timeout`. Override via `TOCDOC_CONNECT_TIMEOUT`. |
 | `read_timeout` | `10` | Response read timeout in seconds, passed to Faraday as `timeout`. Override via `TOCDOC_READ_TIMEOUT`. |
 | `logger` | `nil` | Logger-compatible object (e.g. `Logger.new($stdout)`). When set, `TocDoc::Middleware::Logging` logs each request URL and response status. `nil` disables logging. |
+| `pagination_depth` | `1` | Number of `next_slot` hops `Availability.where` follows automatically. `0` disables automatic pagination. Override via `TOCDOC_PAGINATION_DEPTH`. Negative values are clamped to `0` with a warning. |
+| `rate_limit` | `nil` | Client-side rate limit. Pass a `Numeric` for requests-per-second (e.g. `5`), a `Hash` of `TokenBucket` kwargs (e.g. `{ rate: 5, interval: 2.0 }`), or `nil` to disable. Values below `1` are clamped. |
+| `cache` | `nil` | Response cache for GET requests. `:memory` uses a built-in `MemoryStore` (TTL 300s); a `Hash` with `:store` and `:ttl` keys accepts any AS-compatible store; `nil` disables caching. |
 | `middleware` | Retry + RaiseError + JSON + adapter | Full Faraday middleware stack. Override to customise completely. |
 | `connection_options` | `{}` | Options passed directly to `Faraday.new`. |
 
@@ -162,6 +165,7 @@ All primary options can be set via environment variables before the gem is loade
 | `TOCDOC_CONNECT_TIMEOUT` | `connect_timeout` (default `5`) |
 | `TOCDOC_READ_TIMEOUT` | `read_timeout` (default `10`) |
 | `TOCDOC_RETRY_MAX` | Maximum Faraday retry attempts (default `3`) |
+| `TOCDOC_PAGINATION_DEPTH` | `pagination_depth` (default `1`) |
 
 ---
 
@@ -304,6 +308,8 @@ Implements `Enumerable`, yielding `TocDoc::Availability` instances that have at 
 | `#next_slot` | `String \| nil` | ISO 8601 datetime of the nearest available slot. `nil` when none remain. |
 | `#each` | — | Yields each `TocDoc::Availability` that has at least one slot (excludes empty-slot dates). |
 | `#raw_availabilities` | `Array<TocDoc::Availability>` | All date entries, including those with no slots. |
+| `#more?` | `Boolean` | `true` when the API has indicated further pages exist (`next_slot` is present). |
+| `#fetch_next_page` | `self` | Fetches the next page and merges it into this collection. Raises `StopIteration` when `#more?` is `false`. Requires a client (i.e. built via `Availability.where`). |
 | `#to_h` | `Hash` | Plain-hash representation (only dates with slots in the `availabilities` key). |
 
 ### `TocDoc::Availability`
@@ -447,15 +453,40 @@ The Doctolib availability endpoint is window-based: each request returns up to
 
 ### Automatic next-slot resolution
 
-`TocDoc::Availability.where` automatically follows `next_slot` once: if the
-first API response contains a `next_slot` key (indicating no available slots in
-the requested window), a second request is issued transparently from that date
-before the collection is returned.
+`TocDoc::Availability.where` automatically follows `next_slot` up to
+`pagination_depth` times (default: `1`). Each hop issues a follow-up request
+from the `next_slot` date returned by the previous response, transparently
+merging the pages before returning the collection. Set `pagination_depth: 0` to
+disable automatic pagination entirely.
+
+```ruby
+TocDoc.configure { |c| c.pagination_depth = 3 }
+# → up to 3 next_slot hops per Availability.where call
+```
+
+### On-demand pagination with `#fetch_next_page`
+
+After the initial call, check `#more?` and call `#fetch_next_page` to load
+additional pages one at a time:
+
+```ruby
+collection = TocDoc::Availability.where(
+  visit_motive_ids: 7_767_829,
+  agenda_ids:       1_101_600,
+  start_date:       Date.today
+)
+
+while collection.more?
+  collection.fetch_next_page
+end
+
+collection.total  # slots across all fetched pages
+```
 
 ### Manual window advancement
 
-To fetch additional date windows, call `TocDoc::Availability.where` again with a
-later `start_date`:
+To fetch a completely independent next window, call `TocDoc::Availability.where`
+again with a later `start_date`:
 
 ```ruby
 first_page = TocDoc::Availability.where(

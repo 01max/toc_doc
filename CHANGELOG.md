@@ -1,5 +1,23 @@
 ## [Unreleased]
 
+## [1.8.0] - 2026-04-05
+
+### Added
+
+- **`TocDoc::RateLimiter::TokenBucket`** — new thread-safe token-bucket rate limiter using a monotonic clock; tokens are refilled at a fixed `rate` per `interval`; `#acquire` blocks until a token is available; rate values below 1 are clamped with a warning
+- **`TocDoc::Middleware::RateLimiter`** — new Faraday middleware that enforces client-side rate limiting via a `TokenBucket`; inserted between the retry and JSON middleware so each retry attempt is individually rate-limited; enabled via the new `rate_limit` config key (accepts a `Numeric` for requests-per-second, a `Hash` of `TokenBucket` kwargs, or `nil` to disable)
+- **`TocDoc::Cache::MemoryStore`** — new thread-safe, in-memory response cache with per-entry TTL; lazy expiration (eviction happens on `#read`, not via a background sweep); compatible with the `ActiveSupport::Cache::Store` interface (`read`, `write`, `delete`, `clear`)
+- **`TocDoc::Middleware::Cache`** — new Faraday middleware that caches successful GET responses; cache hits bypass all downstream middleware; cache key is built from the full URL with query parameters sorted for determinism; only GET 200 responses are cached; enabled via the new `cache` config key (`:memory` for a default `MemoryStore`, a `Hash` with `:store`/`:ttl` keys, any AS-compatible store object, or `nil` to disable)
+- **`pagination_depth` config key** — new module-level and per-client option controlling how many `next_slot` hops `Availability.where` follows automatically; defaults to `1`; configurable via the `TOCDOC_PAGINATION_DEPTH` environment variable; negative values are clamped to 0 with a warning; `Default::PAGINATION_DEPTH` constant added
+- **`TocDoc::Availability::Collection#more?`** — returns `true` when the API response indicates further pages exist (`next_slot` present)
+- **`TocDoc::Availability::Collection#fetch_next_page`** — fetches the next page of availabilities and merges it into the collection; raises `StopIteration` when `#more?` is false; raises `TocDoc::Error` when no client was provided at construction time
+
+### Changed
+
+- **`TocDoc::Default#build_middleware`** — now accepts `rate_limit:` and `cache:` keyword arguments and injects the corresponding middleware into the Faraday stack; stack order is now: `RaiseError > [Cache] > [Logging] > Retry > [RateLimiter] > JSON > Adapter`
+- **`TocDoc::Default#options`** — now includes `pagination_depth:`, `rate_limit: nil`, and `cache: nil` in the defaults hash
+- **`TocDoc::Availability.where`** — now respects `pagination_depth` by following up to that many `next_slot` hops before returning; the constructed `Collection` now carries the client instance to enable `#fetch_next_page`
+
 ## [1.7.0] - 2026-04-04
 
 ### Added

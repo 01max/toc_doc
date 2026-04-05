@@ -9,6 +9,7 @@ RSpec.describe TocDoc::Default do
       ENV.delete('TOCDOC_MEDIA_TYPE')
       ENV.delete('TOCDOC_PER_PAGE')
       ENV.delete('TOCDOC_AUTO_PAGINATE')
+      ENV.delete('TOCDOC_PAGINATION_DEPTH')
       ENV.delete('TOCDOC_CONNECT_TIMEOUT')
       ENV.delete('TOCDOC_READ_TIMEOUT')
       example.run
@@ -126,6 +127,111 @@ RSpec.describe TocDoc::Default do
       described_class.reset!
 
       expect(described_class.connection_options).not_to equal(original)
+    end
+  end
+
+  describe '.pagination_depth' do
+    it 'returns PAGINATION_DEPTH by default' do
+      expect(described_class.pagination_depth).to eq(TocDoc::Default::PAGINATION_DEPTH)
+    end
+
+    it 'returns the integer value of TOCDOC_PAGINATION_DEPTH when set' do
+      ENV['TOCDOC_PAGINATION_DEPTH'] = '3'
+      expect(described_class.pagination_depth).to eq(3)
+    end
+
+    it 'clamps negative ENV values to 0' do
+      ENV['TOCDOC_PAGINATION_DEPTH'] = '-5'
+      expect(described_class.pagination_depth).to eq(0)
+    end
+
+    it 'falls back to PAGINATION_DEPTH on invalid ENV value' do
+      ENV['TOCDOC_PAGINATION_DEPTH'] = 'bad'
+      expect(described_class.pagination_depth).to eq(TocDoc::Default::PAGINATION_DEPTH)
+    end
+  end
+
+  describe '.build_middleware' do
+    it 'returns a Faraday::RackBuilder' do
+      expect(described_class.build_middleware).to be_a(Faraday::RackBuilder)
+    end
+
+    it 'includes RaiseError as the first handler' do
+      stack = described_class.build_middleware
+      expect(stack.handlers.first.klass).to eq(TocDoc::Middleware::RaiseError)
+    end
+
+    context 'with rate_limit as a Numeric' do
+      it 'inserts a RateLimiter middleware' do
+        stack = described_class.build_middleware(rate_limit: 5)
+        klasses = stack.handlers.map(&:klass)
+        expect(klasses).to include(TocDoc::Middleware::RateLimiter)
+      end
+
+      it 'positions RateLimiter between Retry and JSON' do
+        stack = described_class.build_middleware(rate_limit: 5)
+        klasses = stack.handlers.map(&:klass)
+        retry_idx     = klasses.index(Faraday::Retry::Middleware) ||
+                        klasses.index { |k| k.name&.include?('Retry') }
+        rate_idx      = klasses.index(TocDoc::Middleware::RateLimiter)
+        expect(rate_idx).to be > retry_idx
+      end
+    end
+
+    context 'with rate_limit as a Hash' do
+      it 'inserts a RateLimiter middleware with the given options' do
+        stack = described_class.build_middleware(rate_limit: { rate: 2, interval: 1.0 })
+        klasses = stack.handlers.map(&:klass)
+        expect(klasses).to include(TocDoc::Middleware::RateLimiter)
+      end
+    end
+
+    context 'without rate_limit' do
+      it 'does not insert a RateLimiter middleware' do
+        stack = described_class.build_middleware
+        klasses = stack.handlers.map(&:klass)
+        expect(klasses).not_to include(TocDoc::Middleware::RateLimiter)
+      end
+    end
+
+    context 'with cache: :memory' do
+      it 'inserts a Cache middleware' do
+        stack = described_class.build_middleware(cache: :memory)
+        klasses = stack.handlers.map(&:klass)
+        expect(klasses).to include(TocDoc::Middleware::Cache)
+      end
+
+      it 'positions Cache before Logging' do
+        stack = described_class.build_middleware(cache: :memory, logger: :stdout)
+        klasses = stack.handlers.map(&:klass)
+        cache_idx   = klasses.index(TocDoc::Middleware::Cache)
+        logging_idx = klasses.index(TocDoc::Middleware::Logging)
+        expect(cache_idx).to be < logging_idx
+      end
+    end
+
+    context 'without cache' do
+      it 'does not insert a Cache middleware' do
+        stack = described_class.build_middleware
+        klasses = stack.handlers.map(&:klass)
+        expect(klasses).not_to include(TocDoc::Middleware::Cache)
+      end
+    end
+
+    context 'with all features active' do
+      it 'produces the correct stack order: RaiseError > Cache > Logging > Retry > RateLimiter > JSON > Adapter' do
+        stack = described_class.build_middleware(logger: :stdout, rate_limit: 5, cache: :memory)
+        klasses = stack.handlers.map(&:klass)
+        raise_idx  = klasses.index(TocDoc::Middleware::RaiseError)
+        cache_idx  = klasses.index(TocDoc::Middleware::Cache)
+        log_idx    = klasses.index(TocDoc::Middleware::Logging)
+        retry_idx  = klasses.index { |k| k.name&.include?('Retry') }
+        rate_idx   = klasses.index(TocDoc::Middleware::RateLimiter)
+        expect(raise_idx).to be < cache_idx
+        expect(cache_idx).to be < log_idx
+        expect(log_idx).to be < retry_idx
+        expect(retry_idx).to be < rate_idx
+      end
     end
   end
 end

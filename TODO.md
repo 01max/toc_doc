@@ -3,12 +3,6 @@
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
 
-## 1.8 — HTTP Layer Robustness
-
-- [ ] Configurable availability pagination depth + `Collection#more?` / `#fetch_next_page`
-- [ ] Client-side rate limiter (token-bucket middleware)
-- [ ] Optional response caching (memory or ActiveSupport-compatible store)
-
 ## 1.9 — Service Layer rework
 
 - [ ] `TocDoc::Services::Availabilities` — extract from `Availability.where`
@@ -32,6 +26,12 @@
 - [ ] Place autocomplete endpoint ? (`/patient_app/place_autocomplete.json`)
 
 # DONE & RELEASED
+
+## 1.8
+
+- [x] Configurable availability pagination depth + `Collection#more?` / `#fetch_next_page`
+- [x] Client-side rate limiter (token-bucket middleware)
+- [x] Optional response caching (memory or ActiveSupport-compatible store)
 
 ## 1.7
 

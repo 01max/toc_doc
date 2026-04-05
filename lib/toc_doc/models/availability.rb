@@ -55,12 +55,17 @@ module TocDoc
       def where(visit_motive_ids:, agenda_ids:, start_date: Date.today,
                 limit: TocDoc.per_page, **options)
         client = TocDoc.client
+        depth  = TocDoc.pagination_depth
         query  = build_query(visit_motive_ids, agenda_ids, start_date, limit, options)
         data   = client.get(PATH, query: query)
 
-        merge_next_page(client, query, data) if data['next_slot']
+        depth.times do
+          break unless data['next_slot']
 
-        Collection.new(data, query: query, path: PATH)
+          merge_next_page(client, query, data)
+        end
+
+        Collection.new(data, query: query, path: PATH, client: client)
       end
 
       private

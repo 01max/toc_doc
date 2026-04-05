@@ -23,10 +23,13 @@ module TocDoc
       # @param data [Hash] parsed first-page response body
       # @param query [Hash] original query params (used to build next-page requests)
       # @param path [String] API path for subsequent requests
-      def initialize(data, query: {}, path: '/availabilities.json')
+      # @param client [TocDoc::Client, nil] client used to fetch additional pages
+      #   via {#fetch_next_page}; +nil+ disables {#fetch_next_page}
+      def initialize(data, query: {}, path: '/availabilities.json', client: nil)
         @data = data.dup
         @query = query
         @path = path
+        @client = client
       end
 
       # Iterates over {TocDoc::Availability} instances that have at least one slot.
@@ -60,6 +63,36 @@ module TocDoc
         end
 
         nil
+      end
+
+      # Returns +true+ when the API has indicated that more results exist beyond
+      # the currently loaded pages.
+      #
+      # @return [Boolean]
+      def more?
+        !!@data['next_slot']
+      end
+
+      # Fetches the next page of availabilities and merges it into this collection.
+      #
+      # Uses the +next_slot+ date from the API response as the +start_date+ for
+      # the follow-up request.
+      #
+      # @raise [TocDoc::Error] if no client was provided at construction time
+      # @raise [StopIteration] if {#more?} is +false+
+      # @return [self]
+      #
+      # @example
+      #   collection.fetch_next_page if collection.more?
+      def fetch_next_page
+        raise TocDoc::Error, 'No client available for pagination' unless @client
+        raise StopIteration, 'No more pages available' unless more?
+
+        next_date = Date.parse(@data['next_slot']).to_s
+        next_page = @client.get(@path, query: @query.merge(start_date: next_date))
+        @data.delete('next_slot')
+        @data['next_slot'] = next_page['next_slot'] if next_page.key?('next_slot')
+        merge_page!(next_page)
       end
 
       # All date entries — including those with no slots — as {TocDoc::Availability}
