@@ -60,8 +60,8 @@ RSpec.describe TocDoc::Middleware::Cache do
     end
 
     it 'are not cached' do
-      connection.get('/missing') rescue nil
-      connection.get('/missing') rescue nil
+      connection.get('/missing')
+      connection.get('/missing')
       expect(a_request(:get, "#{base_url}/missing")).to have_been_made.twice
     end
   end
@@ -76,7 +76,7 @@ RSpec.describe TocDoc::Middleware::Cache do
     it 'treats requests with the same params in different order as identical' do
       connection.get('/search', z: '1', a: '2')
       connection.get('/search', a: '2', z: '1')
-      expect(a_request(:get, "#{base_url}/search")).to have_been_made.once
+      expect(a_request(:get, "#{base_url}/search").with(query: hash_including({}))).to have_been_made.once
     end
   end
 
