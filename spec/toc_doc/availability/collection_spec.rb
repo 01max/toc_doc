@@ -180,7 +180,7 @@ RSpec.describe TocDoc::Availability::Collection do
     end
   end
 
-  describe '#fetch_next_page' do
+  describe '#load_next!' do
     let(:base_url) { 'https://www.doctolib.fr/availabilities.json' }
     let(:page1_data) { JSON.parse(fixture('availabilities_page1.json')) }
     let(:page2_data) { JSON.parse(fixture('availabilities_page2.json')) }
@@ -188,7 +188,7 @@ RSpec.describe TocDoc::Availability::Collection do
     context 'when no client is provided' do
       it 'raises TocDoc::Error' do
         collection = described_class.new(page1_data)
-        expect { collection.fetch_next_page }.to raise_error(TocDoc::Error, /No client available/)
+        expect { collection.load_next! }.to raise_error(TocDoc::Error, /No client available/)
       end
     end
 
@@ -196,7 +196,7 @@ RSpec.describe TocDoc::Availability::Collection do
       it 'raises StopIteration' do
         client = TocDoc.client
         collection = described_class.new(page2_data, client: client)
-        expect { collection.fetch_next_page }.to raise_error(StopIteration)
+        expect { collection.load_next! }.to raise_error(StopIteration)
       end
     end
 
@@ -215,7 +215,7 @@ RSpec.describe TocDoc::Availability::Collection do
           client: client
         )
 
-        result = collection.fetch_next_page
+        result = collection.load_next!
         expect(result).to be(collection)
         expect(collection.more?).to be(false)
         expect(collection.total).to eq(3)

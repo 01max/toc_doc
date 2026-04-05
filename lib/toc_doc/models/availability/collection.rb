@@ -24,7 +24,7 @@ module TocDoc
       # @param query [Hash] original query params (used to build next-page requests)
       # @param path [String] API path for subsequent requests
       # @param client [TocDoc::Client, nil] client used to fetch additional pages
-      #   via {#fetch_next_page}; +nil+ disables {#fetch_next_page}
+      #   via {#load_next!}; +nil+ disables {#load_next!}
       def initialize(data, query: {}, path: '/availabilities.json', client: nil)
         @data = data.dup
         @query = query
@@ -32,12 +32,22 @@ module TocDoc
         @client = client
       end
 
+      def availabilities
+        @availabilities ||= Array(@data['availabilities'])
+                            .select { |entry| Array(entry['slots']).any? }
+                            .map { |entry| TocDoc::Availability.new(entry) }
+      end
+
+      def slots
+        availabilities.flat_map(&:slots)
+      end
+
       # Iterates over {TocDoc::Availability} instances that have at least one slot.
       #
       # @yieldparam availability [TocDoc::Availability]
       # @return [Enumerator] if no block given
       def each(&)
-        filtered_entries.each(&)
+        availabilities.each(&)
       end
 
       # The total number of available slots in the collection.
@@ -73,7 +83,7 @@ module TocDoc
         !!@data['next_slot']
       end
 
-      # Fetches the next page of availabilities and merges it into this collection.
+      # Fetches the next window of availabilities and merges it into this collection.
       #
       # Uses the +next_slot+ date from the API response as the +start_date+ for
       # the follow-up request.
@@ -83,8 +93,8 @@ module TocDoc
       # @return [self]
       #
       # @example
-      #   collection.fetch_next_page if collection.more?
-      def fetch_next_page
+      #   collection.load_next! if collection.more?
+      def load_next!
         raise TocDoc::Error, 'No client available for pagination' unless @client
         raise StopIteration, 'No more pages available' unless more?
 
@@ -110,7 +120,7 @@ module TocDoc
       #
       # @return [Hash{String => Object}]
       def to_h
-        @data.merge('availabilities' => filtered_entries.map(&:to_h))
+        @data.merge('availabilities' => availabilities.map(&:to_h))
       end
 
       # Fetches the next window of availabilities (starting the day after the
@@ -121,16 +131,8 @@ module TocDoc
       def merge_page!(page_data)
         @data['availabilities'] = @data.fetch('availabilities', []) + page_data.fetch('availabilities', [])
         @data['total']          = @data.fetch('total', 0) + page_data.fetch('total', 0)
-        @filtered_entries = nil
+        @availabilities = nil
         self
-      end
-
-      private
-
-      def filtered_entries
-        @filtered_entries ||= Array(@data['availabilities'])
-                              .select { |entry| Array(entry['slots']).any? }
-                              .map { |entry| TocDoc::Availability.new(entry) }
       end
     end
   end
