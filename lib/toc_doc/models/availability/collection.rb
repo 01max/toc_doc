@@ -43,7 +43,7 @@ module TocDoc
                             .map { |entry| TocDoc::Availability.new(entry) }
       end
 
-      alias_method :all, :availabilities
+      alias all availabilities
 
       # All individual slots across every availability in the collection.
       #
