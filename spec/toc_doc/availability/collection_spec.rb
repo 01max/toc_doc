@@ -167,7 +167,68 @@ RSpec.describe TocDoc::Availability::Collection do
       expect(collection.total).to eq(2)
     end
   end
-end
+
+  describe '#more?' do
+    it 'returns true when next_slot is present' do
+      r = described_class.new({ 'total' => 0, 'next_slot' => '2026-03-24T09:00:00.000+01:00',
+                                'availabilities' => [] })
+      expect(r.more?).to be(true)
+    end
+
+    it 'returns false when next_slot is absent' do
+      expect(response.more?).to be(false)
+    end
+  end
+
+  describe '#fetch_next_page' do
+    let(:base_url) { 'https://www.doctolib.fr/availabilities.json' }
+    let(:page1_data) { JSON.parse(fixture('availabilities_page1.json')) }
+    let(:page2_data) { JSON.parse(fixture('availabilities_page2.json')) }
+
+    context 'when no client is provided' do
+      it 'raises TocDoc::Error' do
+        collection = described_class.new(page1_data)
+        expect { collection.fetch_next_page }.to raise_error(TocDoc::Error, /No client available/)
+      end
+    end
+
+    context 'when more? is false' do
+      it 'raises StopIteration' do
+        client = TocDoc.client
+        collection = described_class.new(page2_data, client: client)
+        expect { collection.fetch_next_page }.to raise_error(StopIteration)
+      end
+    end
+
+    context 'when more? is true and a client is provided' do
+      it 'fetches the next page and merges it' do
+        stub_request(:get, base_url)
+          .with(query: hash_including(start_date: '2026-03-12'))
+          .to_return(status: 200, body: fixture('availabilities_page2.json'),
+                     headers: { 'Content-Type' => 'application/json' })
+
+        client = TocDoc.client
+        collection = described_class.new(
+          page1_data,
+          query: { visit_motive_ids: '7767829', agenda_ids: '1101600', limit: 15 },
+          path: '/availabilities.json',
+          client: client
+        )
+
+        result = collection.fetch_next_page
+        expect(result).to be(collection)
+        expect(collection.more?).to be(false)
+        expect(collection.total).to eq(3)
+      end
+    end
+
+    context 'backward compatibility' do
+      it 'still works without client keyword (defaults to nil)' do
+        collection = described_class.new(page2_data)
+        expect(collection).to be_a(described_class)
+      end
+    end
+  end
 
 RSpec.describe TocDoc::Availability do
   let(:base_url) { 'https://www.doctolib.fr/availabilities.json' }
@@ -408,6 +469,67 @@ RSpec.describe TocDoc::Availability do
         expect(a_request(:get, base_url).with(query: hash_including(start_date: '2026-03-01')))
           .to have_been_made.once
         expect(result.to_a.length).to eq(1)
+      end
+    end
+
+    context 'with pagination_depth: 0' do
+      around do |example|
+        original = TocDoc.pagination_depth
+        TocDoc.pagination_depth = 0
+        example.run
+      ensure
+        TocDoc.pagination_depth = original
+      end
+
+      it 'does not follow next_slot even when present' do
+        stub_page('2026-03-01', page1_body)
+
+        result = TocDoc::Availability.where(
+          visit_motive_ids: 7_767_829,
+          agenda_ids: 1_101_600,
+          start_date: Date.new(2026, 3, 1)
+        )
+
+        expect(a_request(:get, base_url).with(query: hash_including(start_date: '2026-03-01')))
+          .to have_been_made.once
+        expect(result.more?).to be(true)
+        expect(result.total).to eq(0)
+      end
+    end
+
+    context 'with pagination_depth: 2' do
+      around do |example|
+        original = TocDoc.pagination_depth
+        TocDoc.pagination_depth = 2
+        example.run
+      ensure
+        TocDoc.pagination_depth = original
+      end
+
+      it 'follows two next_slot hops and concatenates three pages' do
+        page3_body = fixture('availabilities_page3.json')
+        # page1: next_slot → 2026-03-12
+        stub_page('2026-03-01', page1_body)
+        # page2: we need a page2 with next_slot to trigger second hop
+        page2_with_next = {
+          'total' => 3,
+          'next_slot' => '2026-03-20T10:00:00.000+01:00',
+          'availabilities' => [
+            { 'date' => '2026-03-12', 'slots' => ['2026-03-12T09:00:00.000+01:00'] }
+          ]
+        }.to_json
+        stub_page('2026-03-12', page2_with_next)
+        stub_page('2026-03-20', page3_body)
+
+        result = TocDoc::Availability.where(
+          visit_motive_ids: 7_767_829,
+          agenda_ids: 1_101_600,
+          start_date: Date.new(2026, 3, 1)
+        )
+
+        expect(result.to_a.length).to eq(2)
+        expect(result.to_a.map(&:date)).to eq([Date.new(2026, 3, 12), Date.new(2026, 3, 20)])
+        expect(result.more?).to be(false)
       end
     end
   end

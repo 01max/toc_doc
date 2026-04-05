@@ -3,7 +3,8 @@
 RSpec.describe TocDoc::Configurable do
   it 'lists valid configuration keys' do
     expect(described_class.keys).to include(*%i[api_endpoint user_agent middleware connection_options
-                                                default_media_type per_page connect_timeout read_timeout])
+                                                default_media_type per_page connect_timeout read_timeout
+                                                pagination_depth rate_limit cache])
   end
 
   it 'resets to default options' do
@@ -72,6 +73,50 @@ RSpec.describe TocDoc::Configurable do
 
     it 'does not emit a warning when the value is within MAX_PER_PAGE' do
       expect { instance.per_page = 10 }.not_to output.to_stderr
+    end
+  end
+
+  describe '#pagination_depth=' do
+    subject(:instance) { Class.new { extend TocDoc::Configurable } }
+
+    it 'accepts non-negative values without warning' do
+      expect { instance.pagination_depth = 3 }.not_to output.to_stderr
+      expect(instance.pagination_depth).to eq(3)
+    end
+
+    it 'clamps negative values to 0 with a warning' do
+      expect { instance.pagination_depth = -1 }
+        .to output(/\[TocDoc\] pagination_depth -1 is negative; clamped to 0/).to_stderr
+      expect(instance.pagination_depth).to eq(0)
+    end
+
+    it 'accepts 0 without warning' do
+      expect { instance.pagination_depth = 0 }.not_to output.to_stderr
+      expect(instance.pagination_depth).to eq(0)
+    end
+  end
+
+  describe 'rate_limit key' do
+    subject(:instance) { Class.new { extend TocDoc::Configurable } }
+
+    it 'is present in VALID_CONFIG_KEYS' do
+      expect(described_class.keys).to include(:rate_limit)
+    end
+
+    it 'defaults to nil after reset' do
+      expect(instance.rate_limit).to be_nil
+    end
+  end
+
+  describe 'cache key' do
+    subject(:instance) { Class.new { extend TocDoc::Configurable } }
+
+    it 'is present in VALID_CONFIG_KEYS' do
+      expect(described_class.keys).to include(:cache)
+    end
+
+    it 'defaults to nil after reset' do
+      expect(instance.cache).to be_nil
     end
   end
 end

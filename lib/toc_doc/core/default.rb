@@ -5,6 +5,10 @@ require 'faraday/retry'
 
 require 'toc_doc/http/middleware/raise_error'
 require 'toc_doc/http/middleware/logging'
+require 'toc_doc/http/middleware/rate_limiter'
+require 'toc_doc/http/middleware/cache'
+require 'toc_doc/http/rate_limiter/token_bucket'
+require 'toc_doc/cache/memory_store'
 
 module TocDoc
   # Provides sensible default values for every configurable option.
@@ -26,6 +30,9 @@ module TocDoc
     # @return [Integer] the default number of results per page
     PER_PAGE       = 15
 
+    # @return [Integer] the default number of +next_slot+ hops to follow
+    PAGINATION_DEPTH = 1
+
     # @return [Integer] the hard upper limit for per_page
     MAX_PER_PAGE   = 15
 
@@ -46,7 +53,7 @@ module TocDoc
       def options
         { api_endpoint:, user_agent:, default_media_type:, per_page:,
           middleware:, connection_options:, connect_timeout:, read_timeout:,
-          logger: nil }
+          logger: nil, pagination_depth:, rate_limit: nil, cache: nil }
       end
 
       # The base API endpoint URL.
@@ -91,6 +98,19 @@ module TocDoc
         PER_PAGE
       end
 
+      # Number of +next_slot+ hops to follow automatically.
+      #
+      # Falls back to the `TOCDOC_PAGINATION_DEPTH` environment variable, then
+      # {PAGINATION_DEPTH}.  Negative ENV values are clamped to 0.
+      #
+      # @return [Integer]
+      def pagination_depth
+        depth = Integer(ENV.fetch('TOCDOC_PAGINATION_DEPTH', PAGINATION_DEPTH), 10)
+        [depth, 0].max
+      rescue ArgumentError
+        PAGINATION_DEPTH
+      end
+
       # The default (memoized) Faraday middleware stack, built without a logger.
       #
       # Stack order (outermost first): RaiseError, retry, JSON parsing, adapter.
@@ -102,24 +122,30 @@ module TocDoc
         @middleware ||= build_middleware
       end
 
-      # Builds a Faraday middleware stack, optionally injecting a logger.
+      # Builds a Faraday middleware stack, optionally injecting a logger,
+      # rate limiter, and response cache.
       #
-      # When +logger+ is non-nil, {TocDoc::Middleware::Logging} is inserted
-      # between {TocDoc::Middleware::RaiseError} and the retry middleware so
-      # each logical request is logged exactly once after all retries are
-      # exhausted.
+      # Stack order (outermost first):
+      #   RaiseError > [Cache] > [Logging] > Retry > [RateLimiter] > JSON > Adapter
       #
-      # Accepts +:stdout+ as a shorthand that writes to +$stdout+.
-      #
-      # @param logger [Logger, :stdout, nil] the logger to inject; +nil+ omits
-      #   the logging middleware entirely
+      # @param logger [Logger, :stdout, nil] the logger to inject; +nil+ omits logging
+      # @param rate_limit [Numeric, Hash, nil] rate-limit config (see {.resolve_rate_limit})
+      # @param cache [Symbol, Hash, Object, nil] cache config (see {.resolve_cache})
       # @return [Faraday::RackBuilder]
-      def build_middleware(logger: nil)
-        resolved = resolve_logger(logger)
+      def build_middleware(logger: nil, rate_limit: nil, cache: nil)
+        resolved_logger = resolve_logger(logger)
+        resolved_bucket = resolve_rate_limit(rate_limit)
+        resolved_cache  = resolve_cache(cache)
         Faraday::RackBuilder.new do |builder|
           builder.use TocDoc::Middleware::RaiseError
-          builder.use TocDoc::Middleware::Logging, logger: resolved if resolved
+          if resolved_cache
+            builder.use TocDoc::Middleware::Cache,
+                        store: resolved_cache[:store],
+                        ttl: resolved_cache[:ttl]
+          end
+          builder.use TocDoc::Middleware::Logging, logger: resolved_logger if resolved_logger
           builder.request :retry, retry_options
+          builder.use TocDoc::Middleware::RateLimiter, bucket: resolved_bucket if resolved_bucket
           builder.response :json, content_type: /\bjson$/
           builder.adapter Faraday.default_adapter
         end
@@ -179,6 +205,32 @@ module TocDoc
           nil
         else
           logger
+        end
+      end
+
+      def resolve_rate_limit(config)
+        case config
+        when nil, false
+          nil
+        when Numeric
+          TocDoc::RateLimiter::TokenBucket.new(rate: config, interval: 1.0)
+        when Hash
+          TocDoc::RateLimiter::TokenBucket.new(**config)
+        end
+      end
+
+      def resolve_cache(config)
+        case config
+        when nil, false
+          nil
+        when :memory
+          { store: TocDoc::Cache::MemoryStore.new, ttl: 300 }
+        when Hash
+          store = config[:store]
+          store = TocDoc::Cache::MemoryStore.new if store.nil? || store == :memory
+          { store: store, ttl: config.fetch(:ttl, 300) }
+        else
+          { store: config, ttl: 300 }
         end
       end
 
