@@ -14,10 +14,18 @@ module TocDoc
     # @example 2 requests per 2 seconds
     #   bucket = TocDoc::RateLimiter::TokenBucket.new(rate: 2, interval: 2.0)
     class TokenBucket
-      # @param rate [Numeric] maximum burst capacity and refill amount per +interval+
+      MIN_RATE = 1.0
+
+      # @param rate [Numeric] maximum burst capacity and refill amount per +interval+;
+      #   clamped to a minimum of +1+
       # @param interval [Float] refill period in seconds (default: 1.0)
       def initialize(rate:, interval: 1.0)
-        @rate     = rate.to_f
+        raw = rate.to_f
+        if raw < MIN_RATE
+          warn "[TocDoc] rate_limit #{raw} is below minimum; clamped to #{MIN_RATE}."
+          raw = MIN_RATE
+        end
+        @rate     = raw
         @interval = interval.to_f
         @tokens   = @rate
         @last_refill = Process.clock_gettime(Process::CLOCK_MONOTONIC)
