@@ -15,3 +15,11 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
     - 'toc_doc.gemspec'
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'lib/toc_doc/core/default.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/toc_doc/core/default.rb'
