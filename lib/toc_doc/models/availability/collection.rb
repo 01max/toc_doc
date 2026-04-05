@@ -32,12 +32,22 @@ module TocDoc
         @client = client
       end
 
+      # All {TocDoc::Availability} instances that have at least one slot.
+      #
+      # Results are memoized and invalidated by {#merge_page!}.
+      #
+      # @return [Array<TocDoc::Availability>]
       def availabilities
         @availabilities ||= Array(@data['availabilities'])
                             .select { |entry| Array(entry['slots']).any? }
                             .map { |entry| TocDoc::Availability.new(entry) }
       end
 
+      alias_method :all, :availabilities
+
+      # All individual slots across every availability in the collection.
+      #
+      # @return [Array<DateTime>]
       def slots
         availabilities.flat_map(&:slots)
       end
