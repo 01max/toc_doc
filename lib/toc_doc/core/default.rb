@@ -133,22 +133,10 @@ module TocDoc
       # @param cache [Symbol, Hash, Object, nil] cache config (see {.resolve_cache})
       # @return [Faraday::RackBuilder]
       def build_middleware(logger: nil, rate_limit: nil, cache: nil)
-        resolved_logger = resolve_logger(logger)
-        resolved_bucket = resolve_rate_limit(rate_limit)
-        resolved_cache  = resolve_cache(cache)
-        Faraday::RackBuilder.new do |builder|
-          builder.use TocDoc::Middleware::RaiseError
-          if resolved_cache
-            builder.use TocDoc::Middleware::Cache,
-                        store: resolved_cache[:store],
-                        ttl: resolved_cache[:ttl]
-          end
-          builder.use TocDoc::Middleware::Logging, logger: resolved_logger if resolved_logger
-          builder.request :retry, retry_options
-          builder.use TocDoc::Middleware::RateLimiter, bucket: resolved_bucket if resolved_bucket
-          builder.response :json, content_type: /\bjson$/
-          builder.adapter Faraday.default_adapter
-        end
+        logger_obj   = resolve_logger(logger)
+        bucket       = resolve_rate_limit(rate_limit)
+        cache_config = resolve_cache(cache)
+        Faraday::RackBuilder.new { |b| apply_middleware(b, logger_obj, bucket, cache_config) }
       end
 
       # Default Faraday connection options (empty by default).
@@ -196,6 +184,22 @@ module TocDoc
 
       private
 
+      def apply_middleware(builder, logger, bucket, cache_config)
+        builder.use TocDoc::Middleware::RaiseError
+        insert_cache(builder, cache_config)
+        builder.use TocDoc::Middleware::Logging, logger: logger if logger
+        builder.request :retry, retry_options
+        builder.use TocDoc::Middleware::RateLimiter, bucket: bucket if bucket
+        builder.response :json, content_type: /\bjson$/
+        builder.adapter Faraday.default_adapter
+      end
+
+      def insert_cache(builder, cache_config)
+        return unless cache_config
+
+        builder.use TocDoc::Middleware::Cache, store: cache_config[:store], ttl: cache_config[:ttl]
+      end
+
       def resolve_logger(logger)
         case logger
         when :stdout
@@ -221,17 +225,17 @@ module TocDoc
 
       def resolve_cache(config)
         case config
-        when nil, false
-          nil
-        when :memory
-          { store: TocDoc::Cache::MemoryStore.new, ttl: 300 }
-        when Hash
-          store = config[:store]
-          store = TocDoc::Cache::MemoryStore.new if store.nil? || store == :memory
-          { store: store, ttl: config.fetch(:ttl, 300) }
-        else
-          { store: config, ttl: 300 }
+        when nil, false then nil
+        when :memory    then { store: TocDoc::Cache::MemoryStore.new, ttl: 300 }
+        when Hash       then resolve_cache_hash(config)
+        else            { store: config, ttl: 300 }
         end
+      end
+
+      def resolve_cache_hash(config)
+        store = config[:store]
+        store = TocDoc::Cache::MemoryStore.new if store.nil? || store == :memory
+        { store: store, ttl: config.fetch(:ttl, 300) }
       end
 
       def retry_options

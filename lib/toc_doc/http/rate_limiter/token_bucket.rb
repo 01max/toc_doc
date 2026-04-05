@@ -47,7 +47,7 @@ module TocDoc
       def refill
         now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         elapsed = now - @last_refill
-        @tokens = [@tokens + (elapsed / @interval) * @rate, @rate].min
+        @tokens = [@tokens + ((elapsed / @interval) * @rate), @rate].min
         @last_refill = now
       end
     end
