@@ -306,10 +306,12 @@ Implements `Enumerable`, yielding `TocDoc::Availability` instances that have at 
 |---|---|---|
 | `#total` | `Integer` | Total number of available slots across all dates. |
 | `#next_slot` | `String \| nil` | ISO 8601 datetime of the nearest available slot. `nil` when none remain. |
+| `#availabilities` | `Array<TocDoc::Availability>` | All entries that have at least one slot. Aliased as `#all`. Memoized; invalidated by `#merge_page!`. |
+| `#slots` | `Array<DateTime>` | All individual slots across every availability in the collection. |
 | `#each` | — | Yields each `TocDoc::Availability` that has at least one slot (excludes empty-slot dates). |
 | `#raw_availabilities` | `Array<TocDoc::Availability>` | All date entries, including those with no slots. |
 | `#more?` | `Boolean` | `true` when the API has indicated further pages exist (`next_slot` is present). |
-| `#fetch_next_page` | `self` | Fetches the next page and merges it into this collection. Raises `StopIteration` when `#more?` is `false`. Requires a client (i.e. built via `Availability.where`). |
+| `#load_next!` | `self` | Fetches the next window and merges it into this collection. Raises `StopIteration` when `#more?` is `false`. Requires a client (i.e. built via `Availability.where`). |
 | `#to_h` | `Hash` | Plain-hash representation (only dates with slots in the `availabilities` key). |
 
 ### `TocDoc::Availability`
@@ -464,10 +466,10 @@ TocDoc.configure { |c| c.pagination_depth = 3 }
 # → up to 3 next_slot hops per Availability.where call
 ```
 
-### On-demand pagination with `#fetch_next_page`
+### On-demand pagination with `#load_next!`
 
-After the initial call, check `#more?` and call `#fetch_next_page` to load
-additional pages one at a time:
+After the initial call, check `#more?` and call `#load_next!` to load
+additional windows one at a time:
 
 ```ruby
 collection = TocDoc::Availability.where(
@@ -477,7 +479,7 @@ collection = TocDoc::Availability.where(
 )
 
 while collection.more?
-  collection.fetch_next_page
+  collection.load_next!
 end
 
 collection.total  # slots across all fetched pages
