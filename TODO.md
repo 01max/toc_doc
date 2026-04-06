@@ -3,7 +3,7 @@
 [POTENTIAL_ENDPOINTS][POTENTIAL_ENDPOINTS.md]
 
 
-## 1.9 — Service Layer rework
+## Service Layer rework
 
 - [ ] `TocDoc::Services::Availabilities` — extract from `Availability.where`
 - [ ] `TocDoc::Services::Profiles` — extract from `Profile.find`
@@ -12,14 +12,14 @@
 - [ ] Update top-level shortcuts to delegate to services
 - [ ] Deprecation on old model-level finders
 
-## 2.0 — Breaking Changes
+## Breaking Changes
 
 - [ ] Remove deprecated model-level finders
 - [ ] `Place#coordinates` as `Data.define(:latitude, :longitude)`
 - [ ] Integration smoke test suite (gated by ENV, weekly CI cron)
 - [ ] Remove unused HTTP verbs from `Connection` (if auth doesn't ship)
 
-# ???
+# Misc.
 
 - [ ] Figure what is `organization_statuses` in the autocomplete endpoint and what to do with it.
 - [ ] Authentication module

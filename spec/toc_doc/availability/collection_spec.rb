@@ -101,6 +101,50 @@ RSpec.describe TocDoc::Availability::Collection do
     end
   end
 
+  describe '#availabilities' do
+    it 'returns an array of TocDoc::Availability objects' do
+      expect(response.availabilities).to all(be_a(TocDoc::Availability))
+    end
+
+    it 'excludes entries with no slots' do
+      r = described_class.new({
+                                'total' => 1,
+                                'availabilities' => [
+                                  { 'date' => '2026-03-04', 'slots' => [] },
+                                  { 'date' => '2026-03-09', 'slots' => ['2026-03-09T14:50:00.000+01:00'] }
+                                ]
+                              })
+      expect(r.availabilities.length).to eq(1)
+      expect(r.availabilities.first.date).to eq(Date.new(2026, 3, 9))
+    end
+
+    it 'is memoized across calls' do
+      expect(response.availabilities).to equal(response.availabilities)
+    end
+
+    it 'is invalidated after merge_page!' do
+      before = response.availabilities
+      response.merge_page!({ 'total' => 0, 'availabilities' => [] })
+      expect(response.availabilities).not_to equal(before)
+    end
+  end
+
+  describe '#slots' do
+    it 'returns a flat array of DateTime objects' do
+      expect(response.slots).to all(be_a(DateTime))
+    end
+
+    it 'returns the correct total count' do
+      # fixture has 3 slots on 2026-02-28 and 2 slots on 2026-03-01
+      expect(response.slots.length).to eq(5)
+    end
+
+    it 'returns an empty array when there are no slots' do
+      r = described_class.new({ 'total' => 0, 'availabilities' => [] })
+      expect(r.slots).to eq([])
+    end
+  end
+
   describe '#to_h' do
     it 'round-trips to a plain Hash' do
       expect(response.to_h).to eq(raw_hash)
@@ -180,7 +224,7 @@ RSpec.describe TocDoc::Availability::Collection do
     end
   end
 
-  describe '#fetch_next_page' do
+  describe '#load_next!' do
     let(:base_url) { 'https://www.doctolib.fr/availabilities.json' }
     let(:page1_data) { JSON.parse(fixture('availabilities_page1.json')) }
     let(:page2_data) { JSON.parse(fixture('availabilities_page2.json')) }
@@ -188,7 +232,7 @@ RSpec.describe TocDoc::Availability::Collection do
     context 'when no client is provided' do
       it 'raises TocDoc::Error' do
         collection = described_class.new(page1_data)
-        expect { collection.fetch_next_page }.to raise_error(TocDoc::Error, /No client available/)
+        expect { collection.load_next! }.to raise_error(TocDoc::Error, /No client available/)
       end
     end
 
@@ -196,7 +240,7 @@ RSpec.describe TocDoc::Availability::Collection do
       it 'raises StopIteration' do
         client = TocDoc.client
         collection = described_class.new(page2_data, client: client)
-        expect { collection.fetch_next_page }.to raise_error(StopIteration)
+        expect { collection.load_next! }.to raise_error(StopIteration)
       end
     end
 
@@ -215,7 +259,7 @@ RSpec.describe TocDoc::Availability::Collection do
           client: client
         )
 
-        result = collection.fetch_next_page
+        result = collection.load_next!
         expect(result).to be(collection)
         expect(collection.more?).to be(false)
         expect(collection.total).to eq(3)
