@@ -1,5 +1,17 @@
 ## [Unreleased]
 
+## [1.9.0] - 2026-04-06
+
+### Added
+
+- **`TocDoc::Availability::Collection#availabilities`** — new public method returning all `TocDoc::Availability` instances that have at least one slot; results are memoized and invalidated by `#merge_page!`
+- **`TocDoc::Availability::Collection#all`** — alias for `#availabilities`
+- **`TocDoc::Availability::Collection#slots`** — returns all individual slots across every availability in the collection as `Array<DateTime>`
+
+### Changed
+
+- **`TocDoc::Availability::Collection#fetch_next_page`** renamed to **`#load_next!`** for a more idiomatic, mutation-signalling name
+
 ## [1.8.0] - 2026-04-05
 
 ### Added
