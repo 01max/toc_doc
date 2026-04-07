@@ -144,6 +144,33 @@ module TocDoc
         @availabilities = nil
         self
       end
+
+      # Builds a Doctolib booking URL for the current query context.
+      #
+      # Requires +booking_slug+ to have been passed as an option to
+      # {TocDoc::Availability.where}. Returns +nil+ when absent.
+      #
+      # The URL targets the motive-selection step of the booking funnel,
+      # pre-filled with the first practice ID and the visit motive IDs from
+      # the original query.
+      #
+      # @return [String, nil] fully-qualified booking URL, or +nil+ if
+      #   +booking_slug+ was not provided
+      #
+      # @example
+      #   collection = TocDoc::Availability.where(
+      #     visit_motive_ids: 1830057,
+      #     agenda_ids: 2359638,
+      #     booking_slug: 'dentiste/bordeaux/jane-doe'
+      #   )
+      #   collection.booking_url
+      #   #=> "https://www.doctolib.fr/dentiste/bordeaux/jane-doe/booking/motives?pid=practice-125055&vmids[]=1830057"
+      def booking_url
+        return unless @query[:booking_slug]
+
+        practice_id = [@query[:practice_ids]].flatten.first
+        "#{TocDoc.api_endpoint}/#{@query[:booking_slug]}/booking/motives?pid=practice-#{practice_id}&vmids[]=#{@query[:visit_motive_ids]}"
+      end
     end
   end
 end
