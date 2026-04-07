@@ -140,7 +140,7 @@ client.get('/availabilities.json', query: { visit_motive_ids: '123', agenda_ids:
 | Option | Default | Description |
 |---|---|---|
 | `api_endpoint` | `https://www.doctolib.fr` | Base URL. Change to `.de` / `.it` for other countries. |
-| `user_agent` | `TocDoc Ruby Gem 1.8.0` | `User-Agent` header sent with every request. |
+| `user_agent` | `TocDoc Ruby Gem 1.10.0` | `User-Agent` header sent with every request. |
 | `default_media_type` | `application/json` | `Accept` and `Content-Type` headers. |
 | `per_page` | `15` | Default number of availability dates per request (capped at `15`). Emits a warning if the value exceeds the cap. |
 | `connect_timeout` | `5` | TCP connect timeout in seconds, passed to Faraday as `open_timeout`. Override via `TOCDOC_CONNECT_TIMEOUT`. |
@@ -312,6 +312,7 @@ Implements `Enumerable`, yielding `TocDoc::Availability` instances that have at 
 | `#raw_availabilities` | `Array<TocDoc::Availability>` | All date entries, including those with no slots. |
 | `#more?` | `Boolean` | `true` when the API has indicated further pages exist (`next_slot` is present). |
 | `#load_next!` | `self` | Fetches the next window and merges it into this collection. Raises `StopIteration` when `#more?` is `false`. Requires a client (i.e. built via `Availability.where`). |
+| `#booking_url(availability)` | `String` | Returns the Doctolib booking URL for a given `TocDoc::Availability` instance. Delegates URL construction to `TocDoc::UriUtils`. |
 | `#to_h` | `Hash` | Plain-hash representation (only dates with slots in the `availabilities` key). |
 
 ### `TocDoc::Availability`

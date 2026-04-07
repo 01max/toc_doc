@@ -27,6 +27,16 @@
 
 # DONE & RELEASED
 
+## 1.10
+
+- [x] `Collection#booking_url` — Doctolib booking URL
+
+## 1.9
+
+- [x] `Collection#availabilities` / `#all` — filtered entries with memoization, invalidated by `#merge_page!`
+- [x] `Collection#slots` — all slots across the collection
+- [x] `Collection#load_next!` — renamed from `#fetch_next_page` for idiomatic mutation signalling
+
 ## 1.8
 
 - [x] Configurable availability pagination depth + `Collection#more?` / `#fetch_next_page`

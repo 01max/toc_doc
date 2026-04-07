@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [1.10.0] - 2026-04-07
+
+### Added
+
+- **`TocDoc::Availability::Collection#booking_url`** — new method returning the Doctolib booking URL for a given availability; accepts an `availability` argument and delegates URL construction to `TocDoc::UriUtils`
+
 ## [1.9.0] - 2026-04-06
 
 ### Added
