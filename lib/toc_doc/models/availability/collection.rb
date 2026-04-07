@@ -169,7 +169,9 @@ module TocDoc
         return unless @query[:booking_slug]
 
         practice_id = [@query[:practice_ids]].flatten.first
-        "#{TocDoc.api_endpoint}/#{@query[:booking_slug]}/booking/motives?pid=practice-#{practice_id}&vmids[]=#{@query[:visit_motive_ids]}"
+        "#{TocDoc.api_endpoint}/#{@query[:booking_slug]}/booking/motives" \
+          "?pid=practice-#{practice_id}" \
+          "&vmids[]=#{@query[:visit_motive_ids]}"
       end
     end
   end
