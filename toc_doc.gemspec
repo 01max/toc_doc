@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
     to interact with the (unofficial) Doctolib API."
   spec.homepage = 'https://github.com/01max/toc_doc'
   spec.license = 'GPL-3.0-or-later'
-  spec.required_ruby_version = '>= 3.2.0'
+  spec.required_ruby_version = '>= 3.3.0'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/01max/toc_doc/tree/main'
