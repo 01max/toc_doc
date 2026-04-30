@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [1.10.1] - 2026-04-30
+
+### Changed
+
+- Bump runtime dependency `addressable` from 2.8.9 to 2.9.0
+- Bump development dependencies: `rake` (13.3.1 → 13.4.2), `yard` (0.9.38 → 0.9.43), `irb` (1.17.0 → 1.18.0), `rubocop` (1.86.0 → 1.86.1)
+- CI matrix: drop Ruby 3.2, add Ruby 4.0
+
 ## [1.10.0] - 2026-04-07
 
 ### Added
