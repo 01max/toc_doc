@@ -14,6 +14,10 @@ A Ruby gem for interacting with the (unofficial) Doctolib API. A thin, Faraday-b
 > Doctolib is a trademark of Doctolib. This project is not affiliated with,
 > endorsed by, or sponsored by Doctolib.
 
+## Disclaimer
+
+Using this software is not aligned with Doctolib's Terms of Service. This project is provided for research and entertainment purposes only. You are responsible for ensuring that any use complies with applicable laws, policies, and third-party terms.
+
 ---
 
 ## Contents
