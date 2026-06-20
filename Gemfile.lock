@@ -11,8 +11,8 @@ GEM
     addressable (2.9.0)
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
-    bigdecimal (4.1.0)
-    coveralls_reborn (0.29.0)
+    bigdecimal (4.1.2)
+    coveralls_reborn (0.29.1)
       simplecov (~> 0.22.0)
       term-ansicolor (~> 1.7)
       thor (~> 1.2)
@@ -110,7 +110,7 @@ GEM
     term-ansicolor (1.11.3)
       tins (~> 1)
     thor (1.5.0)
-    tins (1.52.0)
+    tins (1.54.0)
       bigdecimal
       mize (~> 0.6)
       readline
