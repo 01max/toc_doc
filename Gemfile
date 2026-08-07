@@ -9,7 +9,7 @@ gem 'irb'
 gem 'rake', '~> 13.4'
 
 gem 'rspec', '~> 3.0'
-gem 'rubocop', '~> 1.88'
+gem 'rubocop', '~> 1.89'
 
 group :development do
   gem 'webrick'
